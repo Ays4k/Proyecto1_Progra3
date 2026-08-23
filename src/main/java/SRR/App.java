@@ -1,4 +1,5 @@
 package SRR;
+import SRR.utilities.MasterStageController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,10 +11,11 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/ui/Prueba.fxml"));
-        Scene scene = new Scene(root, 400, 250);
+        Scene scene = new Scene(root);
         primaryStage.setTitle("My App");
         primaryStage.setScene(scene);
-        primaryStage.show();
+        MasterStageController.getInstance(primaryStage).cambiarEscena(scene);
+
     }
 
     public static void main(String[] args) {
