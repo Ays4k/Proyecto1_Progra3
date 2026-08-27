@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.ArrayDeque;
 
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -43,19 +44,25 @@ public class MasterStageController {
         return instance;
     }
     //Si se quiere cambiar de escena, se guarda la actual en la pila (si hay) y se cambia a la nueva
-    public void cambiarEscena(Scene nuevaEscena) {
+    public void cambiarEscena(String archivoFxml) {
+        Scene nuevaEscena;
+        try {
+            Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource(archivoFxml));
+            nuevaEscena = new Scene(root);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al cargar el archivo FXML: " + archivoFxml, e);
+        }
         Scene currentScene = primaryStage.getScene();
         if (currentScene != null) {
             sceneStack.push(currentScene);
         }
         primaryStage.setScene(nuevaEscena);
         primaryStage.sizeToScene();
-        if(!primaryStage.isShowing()){
+        if (!primaryStage.isShowing()) {
             primaryStage.show();
         }
-
     }
-    //Si se quiere volver a la escena anterior, se saca de la pila y se cambia a ella.
+        //Si se quiere volver a la escena anterior, se saca de la pila y se cambia a ella.
     // Si no hay escenas en la pila, se cierra la aplicación
     public void volverEscenaAnterior() {
         if (!sceneStack.isEmpty()) {

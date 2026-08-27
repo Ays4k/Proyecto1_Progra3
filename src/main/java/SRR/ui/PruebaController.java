@@ -14,9 +14,7 @@ public class PruebaController {
     private void initialize() {
         btnCambioEscena.setOnAction(event -> {
             try {
-                Parent root = FXMLLoader.load(getClass().getResource("/ui/Pantalla2.fxml"));
-                Scene scene = new Scene(root);
-                MasterStageController.getInstance().cambiarEscena(scene);
+                MasterStageController.getInstance().cambiarEscena("/ui/Pantalla2.fxml");
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -10,11 +10,8 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/ui/Prueba.fxml"));
-        Scene scene = new Scene(root);
         primaryStage.setTitle("My App");
-        primaryStage.setScene(scene);
-        MasterStageController.getInstance(primaryStage).cambiarEscena(scene);
+        MasterStageController.getInstance(primaryStage).cambiarEscena("/ui/Prueba.fxml");
 
     }
 
