@@ -17,11 +17,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.controlador.SistemaReservasController">
    <children>
-      <TabPane prefHeight="511.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="-15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="tabPanePrincipal" prefHeight="511.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="-15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-            <Tab text="Reservas">
+            <Tab fx:id="tabReservas" text="Reservas">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="315.0" prefWidth="801.0">
                      <children>
@@ -77,7 +77,173 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab text="Calendarizacion">
+          <Tab fx:id="tabFuncionarios" text="Funcionarios">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="436.0" prefWidth="762.0">
+                     <children>
+                        <TitledPane collapsible="false" layoutX="134.0" layoutY="21.0" prefHeight="94.0" prefWidth="507.0" text="Busqueda">
+                           <content>
+                              <AnchorPane prefHeight="40.0" prefWidth="500.0">
+                                 <children>
+                                    <Label layoutX="11.0" layoutY="22.0" text="ID" />
+                                    <Label layoutX="135.0" layoutY="22.0" prefHeight="17.0" prefWidth="54.0" text="Nombre" />
+                                    <TextField layoutX="189.0" layoutY="18.0" />
+                                    <TextField layoutX="26.0" layoutY="18.0" prefHeight="25.0" prefWidth="102.0" />
+                                    <Button layoutX="350.0" layoutY="18.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="Buscar" />
+                                    <Button layoutX="431.0" layoutY="14.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="80.0" text="Imprimir" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TitledPane>
+                        <TitledPane collapsible="false" layoutX="226.0" layoutY="130.0" prefHeight="172.0" prefWidth="318.0" text="Funcionario">
+                           <content>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="46.0" text="ID" />
+                                    <Label layoutX="14.0" layoutY="49.0" prefHeight="17.0" prefWidth="47.0" text="Nombre" />
+                                    <Label layoutX="14.0" layoutY="84.0" prefHeight="17.0" prefWidth="47.0" text="Telefono" />
+                                    <TextField layoutX="70.0" layoutY="45.0" prefHeight="25.0" prefWidth="256.0" />
+                                    <TextField layoutX="70.0" layoutY="80.0" prefHeight="25.0" prefWidth="256.0" />
+                                    <TextField layoutX="70.0" layoutY="10.0" prefHeight="25.0" prefWidth="101.0" />
+                                    <Button layoutX="70.0" layoutY="119.0" mnemonicParsing="false" prefHeight="11.0" prefWidth="78.0" text="Guardar" />
+                                    <Button layoutX="159.0" layoutY="119.0" mnemonicParsing="false" prefHeight="11.0" prefWidth="78.0" text="Guardar" />
+                                    <Button layoutX="249.0" layoutY="119.0" mnemonicParsing="false" prefHeight="11.0" prefWidth="78.0" text="Guardar" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </TitledPane>
+                        <TableView layoutX="13.0" layoutY="344.0" prefHeight="128.0" prefWidth="776.0">
+                          <columns>
+                            <TableColumn prefWidth="227.0" text="ID" />
+                            <TableColumn prefWidth="253.0" text="Nombre" />
+                              <TableColumn prefWidth="235.0" text="Telefono" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="13.0" layoutY="327.0" text="Listado">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="tabCategorias" text="Categorias">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TitledPane collapsible="false" layoutX="154.0" layoutY="20.0" prefHeight="92.0" prefWidth="459.0" text="Busqueda">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <content>
+                              <AnchorPane prefHeight="46.0" prefWidth="429.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="25.0" text="Descripcion" />
+                                    <TextField layoutX="86.0" layoutY="21.0" />
+                                    <Button layoutX="248.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Buscar" />
+                                    <Button layoutX="336.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Imprimir" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane collapsible="false" layoutX="180.0" layoutY="130.0" prefHeight="161.0" prefWidth="385.0" text="Categorias">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <content>
+                              <AnchorPane prefHeight="119.0" prefWidth="413.0">
+                                 <children>
+                                    <Label layoutX="15.0" layoutY="18.0" text="ID" />
+                                    <Label layoutX="15.0" layoutY="53.0" text="Descripcion" />
+                                    <TextField layoutX="90.0" layoutY="14.0" prefHeight="25.0" prefWidth="296.0" />
+                                    <TextField layoutX="90.0" layoutY="49.0" prefHeight="25.0" prefWidth="296.0" />
+                                    <Button layoutX="90.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Guardar" />
+                                    <Button layoutX="194.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Borrar" />
+                                    <Button layoutX="297.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Limpiar" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <Label layoutX="14.0" layoutY="291.0" text="Listado">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <TableView layoutX="14.0" layoutY="308.0" prefHeight="164.0" prefWidth="775.0">
+                          <columns>
+                            <TableColumn prefWidth="271.0" text="ID" />
+                            <TableColumn prefWidth="503.0" text="Descripcion" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab fx:id="tabRecursos" text="Recursos">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="304.0" prefWidth="541.0">
+                     <children>
+                        <TitledPane collapsible="false" layoutX="53.0" layoutY="24.0" prefHeight="90.0" prefWidth="678.0" text="Filtro">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <content>
+                              <AnchorPane prefHeight="54.0" prefWidth="690.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="20.0" text="Categoria" />
+                                    <Label layoutX="238.0" layoutY="20.0" text="Descripcion" />
+                                    <TextField layoutX="309.0" layoutY="16.0" prefHeight="25.0" prefWidth="160.0" />
+                                    <Button layoutX="490.0" layoutY="16.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="77.0" text="Buscar" />
+                                    <Button layoutX="577.0" layoutY="13.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" text="Imprimir" />
+                                    <ComboBox layoutX="73.0" layoutY="16.0" prefHeight="25.0" prefWidth="153.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane collapsible="false" layoutX="205.0" layoutY="130.0" prefHeight="168.0" prefWidth="392.0" text="Recurso">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <content>
+                              <AnchorPane prefHeight="131.0" prefWidth="390.0">
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="14.0" text="ID" />
+                                    <Label layoutX="14.0" layoutY="51.0" text="Categoria" />
+                                    <Label layoutX="14.0" layoutY="88.0" text="Descripcion" />
+                                    <TextField layoutX="90.0" layoutY="10.0" prefHeight="25.0" prefWidth="279.0" />
+                                    <TextField layoutX="90.0" layoutY="84.0" prefHeight="25.0" prefWidth="279.0" />
+                                    <ComboBox layoutX="90.0" layoutY="47.0" prefHeight="25.0" prefWidth="279.0" />
+                                    <Button layoutX="90.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Guardar" />
+                                    <Button layoutX="187.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Borrar" />
+                                    <Button layoutX="284.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Limpiar" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <Label layoutX="14.0" layoutY="323.0" text="Listado">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <TableView layoutX="14.0" layoutY="340.0" prefHeight="130.0" prefWidth="774.0">
+                          <columns>
+                            <TableColumn prefWidth="191.0" text="ID" />
+                            <TableColumn prefWidth="253.0" text="Categoria" />
+                              <TableColumn prefWidth="329.0" text="Descripcion" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -113,7 +279,7 @@
                      </children></AnchorPane>
               </content>
             </Tab>
-            <Tab text="Actividades">
+            <Tab fx:id="tabActividades" text="Actividades">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -152,7 +318,7 @@
                      </children></AnchorPane>
               </content>
             </Tab>
-            <Tab text="Estadisticas">
+            <Tab fx:id="tabEstadisticas" text="Estadisticas">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

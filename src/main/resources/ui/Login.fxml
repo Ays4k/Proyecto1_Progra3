@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="538.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="538.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.controlador.LoginController">
    <children>
-      <Button defaultButton="true" layoutX="46.0" layoutY="244.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="128.0" text="Ingresar">
+      <Button defaultButton="true" layoutX="46.0" layoutY="244.0" mnemonicParsing="false" onAction="#handleIngresar" prefHeight="46.0" prefWidth="128.0" text="Ingresar">
          <font>
             <Font size="18.0" />
          </font>
@@ -34,7 +34,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField layoutX="139.0" layoutY="83.0" prefHeight="39.0" prefWidth="360.0" />
-      <PasswordField layoutX="139.0" layoutY="142.0" prefHeight="39.0" prefWidth="360.0" />
+      <TextField fx:id="txtUsuario" layoutX="139.0" layoutY="83.0" prefHeight="39.0" prefWidth="360.0" />
+      <PasswordField fx:id="txtPassword" layoutX="139.0" layoutY="142.0" prefHeight="39.0" prefWidth="360.0" />
    </children>
 </AnchorPane>

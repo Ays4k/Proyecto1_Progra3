@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("My App");
-        MasterStageController.getInstance(primaryStage).cambiarEscena("/ui/Prueba.fxml");
+        primaryStage.setTitle("Sistema de Reservas de Recursos");
+        MasterStageController.getInstance(primaryStage).cambiarEscena("/ui/Login.fxml");
 
     }
 
