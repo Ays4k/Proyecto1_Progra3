@@ -1,4 +1,4 @@
-package SRR.datos;
+package SRR.modelo;
 
 public class Categoria {
 }
