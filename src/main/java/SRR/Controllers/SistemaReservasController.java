@@ -1,4 +1,4 @@
-package SRR.controlador;
+package SRR.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;

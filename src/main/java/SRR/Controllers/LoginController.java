@@ -1,4 +1,4 @@
-package SRR.controlador;
+package SRR.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

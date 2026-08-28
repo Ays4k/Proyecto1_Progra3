@@ -1,4 +1,4 @@
-package SRR.modelo;
+package SRR.DTO;
 
 public class Usuario {
 }
