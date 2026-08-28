@@ -1,23 +1,25 @@
 package SRR.DTO;
 
+import java.util.List;
+
 public class ReservaDTO {
     private String id;
     private String idFuncionario;
-    private String idRecurso;
-    private String idActividad;
+    private List<String> idsRecursos;
+    private String actividad;
     private String fecha;
     private String horaInicio;
     private String horaFin;
-    private String estado; // "PENDIENTE", "APROBADA", "CANCELADA"
+    private String estado; // "ACTIVA", "CANCELADA"
 
     public ReservaDTO() {
     }
 
-    public ReservaDTO(String id, String idFuncionario, String idRecurso, String idActividad, String fecha, String horaInicio, String horaFin, String estado) {
+    public ReservaDTO(String id, String idFuncionario, List<String> idsRecursos, String actividad, String fecha, String horaInicio, String horaFin, String estado) {
         this.id = id;
         this.idFuncionario = idFuncionario;
-        this.idRecurso = idRecurso;
-        this.idActividad = idActividad;
+        this.idsRecursos = idsRecursos;
+        this.actividad = actividad;
         this.fecha = fecha;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
@@ -40,21 +42,15 @@ public class ReservaDTO {
         this.idFuncionario = idFuncionario;
     }
 
-    public String getIdRecurso() {
-        return idRecurso;
+    public List<String> getIdsRecursos() {return idsRecursos;}
+
+    public void setIdsRecursos(List<String> idsRecursos) {this.idsRecursos = idsRecursos;}
+
+    public String getActividad() {
+        return actividad;
     }
 
-    public void setIdRecurso(String idRecurso) {
-        this.idRecurso = idRecurso;
-    }
-
-    public String getIdActividad() {
-        return idActividad;
-    }
-
-    public void setIdActividad(String idActividad) {
-        this.idActividad = idActividad;
-    }
+    public void setActividad(String actividad) {this.actividad = actividad;}
 
     public String getFecha() {
         return fecha;

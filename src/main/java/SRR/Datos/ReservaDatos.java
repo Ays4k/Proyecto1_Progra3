@@ -100,7 +100,7 @@ public class ReservaDatos {
     public List<ReservaDTO> buscarPorFuncionario(String idFuncionario) {
         List<ReservaDTO> resultado = new ArrayList<>();
         for (ReservaDTO reserva : mapaReservas.values()) {
-            if (reserva.getIdFuncionario().equalsIgnoreCase(idFuncionario)) {
+            if (idFuncionario.equalsIgnoreCase(reserva.getIdFuncionario())) {
                 resultado.add(reserva);
             }
         }

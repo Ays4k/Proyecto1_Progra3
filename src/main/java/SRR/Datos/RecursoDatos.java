@@ -97,11 +97,22 @@ public class RecursoDatos {
         serializar();
     }
 
-    public List<RecursoDTO> buscarPorNombre(String texto) {
+    public List<RecursoDTO> buscarPorDescripcion(String texto) {
         List<RecursoDTO> resultado = new ArrayList<>();
         String busqueda = texto.toLowerCase();
         for (RecursoDTO recurso : mapaRecursos.values()) {
-            if (recurso.getNombre().toLowerCase().contains(busqueda)) {
+            String descripcion = recurso.getDescripcion();
+            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
+                resultado.add(recurso);
+            }
+        }
+        return resultado;
+    }
+
+    public List<RecursoDTO> buscarPorCategoria(String idCategoria) {
+        List<RecursoDTO> resultado = new ArrayList<>();
+        for (RecursoDTO recurso : mapaRecursos.values()) {
+            if (idCategoria.equals(recurso.getIdCategoria())) {
                 resultado.add(recurso);
             }
         }

@@ -103,7 +103,8 @@ public class CategoriaDatos {
         List<CategoriaDTO> resultado = new ArrayList<>();
         String busqueda = texto.toLowerCase();
         for (CategoriaDTO categoria : mapaCategorias.values()) {
-            if (categoria.getDescripcion().toLowerCase().contains(busqueda)) {
+            String descripcion = categoria.getDescripcion();
+            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
                 resultado.add(categoria);
             }
         }

@@ -1,20 +1,18 @@
 package SRR.DTO;
 
-public class FuncionarioDTO {
+public class UsuarioDTO {
     private String id;
     private String nombre;
-    private String correo;
     private String telefono;
     private String contrasena;
     private String rol; // "ADMINISTRADOR" o "FUNCIONARIO"
 
-    public FuncionarioDTO() {
+    public UsuarioDTO() {
     }
 
-    public FuncionarioDTO(String id, String nombre, String correo, String telefono, String contrasena, String rol) {
+    public UsuarioDTO(String id, String nombre, String telefono, String contrasena, String rol) {
         this.id = id;
         this.nombre = nombre;
-        this.correo = correo;
         this.telefono = telefono;
         this.contrasena = contrasena;
         this.rol = rol;
@@ -34,14 +32,6 @@ public class FuncionarioDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
     }
 
     public String getTelefono() {
