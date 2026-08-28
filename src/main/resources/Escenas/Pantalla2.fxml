@@ -6,7 +6,7 @@
 
 
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.ui.Prueba2Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Vista.Prueba2Controller">
    <children>
       <Label layoutX="267.0" layoutY="95.0" text="Otra escena" />
       <Button fx:id="btnVolver" layoutX="273.0" layoutY="238.0" mnemonicParsing="false" text="Volver" />

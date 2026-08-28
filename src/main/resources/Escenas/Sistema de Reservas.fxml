@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Controlador.SistemaReservasController">
+   <children>
+      <TabPane fx:id="tabPanePrincipal" prefHeight="511.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="-15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+          <tabs>
+              <Tab fx:id="tabReservas" text="Reservas">
+                  <content>
+                      <fx:include source="TabReservas.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabFuncionarios" text="Funcionarios">
+                  <content>
+                      <fx:include source="TabFuncionarios.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabCategorias" text="Categorias">
+                  <content>
+                      <fx:include source="TabCategorias.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabRecursos" text="Recursos">
+                  <content>
+                      <fx:include source="TabRecursos.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabCalendarizacion" text="Calendarizacion">
+                  <content>
+                      <fx:include source="TabCalendarizacion.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabActividades" text="Actividades">
+                  <content>
+                      <fx:include source="TabActividades.fxml" />
+                  </content>
+              </Tab>
+              <Tab fx:id="tabEstadisticas" text="Estadisticas">
+                  <content>
+                      <fx:include source="TabEstadisticas.fxml" />
+                  </content>
+              </Tab>
+          </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

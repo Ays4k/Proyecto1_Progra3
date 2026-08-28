@@ -1,10 +1,7 @@
-package SRR.ui;
-import SRR.utilities.MasterStageController;
+package SRR.Vista;
+import SRR.Singleton.MasterStageController;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 public class PruebaController {
@@ -14,7 +11,7 @@ public class PruebaController {
     private void initialize() {
         btnCambioEscena.setOnAction(event -> {
             try {
-                MasterStageController.getInstance().cambiarEscena("/ui/Pantalla2.fxml");
+                MasterStageController.getInstance().cambiarEscena("/Escenas/Pantalla2.fxml");
             } catch (Exception e) {
                 e.printStackTrace();
             }

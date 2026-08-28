@@ -1,4 +1,4 @@
-package SRR.utilities;
+package SRR.Singleton;
 
 import java.util.Deque;
 import java.util.ArrayDeque;
