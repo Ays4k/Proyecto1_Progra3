@@ -25,7 +25,6 @@ public class CategoriasController {
     @FXML private TextField txtSearch;
     @FXML private Button btnSearch;
     @FXML private Label lblSearch;
-
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
 
     @FXML
@@ -36,11 +35,9 @@ public class CategoriasController {
         catTable.setItems(categoriaList);
         btnSave.setOnAction(event -> guardarCategoria());
         btnDelete.setOnAction(event -> {
-            System.out.println("Eliminar categoria");
+           eliminarCategoria();
         });
-        btnClean.setOnAction(event -> {
-            limpiarCampos();
-        });
+        btnClean.setOnAction(event -> limpiarCampos());
         catTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 llenarCampos(newValue);
@@ -62,8 +59,33 @@ public class CategoriasController {
         txtShowId.setDisable(true); // Deshabilitar el campo de ID para evitar cambios
     }
 
+    private void eliminarCategoria() {
+        if(catTable.getSelectionModel().getSelectedItem() == null) {
+            //TODO Mostrar mensaje de error responsivo al usuario
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación de eliminación");
+        alert.setHeaderText("¿Está seguro de que desea eliminar esta categoría?");
+        alert.setContentText("Esta acción no se puede deshacer.");
+        alert.showAndWait();
+        if(alert.getResult() == ButtonType.OK) {
+            CategoriaDTO categoriaSeleccionada = catTable.getSelectionModel().getSelectedItem();
+            categoriaServicio.eliminarCategoria(categoriaSeleccionada.getId());
+            categoriaList.remove(categoriaSeleccionada);
+            limpiarCampos();
+            //TODO Mostrar mensaje de éxito responsivo al usuario donde se indique que tiene que
+            //reasignar los recursos que estaban asignados a esta categoría
+        }
+    }
+
     private void buscarCategoria() {
         String textoBusqueda = txtSearch.getText().trim();
+        if(textoBusqueda.isEmpty()) {
+            lblSearch.setText("Ingrese un texto para buscar");
+            lblSearch.setStyle("-fx-text-fill: red;");
+            return;
+        }
         for (CategoriaDTO categoria : categoriaList) {
             if (categoria.getDescripcion().toLowerCase().contains(textoBusqueda.toLowerCase())) {
                 catTable.getSelectionModel().select(categoria);

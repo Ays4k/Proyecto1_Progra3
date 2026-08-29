@@ -16,4 +16,8 @@ public class CategoriaServicio {
     public int servicioCategorias(CategoriaDTO categoria) {
         return logica.agregarCategoria(categoria);
     }
+
+    public void eliminarCategoria(String id) {
+        logica.eliminarCategoria(id);
+    }
 }

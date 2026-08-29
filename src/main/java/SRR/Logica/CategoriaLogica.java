@@ -21,4 +21,8 @@ public class CategoriaLogica {
             return 2; // Categoría modificada exitosamente
         }
     }
+
+    public void eliminarCategoria(String id) {
+        datos.borrar(id);
+    }
 }
