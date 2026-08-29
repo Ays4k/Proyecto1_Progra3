@@ -54,6 +54,7 @@ public class CategoriasController {
     private void limpiarCampos() {
         txtShowId.clear();
         txtShowDesc.clear();
+        txtShowId.setDisable(false); // Habilitar el campo de ID para nuevas entradas
     }
     private void llenarCampos(CategoriaDTO categoria) {
         txtShowId.setText(categoria.getId());
