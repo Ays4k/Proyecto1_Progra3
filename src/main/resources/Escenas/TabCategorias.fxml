@@ -11,22 +11,27 @@
 
 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="499.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Controlador.CategoriasController">
    <children>
-      <TitledPane collapsible="false" layoutX="154.0" layoutY="20.0" prefHeight="92.0" prefWidth="459.0" text="Busqueda">
+      <TitledPane collapsible="false" layoutX="154.0" layoutY="14.0" prefHeight="92.0" prefWidth="459.0" text="Busqueda">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
          <content>
-            <AnchorPane prefHeight="46.0" prefWidth="429.0">
+            <AnchorPane prefHeight="75.0" prefWidth="457.0">
                <children>
                   <Label layoutX="14.0" layoutY="25.0" text="Descripcion" />
-                  <TextField layoutX="86.0" layoutY="21.0" />
-                  <Button layoutX="248.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Buscar" />
+                  <TextField fx:id="txtSearch" layoutX="86.0" layoutY="21.0" />
+                  <Button fx:id="btnSearch" layoutX="248.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Buscar" />
                   <Button layoutX="336.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Imprimir" />
+                  <Label fx:id="lblSearch" layoutX="86.0" layoutY="57.0" prefHeight="15.0" prefWidth="334.0" text="                                                                                      ">
+                     <font>
+                        <Font size="9.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
          </content>
       </TitledPane>
-      <TitledPane collapsible="false" layoutX="180.0" layoutY="130.0" prefHeight="161.0" prefWidth="385.0" text="Categorias">
+      <TitledPane collapsible="false" layoutX="180.0" layoutY="137.0" prefHeight="161.0" prefWidth="385.0" text="Categorias">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -35,11 +40,11 @@
                <children>
                   <Label layoutX="15.0" layoutY="18.0" text="ID" />
                   <Label layoutX="15.0" layoutY="53.0" text="Descripcion" />
-                  <TextField layoutX="90.0" layoutY="14.0" prefHeight="25.0" prefWidth="296.0" />
-                  <TextField layoutX="90.0" layoutY="49.0" prefHeight="25.0" prefWidth="296.0" />
-                  <Button layoutX="90.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Guardar" />
-                  <Button layoutX="194.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Borrar" />
-                  <Button layoutX="297.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Limpiar" />
+                  <TextField fx:id="txtShowId" layoutX="90.0" layoutY="14.0" prefHeight="25.0" prefWidth="296.0" />
+                  <TextField fx:id="txtShowDesc" layoutX="90.0" layoutY="49.0" prefHeight="25.0" prefWidth="296.0" />
+                  <Button fx:id="btnSave" layoutX="90.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Guardar" />
+                  <Button fx:id="btnDelete" layoutX="194.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Borrar" />
+                  <Button fx:id="btnClean" layoutX="297.0" layoutY="90.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Limpiar" />
                </children>
             </AnchorPane>
          </content>
@@ -49,10 +54,10 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView layoutX="14.0" layoutY="308.0" prefHeight="178.0" prefWidth="775.0">
+      <TableView fx:id="catTable" layoutX="14.0" layoutY="308.0" prefHeight="178.0" prefWidth="775.0">
          <columns>
-            <TableColumn prefWidth="271.0" text="ID" />
-            <TableColumn prefWidth="503.0" text="Descripcion" />
+            <TableColumn fx:id="colId" prefWidth="271.0" text="ID" />
+            <TableColumn fx:id="colDesc" prefWidth="503.0" text="Descripcion" />
          </columns>
       </TableView>
    </children>
