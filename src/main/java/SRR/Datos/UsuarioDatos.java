@@ -79,7 +79,12 @@ public class UsuarioDatos {
     }
 
     public List<UsuarioDTO> listar() {
-        return new ArrayList<>(mapaUsuarios.values());
+        List<UsuarioDTO> listaUsuarios = new ArrayList<>(mapaUsuarios.values());
+        for(UsuarioDTO usuario : listaUsuarios) {
+            // Ocultar la contraseña antes de devolver la lista
+            usuario.setContrasena(null);
+        }
+        return listaUsuarios;
     }
 
     public void agregar(UsuarioDTO funcionario) {
@@ -88,9 +93,16 @@ public class UsuarioDatos {
     }
 
     public void modificar(UsuarioDTO funcionario) {
+        // Mantener la contraseña existente si el usuario ya existe
+        UsuarioDTO existente = mapaUsuarios.get(funcionario.getId());
+        if (existente != null) {
+            funcionario.setContrasena(existente.getContrasena());
+        }
         mapaUsuarios.put(funcionario.getId(), funcionario);
         serializar();
     }
+
+    //Todo : Implementar método para cambiar la contraseña de un usuario
 
     public void borrar(String id) {
         mapaUsuarios.remove(id);
