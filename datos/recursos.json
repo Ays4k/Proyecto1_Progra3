@@ -1,0 +1,14 @@
+{
+  "recursos": [
+    {
+      "id": "101",
+      "descripcion": "Xbox",
+      "idCategoria": "222"
+    },
+    {
+      "id": "102",
+      "descripcion": "ShitStation",
+      "idCategoria": "1"
+    }
+  ]
+}
