@@ -28,20 +28,20 @@
                   <Label layoutX="13.0" layoutY="70.0" text="Actividad" />
                   <TextField layoutX="72.0" layoutY="66.0" prefHeight="25.0" prefWidth="546.0" />
                   <Label layoutX="13.0" layoutY="102.0" text="Fecha" />
-                  <DatePicker layoutX="72.0" layoutY="98.0" prefHeight="25.0" prefWidth="211.0" />
+                  <DatePicker fx:id="date" layoutX="72.0" layoutY="98.0" prefHeight="25.0" prefWidth="211.0" />
                   <Label layoutX="345.0" layoutY="102.0" text="Hora Inicio" />
                   <Label layoutX="13.0" layoutY="131.0" text="Categorias Requeridas (Seleccion Multiple) " />
                   <Label layoutX="345.0" layoutY="131.0" text="Hora Fin" />
-                  <ListView layoutX="14.0" layoutY="158.0" prefHeight="83.0" prefWidth="603.0" />
-                  <Button layoutX="345.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Reservar" />
+                  <ListView fx:id="listCategoria" layoutX="14.0" layoutY="164.0" prefHeight="83.0" prefWidth="603.0" />
+                  <Button fx:id="btnReservar" layoutX="345.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Reservar" />
                   <Button layoutX="439.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="178.0" text="Cancelar Reserva Seleccionada" />
                   <Label layoutX="20.0" layoutY="150.0" text="Categorias">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <ComboBox layoutX="426.0" layoutY="98.0" prefHeight="25.0" prefWidth="192.0" />
-                  <ComboBox layoutX="426.0" layoutY="127.0" prefHeight="25.0" prefWidth="192.0" />
+                  <ComboBox fx:id="cmbInicio" layoutX="426.0" layoutY="98.0" prefHeight="25.0" prefWidth="192.0" />
+                  <ComboBox fx:id="cmbFinal" layoutX="426.0" layoutY="127.0" prefHeight="25.0" prefWidth="192.0" />
                </children>
             </AnchorPane>
          </content>
