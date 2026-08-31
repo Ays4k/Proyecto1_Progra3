@@ -1,5 +1,6 @@
 package SRR.Logica;
 
+import SRR.DTO.LoginDTO;
 import SRR.DTO.UsuarioDTO;
 import SRR.Datos.UsuarioDatos;
 
@@ -38,5 +39,50 @@ public class UsuarioLogica {
         }
     }
 
+    public UsuarioDTO iniciarSesion(LoginDTO login) {
+        if (login == null || login.getId() == null || login.getId().isBlank()) {
+            return null;
+        }
+
+        UsuarioDTO usuario = datos.buscarPorId(login.getId());
+        if (usuario == null) {
+            return null;
+        }
+
+        if (usuario.getContrasena() == null
+                || !usuario.getContrasena().equals(login.getContrasena())) {
+            return null;
+        }
+
+        // se devuelve una copia sin la contrasena
+        return new UsuarioDTO(usuario.getId(), usuario.getNombre(),
+                usuario.getTelefono(), null, usuario.getRol());
+    }
+
+    public void cambiarClave(String id, String actual, String nueva, String confirmacion) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Debe indicar su id");
+        }
+
+        UsuarioDTO usuario = datos.buscarPorId(id);
+        if (usuario == null || usuario.getContrasena() == null
+                || !usuario.getContrasena().equals(actual)) {
+            throw new IllegalArgumentException("Id o clave actual incorrectos");
+        }
+
+        if (nueva == null || nueva.isBlank()) {
+            throw new IllegalArgumentException("La clave nueva no puede estar vacia");
+        }
+
+        if (!nueva.equals(confirmacion)) {
+            throw new IllegalArgumentException("Las claves nuevas no coinciden");
+        }
+
+        if (nueva.equals(actual)) {
+            throw new IllegalArgumentException("La clave nueva debe ser distinta de la actual");
+        }
+
+        datos.cambiarContrasena(id, nueva);
+    }
 
 }

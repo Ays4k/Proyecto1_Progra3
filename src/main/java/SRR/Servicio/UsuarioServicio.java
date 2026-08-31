@@ -1,5 +1,6 @@
 package SRR.Servicio;
 
+import SRR.DTO.LoginDTO;
 import SRR.Logica.UsuarioLogica;
 import SRR.DTO.UsuarioDTO;
 
@@ -20,4 +21,8 @@ public class UsuarioServicio {
     public boolean eliminarUsuario(String id) {
         return usuarioLogica.eliminarUsuario(id);
     }
+
+    public UsuarioDTO iniciarSesion(LoginDTO login) { return usuarioLogica.iniciarSesion(login);}
+
+    public void cambiarClave(String id, String actual, String nueva, String confirmacion) { usuarioLogica.cambiarClave(id, actual, nueva, confirmacion);}
 }

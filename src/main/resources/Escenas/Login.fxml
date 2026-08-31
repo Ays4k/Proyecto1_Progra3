@@ -14,12 +14,12 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Button layoutX="198.0" layoutY="244.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="128.0" text="Cancelar">
+      <Button layoutX="205.0" layoutY="244.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="128.0" text="Cancelar">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Button layoutX="371.0" layoutY="244.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="128.0" text="Cambiar">
+      <Button layoutX="371.0" layoutY="244.0" mnemonicParsing="false" onAction="#handleCambiar" prefHeight="46.0" prefWidth="128.0" text="Cambiar">
          <font>
             <Font size="18.0" />
          </font>
@@ -36,5 +36,6 @@
       </Label>
       <TextField fx:id="txtUsuario" layoutX="139.0" layoutY="83.0" prefHeight="39.0" prefWidth="360.0" />
       <PasswordField fx:id="txtPassword" layoutX="139.0" layoutY="142.0" prefHeight="39.0" prefWidth="360.0" />
+      <Label fx:id="lblMensaje" layoutX="139.0" layoutY="203.0" prefHeight="22.0" prefWidth="360.0" textFill="#ec0000" />
    </children>
 </AnchorPane>

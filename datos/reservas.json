@@ -1,0 +1,17 @@
+{
+  "reservas": [
+    {
+      "id": "RES-000001",
+      "idFuncionario": "111",
+      "idsRecursos": [
+        "238715",
+        "34343"
+      ],
+      "actividad": "Sesion de Junta Directiva",
+      "fecha": "2026-08-05",
+      "horaInicio": "09:00",
+      "horaFin": "11:00",
+      "estado": "ACTIVA"
+    }
+  ]
+}

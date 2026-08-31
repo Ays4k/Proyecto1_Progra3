@@ -102,7 +102,14 @@ public class UsuarioDatos {
         serializar();
     }
 
-    //Todo : Implementar método para cambiar la contraseña de un usuario
+    public void cambiarContrasena(String id, String nuevaContrasena) {
+        UsuarioDTO usuario = mapaUsuarios.get(id);
+        if (usuario == null) {
+            return;
+        }
+        usuario.setContrasena(nuevaContrasena);
+        serializar();
+    }
 
     public void borrar(String id) {
         mapaUsuarios.remove(id);
