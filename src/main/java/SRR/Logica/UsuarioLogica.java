@@ -5,7 +5,7 @@ import SRR.Datos.UsuarioDatos;
 
 import java.util.List;
 
-public class LogicaUsuarios {
+public class UsuarioLogica {
 
     private final UsuarioDatos datos = new UsuarioDatos();
 

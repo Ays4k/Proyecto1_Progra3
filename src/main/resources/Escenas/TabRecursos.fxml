@@ -21,10 +21,10 @@
                <children>
                   <Label layoutX="14.0" layoutY="20.0" text="Categoria" />
                   <Label layoutX="238.0" layoutY="20.0" text="Descripcion" />
-                  <TextField layoutX="309.0" layoutY="16.0" prefHeight="25.0" prefWidth="160.0" />
-                  <Button layoutX="490.0" layoutY="16.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="77.0" text="Buscar" />
-                  <Button layoutX="577.0" layoutY="13.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" text="Imprimir" />
-                  <ComboBox layoutX="73.0" layoutY="16.0" prefHeight="25.0" prefWidth="153.0" />
+                  <TextField fx:id="txtBuscarDesc" layoutX="309.0" layoutY="16.0" prefHeight="25.0" prefWidth="160.0" />
+                  <Button fx:id="btnBuscar" layoutX="490.0" layoutY="16.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="77.0" text="Buscar" />
+                  <Button fx:id="btnImprimir" layoutX="577.0" layoutY="13.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" text="Imprimir" />
+                  <ComboBox fx:id="cbFiltroCategoria" layoutX="73.0" layoutY="16.0" prefHeight="25.0" prefWidth="153.0" />
                </children>
             </AnchorPane>
          </content>
@@ -39,12 +39,12 @@
                   <Label layoutX="14.0" layoutY="14.0" text="ID" />
                   <Label layoutX="14.0" layoutY="51.0" text="Categoria" />
                   <Label layoutX="14.0" layoutY="88.0" text="Descripcion" />
-                  <TextField layoutX="90.0" layoutY="10.0" prefHeight="25.0" prefWidth="279.0" />
-                  <TextField layoutX="90.0" layoutY="84.0" prefHeight="25.0" prefWidth="279.0" />
-                  <ComboBox layoutX="90.0" layoutY="47.0" prefHeight="25.0" prefWidth="279.0" />
-                  <Button layoutX="90.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Guardar" />
-                  <Button layoutX="187.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Borrar" />
-                  <Button layoutX="284.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Limpiar" />
+                  <TextField fx:id="txtId" layoutX="90.0" layoutY="10.0" prefHeight="25.0" prefWidth="279.0" />
+                  <TextField fx:id="txtDesc" layoutX="90.0" layoutY="84.0" prefHeight="25.0" prefWidth="279.0" />
+                  <ComboBox fx:id="cbFormCategoria" layoutX="90.0" layoutY="47.0" prefHeight="25.0" prefWidth="279.0" />
+                  <Button fx:id="btnGuardar" layoutX="90.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Guardar" />
+                  <Button fx:id="btnBorrar" layoutX="187.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Borrar" />
+                  <Button fx:id="btnLimpiar" layoutX="284.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0" text="Limpiar" />
                </children>
             </AnchorPane>
          </content>
@@ -54,11 +54,11 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView layoutX="14.0" layoutY="340.0" prefHeight="144.0" prefWidth="774.0">
+      <TableView fx:id="tablaRecursos" layoutX="14.0" layoutY="340.0" prefHeight="144.0" prefWidth="774.0">
          <columns>
-            <TableColumn prefWidth="191.0" text="ID" />
-            <TableColumn prefWidth="253.0" text="Categoria" />
-            <TableColumn prefWidth="329.0" text="Descripcion" />
+            <TableColumn fx:id="colId" prefWidth="191.0" text="ID" />
+            <TableColumn fx:id="colCategoria" prefWidth="253.0" text="Categoria" />
+            <TableColumn fx:id="colDescripcion" prefWidth="329.0" text="Descripcion" />
          </columns>
       </TableView>
    </children>

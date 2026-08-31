@@ -1,23 +1,23 @@
 package SRR.Servicio;
 
-import SRR.Logica.LogicaUsuarios;
+import SRR.Logica.UsuarioLogica;
 import SRR.DTO.UsuarioDTO;
 
 import java.util.List;
 
 public class UsuarioServicio {
 
-    private final LogicaUsuarios logicaUsuarios = new LogicaUsuarios();
+    private final UsuarioLogica usuarioLogica = new UsuarioLogica();
 
     public List<UsuarioDTO> obtenerUsuarios() throws IllegalAccessException {
-        return logicaUsuarios.obtenerUsuarios();
+        return usuarioLogica.obtenerUsuarios();
     }
 
     public int cambiosUsuario(UsuarioDTO usuario) {
-        return logicaUsuarios.cambiosUsuario(usuario);
+        return usuarioLogica.cambiosUsuario(usuario);
     }
 
     public boolean eliminarUsuario(String id) {
-        return logicaUsuarios.eliminarUsuario(id);
+        return usuarioLogica.eliminarUsuario(id);
     }
 }

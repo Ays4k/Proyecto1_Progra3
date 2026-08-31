@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import SRR.Servicio.UsuarioServicio;
-import SRR.DTO.UsuarioDTO;
 import jdk.jfr.Event;
 
 public class FuncionariosController {
@@ -59,9 +58,6 @@ public class FuncionariosController {
         txtSearchName.textProperty().addListener((observable, oldValue, newValue) ->
             textosBusqueda(!newValue.isEmpty(), txtSearchId)
         );
-
-
-
 
 
 
