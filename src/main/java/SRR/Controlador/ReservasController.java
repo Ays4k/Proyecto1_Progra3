@@ -4,6 +4,7 @@ import SRR.DTO.CategoriaDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.ReservaServicio;
+import SRR.utilidades.Sesion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -136,10 +137,9 @@ public class ReservasController {
             categorias.add(cat.getId());
         }
 
-        ReservaDTO res = new ReservaDTO("1","111",categorias,actividad,fecha,horaInicio,horaFinal,"Pendiente");
-
-        servicio.crearReserva(res);
-
+        // crearReserva ahora recibe las categorias y devuelve la reserva ya armada,
+        // con el id generado y el recurso libre de cada categoria asignado
+        servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
 
     }
 }

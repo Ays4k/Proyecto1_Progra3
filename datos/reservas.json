@@ -12,6 +12,30 @@
       "horaInicio": "09:00",
       "horaFin": "11:00",
       "estado": "ACTIVA"
+    },
+    {
+      "id": "RES-000002",
+      "idFuncionario": "111",
+      "idsRecursos": [
+        "238715"
+      ],
+      "actividad": "Capacitacion",
+      "fecha": "2026-08-05",
+      "horaInicio": "14:00",
+      "horaFin": "16:00",
+      "estado": "ACTIVA"
+    },
+    {
+      "id": "RES-000003",
+      "idFuncionario": "111",
+      "idsRecursos": [
+        "238715"
+      ],
+      "actividad": "Temporal",
+      "fecha": "2026-08-20",
+      "horaInicio": "09:00",
+      "horaFin": "11:00",
+      "estado": "CANCELADA"
     }
   ]
 }
