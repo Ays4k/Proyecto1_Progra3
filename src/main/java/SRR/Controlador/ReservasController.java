@@ -1,7 +1,9 @@
 package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
+import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
+import SRR.Servicio.ReservaServicio;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,15 +13,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
-import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.awt.TextField;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import javafx.scene.control.ComboBox;
-import javafx.util.StringConverter;
+
 
 
 public class ReservasController {
+
+    ReservaServicio servicio = new ReservaServicio();
 
     @FXML DatePicker date;
 
@@ -31,6 +36,7 @@ public class ReservasController {
     @FXML private Button btnReservar;
     @FXML private ComboBox<LocalTime> cmbInicio;
     @FXML private ComboBox<LocalTime> cmbFinal;
+    @FXML private TextField txtActividad;
 
     @FXML
     public void initialize() {
@@ -45,15 +51,29 @@ public class ReservasController {
                 }
             }
         });
+        date.valueProperty().addListener((evento,oldvalue,newvalue)->{
+
+            int horaActual;
+            int minutos;
+            if(newvalue.equals(LocalDate.now())){
+                horaActual = LocalTime.now().getMinute()<30 ? LocalTime.now().getHour() : LocalTime.now().getHour() + 1;
+                minutos = LocalTime.now().getMinute()<30 ? 30 : 0;
+            }
+            else{
+                horaActual = 8;
+                minutos = 0;
+            }
+            for(LocalTime hora = LocalTime.of(horaActual,minutos); !hora.isAfter(LocalTime.of(16,30)); hora = hora.plusMinutes(30)){
+                cmbInicio.getItems().add(hora);
+            }
+        });
 
         cargarCategorias();
         btnReservar.setOnAction(event -> {
             System.out.println(listCategoria.getSelectionModel().getSelectedItems());
         });
 
-        for(LocalTime hora = LocalTime.of(8,0); !hora.isAfter(LocalTime.of(16,30)); hora = hora.plusMinutes(30)){
-            cmbInicio.getItems().add(hora);
-        }
+
 
         cmbInicio.getSelectionModel().selectedItemProperty().addListener((event, viejo, nuevo) ->{
             cmbFinal.getItems().clear();
@@ -77,7 +97,6 @@ public class ReservasController {
                     }
                 }
             };
-
             cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
                 listCategoria.requestFocus();
                 if (!cell.isEmpty()) {
@@ -92,18 +111,11 @@ public class ReservasController {
                     event.consume();
                 }
             });
-
             return cell;
 
         });
-
-
-
         listCategoria.setItems(listaCategorias);
         listCategoria.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-
-
         //Explicacion:
         // listaCategoria es un observable list (si se le agrega algo se actualiza en el listview)
         //listCategoria.setCellFactory le dice como va a construir sus celdas, solo queremos mostrar la descripcion de la categoria
@@ -111,5 +123,23 @@ public class ReservasController {
         //listCategoria.getSelectionModel().setSelectionMode le dice que modo de seleccion va a tener, en este caso MULTIPLE
         //cuando se se use .getSelectionModel().getSelectedItems() se va a obtener una lista de categorias seleccionadas
         //se envia al servicio de hacer reservas
+        //por ultimo, a la factory le agregamos un event filtrer, para que cuando seleccionamos una celda no deseleccione las demas
+    }
+
+    private void reservar(){
+        String actividad = txtActividad.getText().trim();
+        String fecha = date.valueProperty().get().toString();
+        String horaInicio = cmbInicio.getSelectionModel().getSelectedItem().toString();
+        String horaFinal = cmbFinal.getSelectionModel().getSelectedItem().toString();
+        List<String> categorias = new ArrayList<String>();
+        for(CategoriaDTO cat : listCategoria.getSelectionModel().getSelectedItems()){
+            categorias.add(cat.getId());
+        }
+
+        ReservaDTO res = new ReservaDTO("1","111",categorias,actividad,fecha,horaInicio,horaFinal,"Pendiente");
+
+        servicio.crearReserva(res);
+
+
     }
 }
