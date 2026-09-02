@@ -8,6 +8,7 @@ import SRR.Datos.RecursoDatos;
 import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
+import javax.swing.text.html.ListView;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -63,7 +64,7 @@ public class ReservaLogica {
 
     public ReservaDTO crearReserva(String idFuncionario, String actividad, String fecha,
                                    String horaInicio, String horaFin,
-                                   List<String> idsCategorias) {
+                                   List<String> idsCategorias) throws CategoriasNoDisponiblesException {
 
         validar(idFuncionario, actividad, fecha, horaInicio, horaFin, idsCategorias);
 
@@ -101,6 +102,16 @@ public class ReservaLogica {
 
     public List<ReservaDTO> reservasDe(String idFuncionario) {
         return datos.buscarPorFuncionario(idFuncionario);
+    }
+
+    public List<ReservaDTO> reservasActivasDe(String idFuncionario){
+        List<ReservaDTO> activas = new ArrayList<ReservaDTO>();
+        for(ReservaDTO x : reservasDe(idFuncionario)){
+            if(x.getEstado().equals("ACTIVA")){
+                activas.add(x);
+            }
+        }
+        return activas;
     }
 
     private void validar(String idFuncionario, String actividad, String fecha,

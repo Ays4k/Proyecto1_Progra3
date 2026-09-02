@@ -36,6 +36,45 @@
       "horaInicio": "09:00",
       "horaFin": "11:00",
       "estado": "CANCELADA"
+    },
+    {
+      "id": "RES-000004",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "102",
+        "101"
+      ],
+      "actividad": "xfxfxf",
+      "fecha": "2026-09-02",
+      "horaInicio": "08:00",
+      "horaFin": "11:30",
+      "estado": "CANCELADA"
+    },
+    {
+      "id": "RES-000005",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "102",
+        "101"
+      ],
+      "actividad": "Ver una peli con fer",
+      "fecha": "2026-09-02",
+      "horaInicio": "14:00",
+      "horaFin": "17:00",
+      "estado": "CANCELADA"
+    },
+    {
+      "id": "RES-000006",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "102",
+        "101"
+      ],
+      "actividad": "aaa",
+      "fecha": "2026-10-01",
+      "horaInicio": "09:30",
+      "horaFin": "12:30",
+      "estado": "ACTIVA"
     }
   ]
 }

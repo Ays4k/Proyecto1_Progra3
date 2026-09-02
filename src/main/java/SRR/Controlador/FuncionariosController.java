@@ -33,6 +33,7 @@ public class FuncionariosController {
     @FXML private TableColumn<UsuarioDTO, String> colName;
     @FXML private TableColumn<UsuarioDTO, String> colPhone;
     @FXML private TableColumn<UsuarioDTO, String> colRol;
+
     @FXML private ObservableList<UsuarioDTO> userList;
     @FXML
     public void initialize() {

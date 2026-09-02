@@ -2,6 +2,7 @@ package SRR.Servicio;
 
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaDTO;
+import SRR.Excepciones.CategoriasNoDisponiblesException;
 import SRR.Logica.ReservaLogica;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class ReservaServicio {
 
     public ReservaDTO crearReserva(String idFuncionario, String actividad, String fecha,
                                    String horaInicio, String horaFin,
-                                   List<String> idsCategorias) {
+                                   List<String> idsCategorias) throws CategoriasNoDisponiblesException {
         return reservaLogica.crearReserva(idFuncionario, actividad, fecha,
                 horaInicio, horaFin, idsCategorias);
     }
@@ -21,8 +22,8 @@ public class ReservaServicio {
         reservaLogica.cancelarReserva(idReserva);
     }
 
-    public List<ReservaDTO> reservasDe(String idFuncionario) {
-        return reservaLogica.reservasDe(idFuncionario);
+    public List<ReservaDTO> reservasActivasDe(String idFuncionario) {
+        return reservaLogica.reservasActivasDe(idFuncionario);
     }
 
     public boolean estaDisponible(String idRecurso, String fecha,

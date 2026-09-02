@@ -8,19 +8,16 @@ import SRR.utilidades.Sesion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 
-import javafx.scene.control.Button;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.awt.TextField;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import javafx.scene.control.ComboBox;
-
 
 
 public class ReservasController {
@@ -33,8 +30,22 @@ public class ReservasController {
 
     private ObservableList<CategoriaDTO> listaCategorias;
 
+    private ObservableList<ReservaDTO> resList;
+    @FXML private TableView<ReservaDTO> tableRes;
+    @FXML private TableColumn<ReservaDTO,String> idColum;
+    @FXML private TableColumn<ReservaDTO,String> actColum;
+    @FXML private TableColumn<ReservaDTO,String> fchColum;
+    @FXML private TableColumn<ReservaDTO,String> horColum;
+    @FXML private TableColumn<ReservaDTO,String> recColum;
+    @FXML private TableColumn<ReservaDTO,String> estColum;
+
+
     @FXML private ListView<CategoriaDTO> listCategoria;
+
     @FXML private Button btnReservar;
+    @FXML private Button btnCan;
+    @FXML private Button btnClear;
+
     @FXML private ComboBox<LocalTime> cmbInicio;
     @FXML private ComboBox<LocalTime> cmbFinal;
     @FXML private TextField txtActividad;
@@ -42,6 +53,30 @@ public class ReservasController {
     @FXML
     public void initialize() {
 
+        idColum.setCellValueFactory(new PropertyValueFactory<>("id"));
+        actColum.setCellValueFactory(new PropertyValueFactory<>("actividad"));
+        fchColum.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        horColum.setCellValueFactory(new PropertyValueFactory<>("id"));
+        recColum.setCellValueFactory(new PropertyValueFactory<>("idsRecursos"));
+        estColum.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        try{
+            resList = FXCollections.observableList(servicio.reservasActivasDe(Sesion.getId()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        tableRes.setItems(resList);
+
+        /*
+        tableRes.getSelectionModel().selectedItemProperty().addListener((obj, oldv, newv)->{
+            txtActividad.setText(obj.getValue().getActividad());
+            cmbInicio.getItems().clear();
+            cmbInicio.setValue(LocalTime.parse(obj.getValue().getHoraInicio()));
+            cmbFinal.getItems().clear();
+            cmbFinal.setValue(LocalTime.parse(obj.getValue().getHoraFin()));
+            date.setValue(LocalDate.parse(obj.getValue().getFecha()));
+        });
+        nota: podria llenarse los campos si se selecciona
+        */
         date.setDayCellFactory(seleccion -> new DateCell(){
             @Override
             public void updateItem(LocalDate item, boolean empty) {
@@ -71,14 +106,19 @@ public class ReservasController {
 
         cargarCategorias();
         btnReservar.setOnAction(event -> {
-            System.out.println(listCategoria.getSelectionModel().getSelectedItems());
+            reservar();
+            limpiar();
         });
-
-
+        btnCan.setOnAction(event -> {
+            cancelar();
+        });
+        btnClear.setOnAction(event -> {
+            limpiar();
+        });
 
         cmbInicio.getSelectionModel().selectedItemProperty().addListener((event, viejo, nuevo) ->{
             cmbFinal.getItems().clear();
-            for(LocalTime hora = nuevo.plusMinutes(30); !hora.isAfter(LocalTime.of(17,00)); hora = hora.plusMinutes(30)){
+            for(LocalTime hora = nuevo.plusMinutes(30); !hora.isAfter(LocalTime.of(17,0)); hora = hora.plusMinutes(30)){
                 cmbFinal.getItems().add(hora);
             }
         });
@@ -127,6 +167,15 @@ public class ReservasController {
         //por ultimo, a la factory le agregamos un event filtrer, para que cuando seleccionamos una celda no deseleccione las demas
     }
 
+    private void cancelar(){
+        if(tableRes.getSelectionModel().getSelectedItem() == null){
+            return;
+        }
+        ReservaDTO res = tableRes.getSelectionModel().getSelectedItem();
+        resList.remove(res);
+        servicio.cancelarReserva(res.getId());
+    }
+
     private void reservar(){
         String actividad = txtActividad.getText().trim();
         String fecha = date.valueProperty().get().toString();
@@ -139,7 +188,21 @@ public class ReservasController {
 
         // crearReserva ahora recibe las categorias y devuelve la reserva ya armada,
         // con el id generado y el recurso libre de cada categoria asignado
-        servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
+        ReservaDTO reserva;
+        try {
+            reserva = servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
+            resList.add(reserva);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
+    }
+
+    private void limpiar(){
+        txtActividad.clear();
+        date.setValue(null);
+        cmbInicio.getItems().clear();
+        cmbFinal.getItems().clear();
+        listCategoria.getSelectionModel().clearSelection();
     }
 }
