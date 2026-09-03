@@ -1,4 +1,4 @@
-package SRR.utilidades;
+package SRR.Utilidades;
 
 import SRR.DTO.UsuarioDTO;
 

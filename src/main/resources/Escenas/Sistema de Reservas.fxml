@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Controlador.SistemaReservasController">
    <children>
-      <TabPane fx:id="tabPanePrincipal" prefHeight="511.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="-15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="tabPanePrincipal" prefHeight="540.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <tabs>
               <Tab fx:id="tabReservas" text="Reservas">
                   <content>
@@ -45,5 +46,6 @@
               </Tab>
           </tabs>
       </TabPane>
+      <Button fx:id="btnCerrarSesion" layoutX="701.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleCerrarSesion" text="Cerrar Sesión" />
    </children>
 </AnchorPane>

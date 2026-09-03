@@ -39,6 +39,8 @@ public class RecursosController {
 
     @FXML
     public void initialize() {
+        tablaRecursos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));

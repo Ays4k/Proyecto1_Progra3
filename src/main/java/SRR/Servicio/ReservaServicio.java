@@ -35,4 +35,8 @@ public class ReservaServicio {
                                                 String horaInicio, String horaFin) {
         return reservaLogica.recursosDisponibles(idCategoria, fecha, horaInicio, horaFin);
     }
+
+    public List<ReservaDTO> obtenerTodasLasReservas() {
+        return reservaLogica.obtenerTodasLasReservas();
+    }
 }

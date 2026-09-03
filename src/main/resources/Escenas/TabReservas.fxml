@@ -51,7 +51,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView fx:id="tableRes" layoutX="14.0" layoutY="368.0" prefHeight="120.0" prefWidth="684.0">
+      <TableView fx:id="tableRes" layoutX="14.0" layoutY="368.0" prefHeight="110.0" prefWidth="684.0">
          <columns>
             <TableColumn fx:id="idColum" prefWidth="112.0" text="ID" />
             <TableColumn fx:id="actColum" prefWidth="125.0" text="Actividad" />

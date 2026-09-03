@@ -1,6 +1,10 @@
 package SRR.Controlador;
 
+import SRR.Singleton.MasterStageController;
+import SRR.Utilidades.Sesion;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -14,6 +18,7 @@ public class SistemaReservasController {
     @FXML private Tab tabCalendarizacion;
     @FXML private Tab tabActividades;
     @FXML private Tab tabEstadisticas;
+    @FXML private Button btnCerrarSesion;
 
     // Almacena el rol seleccionado antes de cargar la escena
     private static String rolActual;
@@ -37,5 +42,17 @@ public class SistemaReservasController {
         } else if (rol.equalsIgnoreCase("ADMINISTRADOR") || rol.equalsIgnoreCase("ADMIN")) {
             tabPanePrincipal.getTabs().remove(tabReservas);
         }
+    }
+
+    @FXML
+    public void handleCerrarSesion(ActionEvent event) {
+        // 1. Limpia la sesión activa
+        Sesion.cerrar();
+
+        // 2. Reinicia el estado del rol
+        rolActual = null;
+
+        // 3. Redirige a la pantalla de Login
+        MasterStageController.getInstance().cambiarEscena("/Escenas/Login.fxml");
     }
 }

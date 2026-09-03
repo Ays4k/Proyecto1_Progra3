@@ -4,12 +4,14 @@
       "id": "111",
       "nombre": "Juan Perez",
       "telefono": "3323",
+      "contrasena": "111",
       "rol": "FUNCIONARIO"
     },
     {
       "id": "admin",
       "nombre": "Administrador",
       "telefono": "",
+      "contrasena": "admin",
       "rol": "ADMINISTRADOR"
     },
     {

@@ -29,6 +29,8 @@ public class CategoriasController {
 
     @FXML
     public void initialize() {
+        catTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         categoriaList = FXCollections.observableList(categoriaServicio.obtenerCategorias());

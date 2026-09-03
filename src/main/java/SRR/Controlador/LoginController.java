@@ -4,7 +4,7 @@ import SRR.DTO.LoginDTO;
 import SRR.DTO.UsuarioDTO;
 import SRR.Servicio.UsuarioServicio;
 import SRR.Singleton.MasterStageController;
-import SRR.utilidades.Sesion;
+import SRR.Utilidades.Sesion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

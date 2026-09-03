@@ -54,7 +54,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView fx:id="tablaRecursos" layoutX="14.0" layoutY="340.0" prefHeight="144.0" prefWidth="774.0">
+      <TableView fx:id="tablaRecursos" layoutX="14.0" layoutY="340.0" prefHeight="135.0" prefWidth="775.0">
          <columns>
             <TableColumn fx:id="colId" prefWidth="191.0" text="ID" />
             <TableColumn fx:id="colCategoria" prefWidth="253.0" text="Categoria" />

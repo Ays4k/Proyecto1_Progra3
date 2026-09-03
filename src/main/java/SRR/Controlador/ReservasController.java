@@ -4,7 +4,7 @@ import SRR.DTO.CategoriaDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.ReservaServicio;
-import SRR.utilidades.Sesion;
+import SRR.Utilidades.Sesion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -52,6 +52,7 @@ public class ReservasController {
 
     @FXML
     public void initialize() {
+        tableRes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         idColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         actColum.setCellValueFactory(new PropertyValueFactory<>("actividad"));

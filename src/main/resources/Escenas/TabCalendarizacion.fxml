@@ -21,10 +21,10 @@
                <children>
                   <Label layoutX="14.0" layoutY="23.0" text="Fecha" />
                   <Label layoutX="246.0" layoutY="23.0" text="Categoria" />
-                  <ComboBox layoutX="305.0" layoutY="19.0" prefHeight="25.0" prefWidth="166.0" />
-                  <Button layoutX="491.0" layoutY="20.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" text="Cargar" />
-                  <Button layoutX="598.0" layoutY="14.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="95.0" text="Imprimir" />
-                  <DatePicker layoutX="60.0" layoutY="19.0" />
+                  <ComboBox fx:id="cbCategoria" layoutX="305.0" layoutY="19.0" prefHeight="25.0" prefWidth="166.0" />
+                  <Button fx:id="btnCargar" layoutX="491.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleCargar" prefHeight="25.0" prefWidth="95.0" text="Cargar" />
+                  <Button fx:id="btnImprimir" layoutX="598.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleImprimir" prefHeight="35.0" prefWidth="95.0" text="Imprimir" />
+                  <DatePicker fx:id="dpFecha" layoutX="60.0" layoutY="19.0" />
                </children>
             </AnchorPane>
          </content>
@@ -34,11 +34,11 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView layoutX="14.0" layoutY="136.0" prefHeight="350.0" prefWidth="771.0">
+      <TableView fx:id="tblCalendarizacion" layoutX="14.0" layoutY="136.0" prefHeight="340.0" prefWidth="771.0">
          <columns>
             <TableColumn prefWidth="75.0" text="Hora" />
-            <TableColumn prefWidth="337.0" text="Laptop #1" />
-            <TableColumn prefWidth="358.0" text="Laptop #2" />
+            <TableColumn prefWidth="337.0" text="Recurso #1" />
+            <TableColumn prefWidth="358.0" text="Recurso #2" />
          </columns>
       </TableView>
    </children>

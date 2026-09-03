@@ -37,6 +37,8 @@ public class FuncionariosController {
     @FXML private ObservableList<UsuarioDTO> userList;
     @FXML
     public void initialize() {
+        tableUsers.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("telefono"));

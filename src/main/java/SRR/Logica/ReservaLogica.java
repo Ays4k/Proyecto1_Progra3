@@ -155,4 +155,8 @@ public class ReservaLogica {
         }
         return String.format("RES-%06d", mayor + 1);
     }
+
+    public List<ReservaDTO> obtenerTodasLasReservas() {
+        return datos.listar();
+    }
 }

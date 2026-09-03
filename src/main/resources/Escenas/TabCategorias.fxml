@@ -49,12 +49,12 @@
             </AnchorPane>
          </content>
       </TitledPane>
-      <Label layoutX="14.0" layoutY="291.0" text="Listado">
+      <Label layoutX="14.0" layoutY="290.0" text="Listado">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView fx:id="catTable" layoutX="14.0" layoutY="308.0" prefHeight="178.0" prefWidth="775.0">
+      <TableView fx:id="catTable" layoutX="14.0" layoutY="308.0" prefHeight="170.0" prefWidth="775.0">
          <columns>
             <TableColumn fx:id="colId" prefWidth="271.0" text="ID" />
             <TableColumn fx:id="colDesc" prefWidth="503.0" text="Descripcion" />
