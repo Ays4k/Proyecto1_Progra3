@@ -21,9 +21,9 @@
          <content>
             <AnchorPane prefHeight="283.0" prefWidth="754.0">
                <children>
-                  <Label layoutX="14.0" layoutY="25.0" text="Frase" />
+                  <Label fx:id="lblAi" layoutX="640.0" layoutY="61.0" prefHeight="17.0" prefWidth="89.0" text="Cargando..." />
                   <TextField fx:id="txtAi" layoutX="72.0" layoutY="9.0" prefHeight="50.0" prefWidth="546.0" />
-                  <Button fx:id="btnClear" layoutX="658.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Limpiar" />
+                  <Button fx:id="btnClear" layoutX="647.0" layoutY="221.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Limpiar" />
                   <Button fx:id="btnAi" layoutX="636.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Extraer AI" />
                   <Label layoutX="13.0" layoutY="70.0" text="Actividad" />
                   <TextField fx:id="txtActividad" layoutX="72.0" layoutY="66.0" prefHeight="25.0" prefWidth="546.0" />
@@ -32,9 +32,8 @@
                   <Label layoutX="345.0" layoutY="102.0" text="Hora Inicio" />
                   <Label layoutX="13.0" layoutY="131.0" text="Categorias Requeridas (Seleccion Multiple) " />
                   <Label layoutX="345.0" layoutY="131.0" text="Hora Fin" />
-                  <ListView fx:id="listCategoria" layoutX="14.0" layoutY="164.0" prefHeight="83.0" prefWidth="603.0" />
-                  <Button fx:id="btnReservar" layoutX="345.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Reservar" />
-                  <Button fx:id="btnCan" layoutX="439.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="178.0" text="Cancelar Reserva Seleccionada" />
+                  <ListView fx:id="listCategoria" layoutX="14.0" layoutY="164.0" prefHeight="107.0" prefWidth="603.0" />
+                  <Button fx:id="btnReservar" layoutX="647.0" layoutY="179.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Reservar" />
                   <Label layoutX="20.0" layoutY="150.0" text="Categorias">
                      <font>
                         <Font name="System Bold" size="12.0" />
@@ -46,12 +45,12 @@
             </AnchorPane>
          </content>
       </TitledPane>
-      <Label layoutX="14.0" layoutY="351.0" text="Mis Reservas">
+      <Label layoutX="14.0" layoutY="352.0" text="Mis Reservas">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <TableView fx:id="tableRes" layoutX="14.0" layoutY="368.0" prefHeight="110.0" prefWidth="684.0">
+      <TableView fx:id="tableRes" layoutX="14.0" layoutY="378.0" prefHeight="110.0" prefWidth="684.0">
          <columns>
             <TableColumn fx:id="idColum" prefWidth="112.0" text="ID" />
             <TableColumn fx:id="actColum" prefWidth="125.0" text="Actividad" />
@@ -61,6 +60,7 @@
             <TableColumn fx:id="estColum" prefWidth="114.0" text="Estado" />
          </columns>
       </TableView>
-      <Button layoutX="716.0" layoutY="416.0" mnemonicParsing="false" text="Imprimir" />
+      <Button layoutX="715.0" layoutY="381.0" mnemonicParsing="false" text="Imprimir" />
+      <Button fx:id="btnCan" layoutX="485.0" layoutY="345.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="212.0" text="Cancelar Reserva Seleccionada" />
    </children>
 </AnchorPane>

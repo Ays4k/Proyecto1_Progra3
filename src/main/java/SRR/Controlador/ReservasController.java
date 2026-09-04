@@ -47,6 +47,7 @@ public class ReservasController {
 
 
     @FXML private Button btnAi;
+    @FXML private Label lblAi;
     @FXML private Button btnReservar;
     @FXML private Button btnCan;
     @FXML private Button btnClear;
@@ -73,6 +74,8 @@ public class ReservasController {
             e.printStackTrace();
         }
         tableRes.setItems(resList);
+
+        lblAi.setText("");
 
         /*
         tableRes.getSelectionModel().selectedItemProperty().addListener((obj, oldv, newv)->{
@@ -181,7 +184,14 @@ public class ReservasController {
             return;
         }
         String prompt = txtAi.getText().trim();
-
+        lblAi.setText("Cargando...");
+        lblAi.setStyle("-fx-text-fill: orange");
+        txtAi.setDisable(true);
+        txtActividad.setDisable(true);
+        date.setDisable(true);
+        cmbInicio.setDisable(true);
+        cmbFinal.setDisable(true);
+        listCategoria.setDisable(true);
         Thread peticion = new Thread(() ->{
             try {
                 ReservaAiDTO res = servicio.generarReservaAi(prompt);
@@ -200,10 +210,31 @@ public class ReservasController {
                         }
                     }
                     listCategoria.requestFocus();
+                    lblAi.setText("Infomación extraída con exito");
+                    lblAi.setStyle("-fx-text-fill: green");
+                    txtAi.setDisable(false);
+                    txtActividad.setDisable(false);
+                    date.setDisable(false);
+                    cmbInicio.setDisable(false);
+                    cmbFinal.setDisable(false);
+                    listCategoria.setDisable(false);
+                    txtAi.setText("");
                 });
 
             }catch (Exception e){
-                System.out.println(e.getMessage());
+                Alert alerta = new Alert(Alert.AlertType.ERROR);
+                alerta.setHeaderText("Error con la IA");
+                alerta.setContentText("Error: " + e.getMessage());
+                alerta.showAndWait();
+                lblAi.setText("Intentelo Nuevamente");
+                lblAi.setStyle("-fx-text-fill: red");
+                txtAi.setDisable(false);
+                txtActividad.setDisable(false);
+                date.setDisable(false);
+                cmbInicio.setDisable(false);
+                cmbFinal.setDisable(false);
+                listCategoria.setDisable(false);
+                txtAi.setText("");
             }
         });
 
