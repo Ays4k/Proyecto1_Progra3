@@ -22,9 +22,9 @@
             <AnchorPane prefHeight="283.0" prefWidth="754.0">
                <children>
                   <Label layoutX="14.0" layoutY="25.0" text="Frase" />
-                  <TextField layoutX="72.0" layoutY="9.0" prefHeight="50.0" prefWidth="546.0" />
+                  <TextField fx:id="txtAi" layoutX="72.0" layoutY="9.0" prefHeight="50.0" prefWidth="546.0" />
                   <Button fx:id="btnClear" layoutX="658.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Limpiar" />
-                  <Button layoutX="636.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Extraer AI" />
+                  <Button fx:id="btnAi" layoutX="636.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Extraer AI" />
                   <Label layoutX="13.0" layoutY="70.0" text="Actividad" />
                   <TextField fx:id="txtActividad" layoutX="72.0" layoutY="66.0" prefHeight="25.0" prefWidth="546.0" />
                   <Label layoutX="13.0" layoutY="102.0" text="Fecha" />

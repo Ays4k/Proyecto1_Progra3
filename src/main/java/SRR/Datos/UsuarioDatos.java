@@ -79,10 +79,9 @@ public class UsuarioDatos {
     }
 
     public List<UsuarioDTO> listar() {
-        List<UsuarioDTO> listaUsuarios = new ArrayList<>(mapaUsuarios.values());
-        for(UsuarioDTO usuario : listaUsuarios) {
-            // Ocultar la contraseña antes de devolver la lista
-            usuario.setContrasena(null);
+        List<UsuarioDTO> listaUsuarios = new ArrayList<>();
+        for(UsuarioDTO x : mapaUsuarios.values()){
+            listaUsuarios.add(new UsuarioDTO(x));
         }
         return listaUsuarios;
     }

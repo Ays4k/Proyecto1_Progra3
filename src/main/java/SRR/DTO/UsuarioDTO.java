@@ -18,6 +18,14 @@ public class UsuarioDTO {
         this.rol = rol;
     }
 
+    public UsuarioDTO(UsuarioDTO otro) {
+        this.id = otro.id;
+        this.nombre = otro.nombre;
+        this.telefono = otro.telefono;
+        this.rol = otro.rol;
+        this.contrasena = null;
+    }
+
     public String getId() {
         return id;
     }

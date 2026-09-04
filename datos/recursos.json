@@ -14,6 +14,21 @@
       "id": "238715",
       "descripcion": "Laptop #238715",
       "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "888",
+      "descripcion": "sala",
+      "idCategoria": "1"
+    },
+    {
+      "id": "777",
+      "descripcion": "VegetaPlay",
+      "idCategoria": "222"
+    },
+    {
+      "id": "555",
+      "descripcion": "Sala grande para 10 personas",
+      "idCategoria": "3"
     }
   ]
 }

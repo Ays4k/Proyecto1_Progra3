@@ -74,6 +74,32 @@
       "fecha": "2026-10-01",
       "horaInicio": "09:30",
       "horaFin": "12:30",
+      "estado": "CANCELADA"
+    },
+    {
+      "id": "RES-000007",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "102",
+        "101"
+      ],
+      "actividad": "reunion con jp y andrea",
+      "fecha": "2026-09-03",
+      "horaInicio": "15:30",
+      "horaFin": "17:00",
+      "estado": "ACTIVA"
+    },
+    {
+      "id": "RES-000008",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "238715",
+        "555"
+      ],
+      "actividad": "Reserva de sala para 10 personas y laptop con Windows",
+      "fecha": "2026-09-04",
+      "horaInicio": "10:00",
+      "horaFin": "14:00",
       "estado": "ACTIVA"
     }
   ]

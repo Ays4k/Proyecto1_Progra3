@@ -2,6 +2,7 @@ package SRR.Logica;
 
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
+import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Datos.CategoriaDatos;
 import SRR.Datos.RecursoDatos;
@@ -9,8 +10,12 @@ import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
 import javax.swing.text.html.ListView;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -19,6 +24,7 @@ public class ReservaLogica {
     private final ReservaDatos datos = new ReservaDatos();
     private final RecursoDatos recursoDatos = new RecursoDatos();
     private final CategoriaDatos categoriaDatos = new CategoriaDatos();
+    private final GeminiService ai = new GeminiService();
 
      //Un recurso esta libre si ninguna reserva ACTIVA lo usa en esa fecha
      // dentro de un rango que se traslape con el pedido.
@@ -98,6 +104,23 @@ public class ReservaLogica {
         }
         reserva.setEstado("CANCELADA");
         datos.modificar(reserva);
+    }
+
+    public ReservaAiDTO crearReservaAi(String prompt){
+        try{
+            String[] datos = ai.enviarMensaje(prompt).split(",");
+            if(!datos[0].contains("COMPLETO")){
+                throw new IOException("Error al generar el contenido");
+            }
+            ReservaAiDTO res = new ReservaAiDTO(datos[1], LocalDate.parse(datos[2])
+                    ,LocalTime.parse(datos[3]),LocalTime.parse(datos[4]),
+                    new ArrayList<String>(Arrays.asList(datos[5].split("#"))));
+
+            return res;
+
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public List<ReservaDTO> reservasDe(String idFuncionario) {

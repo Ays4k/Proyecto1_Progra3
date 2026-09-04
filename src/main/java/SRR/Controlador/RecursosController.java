@@ -45,8 +45,12 @@ public class RecursosController {
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
-        cargarCategorias();
-
+        cbFormCategoria.setOnShowing(event->{
+            cargarCategorias();
+        });
+        cbFiltroCategoria.setOnShowing(event->{
+            cargarCategorias();
+        });
         recursoList = FXCollections.observableArrayList(recursoServicio.obtenerRecursos());
         tablaRecursos.setItems(recursoList);
 

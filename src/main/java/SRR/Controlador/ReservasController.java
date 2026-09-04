@@ -1,10 +1,12 @@
 package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
+import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.ReservaServicio;
 import SRR.Utilidades.Sesion;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
+import java.security.spec.ECField;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDate;
@@ -42,9 +45,13 @@ public class ReservasController {
 
     @FXML private ListView<CategoriaDTO> listCategoria;
 
+
+    @FXML private Button btnAi;
     @FXML private Button btnReservar;
     @FXML private Button btnCan;
     @FXML private Button btnClear;
+
+    @FXML private TextField txtAi;
 
     @FXML private ComboBox<LocalTime> cmbInicio;
     @FXML private ComboBox<LocalTime> cmbFinal;
@@ -106,6 +113,8 @@ public class ReservasController {
         });
 
         cargarCategorias();
+
+        btnAi.setOnAction(event -> reservaAi());
         btnReservar.setOnAction(event -> {
             reservar();
             limpiar();
@@ -167,7 +176,40 @@ public class ReservasController {
         //se envia al servicio de hacer reservas
         //por ultimo, a la factory le agregamos un event filtrer, para que cuando seleccionamos una celda no deseleccione las demas
     }
+    private void reservaAi() {
+        if(txtAi.getText().isEmpty()){
+            return;
+        }
+        String prompt = txtAi.getText().trim();
 
+        Thread peticion = new Thread(() ->{
+            try {
+                ReservaAiDTO res = servicio.generarReservaAi(prompt);
+                Platform.runLater(()->{
+                    txtActividad.setText(res.getActividad());
+                    date.setValue(res.getFecha());
+                    cmbInicio.setValue(res.getHoraInicio());
+                    cmbFinal.setValue(res.getHoraFinal());
+                    for(String categoria : res.getCategorias()){
+                        for(int i = 0; i<listCategoria.getItems().size(); i++){
+                            if(listCategoria.getItems().get(i).getDescripcion().equals(categoria)){
+                                listCategoria.getSelectionModel().select(i);
+                                System.out.println(1);
+                                break;
+                            }
+                        }
+                    }
+                    listCategoria.requestFocus();
+                });
+
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        });
+
+        peticion.start();
+
+    }
     private void cancelar(){
         if(tableRes.getSelectionModel().getSelectedItem() == null){
             return;

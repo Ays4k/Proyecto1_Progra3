@@ -1,6 +1,7 @@
 package SRR.Servicio;
 
 import SRR.DTO.RecursoDTO;
+import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 import SRR.Logica.ReservaLogica;
@@ -20,6 +21,10 @@ public class ReservaServicio {
 
     public void cancelarReserva(String idReserva) {
         reservaLogica.cancelarReserva(idReserva);
+    }
+
+    public ReservaAiDTO generarReservaAi(String prompt){
+        return reservaLogica.crearReservaAi(prompt);
     }
 
     public List<ReservaDTO> reservasActivasDe(String idFuncionario) {
