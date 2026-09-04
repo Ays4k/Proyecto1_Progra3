@@ -74,10 +74,6 @@ public class UsuarioDatos {
         }
     }
 
-    public UsuarioDTO buscarPorId(String id) {
-        return mapaUsuarios.get(id);
-    }
-
     public List<UsuarioDTO> listar() {
         List<UsuarioDTO> listaUsuarios = new ArrayList<>();
         for(UsuarioDTO x : mapaUsuarios.values()){
@@ -86,6 +82,21 @@ public class UsuarioDatos {
         return listaUsuarios;
     }
 
+    public boolean validarCredenciales(String id, String contrasena) {
+        UsuarioDTO usuario = mapaUsuarios.get(id);
+        return usuario != null
+                && usuario.getContrasena() != null
+                && usuario.getContrasena().equals(contrasena);
+    }
+
+    public void cambiarContrasena(String id, String nuevaContrasena) {
+        UsuarioDTO usuario = mapaUsuarios.get(id);
+        if (usuario == null) {
+            return;
+        }
+        usuario.setContrasena(nuevaContrasena);
+        serializar();
+    }
     public void agregar(UsuarioDTO funcionario) {
         mapaUsuarios.put(funcionario.getId(), funcionario);
         serializar();
@@ -101,30 +112,9 @@ public class UsuarioDatos {
         serializar();
     }
 
-    public void cambiarContrasena(String id, String nuevaContrasena) {
-        UsuarioDTO usuario = mapaUsuarios.get(id);
-        if (usuario == null) {
-            return;
-        }
-        usuario.setContrasena(nuevaContrasena);
-        serializar();
-    }
-
     public void borrar(String id) {
         mapaUsuarios.remove(id);
         serializar();
-    }
-
-    public List<UsuarioDTO> buscarPorNombre(String texto) {
-        List<UsuarioDTO> resultado = new ArrayList<>();
-        String busqueda = texto.toLowerCase();
-        for (UsuarioDTO usuario : mapaUsuarios.values()) {
-            String nombre = usuario.getNombre();
-            if (nombre != null && nombre.toLowerCase().contains(busqueda)) {
-                resultado.add(usuario);
-            }
-        }
-        return resultado;
     }
 
     private static class Contenedor {

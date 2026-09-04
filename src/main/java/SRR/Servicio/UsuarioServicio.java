@@ -10,8 +10,16 @@ public class UsuarioServicio {
 
     private final UsuarioLogica usuarioLogica = new UsuarioLogica();
 
-    public List<UsuarioDTO> obtenerUsuarios() throws IllegalAccessException {
+    public List<UsuarioDTO> obtenerUsuarios() {
         return usuarioLogica.obtenerUsuarios();
+    }
+
+    public UsuarioDTO buscarPorId(String id) {
+        return usuarioLogica.buscarPorId(id);
+    }
+
+    public List<UsuarioDTO> buscarPorNombre(String texto) {
+        return usuarioLogica.buscarPorNombre(texto);
     }
 
     public int cambiosUsuario(UsuarioDTO usuario) {
@@ -21,8 +29,4 @@ public class UsuarioServicio {
     public boolean eliminarUsuario(String id) {
         return usuarioLogica.eliminarUsuario(id);
     }
-
-    public UsuarioDTO iniciarSesion(LoginDTO login) { return usuarioLogica.iniciarSesion(login);}
-
-    public void cambiarClave(String id, String actual, String nueva, String confirmacion) { usuarioLogica.cambiarClave(id, actual, nueva, confirmacion);}
 }

@@ -44,12 +44,7 @@ public class FuncionariosController {
         colPhone.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
 
-        try {
-            userList = FXCollections.observableList(userService.obtenerUsuarios());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            userList = FXCollections.observableArrayList(); // Lista vacía en caso de error
-        }
+        userList = FXCollections.observableList(userService.obtenerUsuarios());
         tableUsers.setItems(userList);
 
         btnSearch.setOnAction(event -> buscarFuncionario());
@@ -151,7 +146,7 @@ public class FuncionariosController {
         String rol = ((RadioButton) grupoRol.getSelectedToggle()).getText();
 
         txtId.setDisable(false); // Habilitar el campo de ID para evitar cambios
-        UsuarioDTO newUser = new UsuarioDTO(id, name, phone, id, rol);
+        UsuarioDTO newUser = new UsuarioDTO(id, name, phone, null, rol);
         int resultado = userService.cambiosUsuario(newUser);
 
         if(resultado == 1) {

@@ -2,7 +2,7 @@ package SRR.Controlador;
 
 import SRR.DTO.LoginDTO;
 import SRR.DTO.UsuarioDTO;
-import SRR.Servicio.UsuarioServicio;
+import SRR.Servicio.LoginServicio;
 import SRR.Singleton.MasterStageController;
 import SRR.Utilidades.Sesion;
 import javafx.event.ActionEvent;
@@ -17,7 +17,7 @@ public class LoginController {
     @FXML private PasswordField txtPassword;
     @FXML private Label lblMensaje;
 
-    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
+    private final LoginServicio loginServicio = new LoginServicio();
 
     @FXML
     public void handleIngresar(ActionEvent event) {
@@ -31,7 +31,7 @@ public class LoginController {
             return;
         }
 
-        UsuarioDTO usuario = usuarioServicio.iniciarSesion(new LoginDTO(id, clave));
+        UsuarioDTO usuario = loginServicio.iniciarSesion(new LoginDTO(id, clave));
 
         if (usuario == null) {
             lblMensaje.setText("Usuario o clave incorrectos");

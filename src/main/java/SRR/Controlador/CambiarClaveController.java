@@ -1,6 +1,6 @@
 package SRR.Controlador;
 
-import SRR.Servicio.UsuarioServicio;
+import SRR.Servicio.LoginServicio;
 import SRR.Singleton.MasterStageController;
 import SRR.Utilidades.Sesion;
 import javafx.event.ActionEvent;
@@ -15,7 +15,7 @@ public class CambiarClaveController {
     @FXML private PasswordField txtConfirmar;
     @FXML private Label lblMensaje;
 
-    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
+    private final LoginServicio loginServicio = new LoginServicio();
 
     // El id se recibe antes de mostrar la pantalla, porque este formulario
     // no lo pide. Viene del login o de la sesion activa.
@@ -32,7 +32,7 @@ public class CambiarClaveController {
         String id = Sesion.getId() != null ? Sesion.getId() : idPendiente;
 
         try {
-            usuarioServicio.cambiarClave(id, txtActual.getText(),
+            loginServicio.cambiarClave(id, txtActual.getText(),
                     txtNueva.getText(), txtConfirmar.getText());
             lblMensaje.setTextFill(javafx.scene.paint.Color.GREEN);
             lblMensaje.setText("Clave cambiada correctamente");
