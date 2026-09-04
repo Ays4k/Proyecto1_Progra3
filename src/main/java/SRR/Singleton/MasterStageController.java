@@ -19,10 +19,15 @@ public class MasterStageController {
     //Pila de escenas para poder volver a la anterior
     private Deque<Scene> sceneStack;
 
+    private boolean temporal;
+    private String rutaSalto;
+
     private MasterStageController(Stage primaryStage) {
         //Constructor privado para evitar instanciación externa
         this.sceneStack = new ArrayDeque<>();
         this.primaryStage = primaryStage;
+        this.temporal = false;
+        this.rutaSalto = null;
     }
 
     public static MasterStageController getInstance(Stage primaryStage) throws IllegalStateException {
@@ -73,4 +78,30 @@ public class MasterStageController {
             Platform.exit();
         }
     }
+
+    public void escenaTemporal(String archivoFxml, String siguiente){
+        if(temporal){
+            throw new IllegalStateException ("No se puede tener dos escenas temporales al mismo tiempo");
+        }
+        if(getClass().getResource(siguiente) == null){
+            throw new IllegalStateException ("La escena siguiente no existe");
+        }
+        this.cambiarEscena(archivoFxml);
+        this.rutaSalto = siguiente;
+    }
+
+    public void eliminarEscenaTemporal(){
+        if(!temporal){
+            return;
+        }
+        volverEscenaAnterior();
+        if(rutaSalto == null){
+            return;
+        }
+        cambiarEscena(rutaSalto);
+        rutaSalto = null;
+
+
+    }
+
 }

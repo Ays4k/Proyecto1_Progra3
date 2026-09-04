@@ -43,7 +43,7 @@ public class UsuarioLogica {
         if (login == null || login.getId() == null || login.getId().isBlank()) {
             return null;
         }
-
+        datos.deserializar();
         UsuarioDTO usuario = datos.buscarPorId(login.getId());
         if (usuario == null) {
             return null;
@@ -83,6 +83,7 @@ public class UsuarioLogica {
         }
 
         datos.cambiarContrasena(id, nueva);
+        datos.deserializar();
     }
 
 }

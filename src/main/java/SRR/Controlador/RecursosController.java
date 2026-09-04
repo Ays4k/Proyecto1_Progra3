@@ -37,6 +37,8 @@ public class RecursosController {
     private final RecursoServicio recursoServicio = new RecursoServicio();
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
 
+
+
     @FXML
     public void initialize() {
         tablaRecursos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

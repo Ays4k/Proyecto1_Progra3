@@ -10,14 +10,14 @@
       "id": "admin",
       "nombre": "Administrador",
       "telefono": "",
-      "contrasena":"admin",
+      "contrasena": "admin",
       "rol": "ADMINISTRADOR"
     },
     {
       "id": "user",
       "nombre": "user",
       "telefono": "user",
-      "contrasena":"user",
+      "contrasena": "suser",
       "rol": "Funcionario"
     },
     {
