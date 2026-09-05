@@ -128,7 +128,7 @@ public class FuncionariosController {
         txtPhone.setText(funcionario.getTelefono());
         // Seleccionar el rol correspondiente
         for (Toggle toggle : grupoRol.getToggles()) {
-            if (((RadioButton) toggle).getText().equals(funcionario.getRol())) {
+            if (((RadioButton) toggle).getText().equalsIgnoreCase(funcionario.getRol())) {
                 grupoRol.selectToggle(toggle);
                 break;
             }
@@ -143,7 +143,7 @@ public class FuncionariosController {
         String id = txtId.getText().trim();
         String name = txtName.getText().trim();
         String phone = txtPhone.getText().trim();
-        String rol = ((RadioButton) grupoRol.getSelectedToggle()).getText();
+        String rol = ((RadioButton) grupoRol.getSelectedToggle()).getText().toUpperCase();
 
         txtId.setDisable(false); // Habilitar el campo de ID para evitar cambios
         UsuarioDTO newUser = new UsuarioDTO(id, name, phone, null, rol);

@@ -3,7 +3,8 @@
     {
       "id": "111",
       "nombre": "Juan Perez",
-      "telefono": "3323",
+      "telefono": "1234",
+      "contrasena": "111",
       "rol": "FUNCIONARIO"
     },
     {
@@ -18,14 +19,14 @@
       "nombre": "user",
       "telefono": "user",
       "contrasena": "suser",
-      "rol": "Funcionario"
+      "rol": "FUNCIONARIO"
     },
     {
       "id": "1234",
       "nombre": "Yariela",
-      "telefono": "86263599",
+      "telefono": "86263598",
       "contrasena": "1234",
-      "rol": "Administrador"
+      "rol": "ADMINISTRADOR"
     }
   ]
 }

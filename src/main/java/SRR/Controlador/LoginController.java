@@ -5,6 +5,7 @@ import SRR.DTO.UsuarioDTO;
 import SRR.Servicio.LoginServicio;
 import SRR.Singleton.MasterStageController;
 import SRR.Utilidades.Sesion;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -53,5 +54,10 @@ public class LoginController {
         }
         CambiarClaveController.setIdPendiente(id);
         MasterStageController.getInstance().cambiarEscena("/Escenas/Cambiar Clave.fxml");
+    }
+
+    @FXML
+    public void handleCancelar(ActionEvent event) {
+        Platform.exit();
     }
 }

@@ -35,6 +35,6 @@ public class Sesion {
     }
 
     public static boolean esAdministrador() {
-        return "ADMINISTRADOR".equals(getRol());
+        return "ADMINISTRADOR".equalsIgnoreCase(getRol());
     }
 }
