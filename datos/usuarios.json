@@ -18,7 +18,7 @@
       "id": "user",
       "nombre": "user",
       "telefono": "user",
-      "contrasena": "suser",
+      "contrasena": "user",
       "rol": "FUNCIONARIO"
     },
     {

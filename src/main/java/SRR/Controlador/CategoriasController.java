@@ -33,6 +33,22 @@ public class CategoriasController {
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+
+        // Centrar texto de las columnas
+        colId.setStyle("-fx-alignment: CENTER;");
+        colDesc.setStyle("-fx-alignment: CENTER;");
+
+        // Ajustar alto de filas cuando cambien los ítems, la lista o la altura de la tabla
+        catTable.heightProperty().addListener((obs, oldH, newH) -> ajustarAltoFilas(catTable, catTable.getItems()));
+        catTable.itemsProperty().addListener((obs, oldList, newList) -> {
+            if (newList != null) {
+                ajustarAltoFilas(catTable, newList);
+                newList.addListener((javafx.collections.ListChangeListener.Change<? extends CategoriaDTO> c) ->
+                        ajustarAltoFilas(catTable, newList)
+                );
+            }
+        });
+
         categoriaList = FXCollections.observableList(categoriaServicio.obtenerCategorias());
         catTable.setItems(categoriaList);
         btnSave.setOnAction(event -> guardarCategoria());
@@ -120,6 +136,28 @@ public class CategoriasController {
 
         }
         limpiarCampos();
+    }
+
+    private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {
+        tabla.fixedCellSizeProperty().unbind();
+
+        if (lista == null || lista.isEmpty()) {
+            tabla.setFixedCellSize(-1);
+            return;
+        }
+
+        double alturaEstandar = 25.0;
+        double altoEncabezado = 29.0;
+        double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
+        double altoCalculado = altoDisponible / lista.size();
+
+        if (altoCalculado >= alturaEstandar) {
+            tabla.fixedCellSizeProperty().bind(
+                    tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
+            );
+        } else {
+            tabla.setFixedCellSize(alturaEstandar);
+        }
     }
 
 

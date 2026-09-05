@@ -11,6 +11,7 @@ public class RecursoLogica {
     private final RecursoDatos datos = new RecursoDatos();
 
     public List<RecursoDTO> obtenerRecursos() {
+        datos.deserializar();   // relee por si otra pantalla agrego o modifico un recurso
         return datos.listar();
     }
 

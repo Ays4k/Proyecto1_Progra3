@@ -101,6 +101,18 @@
       "horaInicio": "10:00",
       "horaFin": "14:00",
       "estado": "ACTIVA"
+    },
+    {
+      "id": "RES-000009",
+      "idFuncionario": "user",
+      "idsRecursos": [
+        "102"
+      ],
+      "actividad": "Reserva para pepe",
+      "fecha": "2026-09-06",
+      "horaInicio": "10:00",
+      "horaFin": "11:00",
+      "estado": "CANCELADA"
     }
   ]
 }

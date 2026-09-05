@@ -62,12 +62,37 @@ public class ReservasController {
     public void initialize() {
         tableRes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // Permite múltiples líneas y asegura que el texto se centre siempre
+        lblAi.setWrapText(true);
+        lblAi.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        lblAi.setAlignment(javafx.geometry.Pos.CENTER);
+
         idColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         actColum.setCellValueFactory(new PropertyValueFactory<>("actividad"));
         fchColum.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         horColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         recColum.setCellValueFactory(new PropertyValueFactory<>("idsRecursos"));
         estColum.setCellValueFactory(new PropertyValueFactory<>("estado"));
+
+        // Centrar texto de las columnas
+        idColum.setStyle("-fx-alignment: CENTER;");
+        actColum.setStyle("-fx-alignment: CENTER;");
+        fchColum.setStyle("-fx-alignment: CENTER;");
+        horColum.setStyle("-fx-alignment: CENTER;");
+        recColum.setStyle("-fx-alignment: CENTER;");
+        estColum.setStyle("-fx-alignment: CENTER;");
+
+        // Ajustar alto de filas cuando cambien los ítems, la lista o la altura de la tabla
+        tableRes.heightProperty().addListener((obs, oldH, newH) -> ajustarAltoFilas(tableRes, tableRes.getItems()));
+        tableRes.itemsProperty().addListener((obs, oldList, newList) -> {
+            if (newList != null) {
+                ajustarAltoFilas(tableRes, newList);
+                newList.addListener((javafx.collections.ListChangeListener.Change<? extends ReservaDTO> c) ->
+                        ajustarAltoFilas(tableRes, newList)
+                );
+            }
+        });
+
         try{
             resList = FXCollections.observableList(servicio.reservasActivasDe(Sesion.getId()));
         }catch (Exception e){
@@ -210,7 +235,7 @@ public class ReservasController {
                         }
                     }
                     listCategoria.requestFocus();
-                    lblAi.setText("Infomación extraída con exito");
+                    lblAi.setText("Información extraída\ncon éxito");
                     lblAi.setStyle("-fx-text-fill: green");
                     txtAi.setDisable(false);
                     txtActividad.setDisable(false);
@@ -278,5 +303,27 @@ public class ReservasController {
         cmbInicio.getItems().clear();
         cmbFinal.getItems().clear();
         listCategoria.getSelectionModel().clearSelection();
+    }
+
+    private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {
+        tabla.fixedCellSizeProperty().unbind();
+
+        if (lista == null || lista.isEmpty()) {
+            tabla.setFixedCellSize(-1);
+            return;
+        }
+
+        double alturaEstandar = 25.0;
+        double altoEncabezado = 29.0;
+        double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
+        double altoCalculado = altoDisponible / lista.size();
+
+        if (altoCalculado >= alturaEstandar) {
+            tabla.fixedCellSizeProperty().bind(
+                    tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
+            );
+        } else {
+            tabla.setFixedCellSize(alturaEstandar);
+        }
     }
 }

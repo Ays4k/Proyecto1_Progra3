@@ -44,6 +44,23 @@ public class FuncionariosController {
         colPhone.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
 
+        // Centrar texto de las columnas
+        colId.setStyle("-fx-alignment: CENTER;");
+        colName.setStyle("-fx-alignment: CENTER;");
+        colPhone.setStyle("-fx-alignment: CENTER;");
+        colRol.setStyle("-fx-alignment: CENTER;");
+
+        // Ajustar alto de filas cuando cambien los ítems, la lista o la altura de la tabla
+        tableUsers.heightProperty().addListener((obs, oldH, newH) -> ajustarAltoFilas(tableUsers, tableUsers.getItems()));
+        tableUsers.itemsProperty().addListener((obs, oldList, newList) -> {
+            if (newList != null) {
+                ajustarAltoFilas(tableUsers, newList);
+                newList.addListener((javafx.collections.ListChangeListener.Change<? extends UsuarioDTO> c) ->
+                        ajustarAltoFilas(tableUsers, newList)
+                );
+            }
+        });
+
         userList = FXCollections.observableList(userService.obtenerUsuarios());
         tableUsers.setItems(userList);
 
@@ -57,20 +74,15 @@ public class FuncionariosController {
             textosBusqueda(!newValue.isEmpty(), txtSearchId)
         );
 
-
-
         btnSave.setOnAction(event -> guardarFuncionario());
         btnClean.setOnAction(event -> limpiarCampos());
         btnDelete.setOnAction(event -> eliminarFuncionario());
-
 
         tableUsers.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 seleccionarFuncionario(newSelection);
             }
         });
-
-
     }
 
     private void textosBusqueda(boolean condition, TextField event) {
@@ -168,6 +180,28 @@ public class FuncionariosController {
         txtPhone.clear();
         grupoRol.selectToggle(null); // Deseleccionar cualquier rol seleccionado
         txtId.setDisable(false); // Habilitar el campo de ID para nuevas entradas
+    }
+
+    private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {
+        tabla.fixedCellSizeProperty().unbind();
+
+        if (lista == null || lista.isEmpty()) {
+            tabla.setFixedCellSize(-1);
+            return;
+        }
+
+        double alturaEstandar = 25.0;
+        double altoEncabezado = 29.0;
+        double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
+        double altoCalculado = altoDisponible / lista.size();
+
+        if (altoCalculado >= alturaEstandar) {
+            tabla.fixedCellSizeProperty().bind(
+                    tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
+            );
+        } else {
+            tabla.setFixedCellSize(alturaEstandar);
+        }
     }
 
 }

@@ -74,27 +74,36 @@ public class CalendarizacionController {
         tblCalendarizacion.getColumns().clear();
         tblCalendarizacion.getItems().clear();
 
-        // Activa el ajuste automático de columnas al ancho del TableView
-        tblCalendarizacion.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        List<RecursoDTO> recursos = recursoServicio.obtenerRecursosPorCategoria(categoria.getId());
+        List<TableColumn<Map<String, String>, ?>> nuevasColumnas = new ArrayList<>();
 
+        // Columna Hora
         TableColumn<Map<String, String>, String> colHora = new TableColumn<>("Hora");
         colHora.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("Hora")));
-
-        // Fija el tamaño de la columna Hora para que no se estire en exceso
-        colHora.setMinWidth(110);
-        colHora.setMaxWidth(130);
-
+        colHora.setStyle("-fx-alignment: CENTER;");
+        colHora.setMinWidth(110); // Fija el tamaño de la columna Hora para que no se estire en exceso
+        colHora.setMaxWidth(110);
         tblCalendarizacion.getColumns().add(colHora);
 
-        List<RecursoDTO> recursos = recursoServicio.obtenerRecursosPorCategoria(categoria.getId());
+        // Calcular el ancho proporcional equitativo para cada recurso
+        double anchoTabla = tblCalendarizacion.getWidth() > 0 ? tblCalendarizacion.getWidth() : 771.0;
+        double anchoDisponible = Math.max(100.0, anchoTabla - 112.0);
+        double anchoRecurso = recursos.isEmpty() ? 100.0 : (anchoDisponible / recursos.size());
 
+        // Crear las columnas de recursos asignando el ancho proporcional inicial
         for (RecursoDTO rec : recursos) {
             TableColumn<Map<String, String>, String> colRecurso = new TableColumn<>(rec.getDescripcion());
             colRecurso.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(rec.getId())));
-            // Estas columnas absorben tudo el espacio restante uniformemente
-            tblCalendarizacion.getColumns().add(colRecurso);
+            colRecurso.setStyle("-fx-alignment: CENTER;");
+            colRecurso.setPrefWidth(anchoRecurso);
+            nuevasColumnas.add(colRecurso);
         }
 
+        // Insertar TODAS las columnas atómicamente y aplicar la política de ajuste
+        tblCalendarizacion.getColumns().addAll(nuevasColumnas);
+        tblCalendarizacion.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Cargar datos de la tabla
         String fechaStr = fecha.toString();
         List<ReservaDTO> reservasDia = obtenerReservasActivasPorFecha(fechaStr);
 
@@ -129,6 +138,13 @@ public class CalendarizacionController {
         }
 
         tblCalendarizacion.setItems(filas);
+
+        // Ajustar el alto de cada fila para llenar el 100% de la tabla sin dejar filas vacías
+        if (!filas.isEmpty()) {
+            tblCalendarizacion.fixedCellSizeProperty().bind(
+                    tblCalendarizacion.heightProperty().subtract(29).divide(filas.size())
+            );
+        }
     }
 
     @FXML

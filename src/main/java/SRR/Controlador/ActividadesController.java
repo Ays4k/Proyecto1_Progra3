@@ -41,6 +41,16 @@ public class ActividadesController {
         for (String dia : dias) {
             TableColumn<Map<String, String>, String> col = new TableColumn<>(dia);
             col.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(dia)));
+
+            // Centrar texto de la columna
+            col.setStyle("-fx-alignment: CENTER;");
+
+            // Fijar ancho de la columna Hora y dejar que el resto se divida equitativamente
+            if ("Hora".equals(dia)) {
+                col.setMinWidth(100);
+                col.setMaxWidth(120);
+            }
+
             tblActividades.getColumns().add(col);
         }
     }
@@ -96,6 +106,13 @@ public class ActividadesController {
         }
 
         tblActividades.setItems(filas);
+
+        // Ajustar el alto de cada fila para llenar el 100% de la tabla sin dejar filas vacías
+        if (!filas.isEmpty()) {
+            tblActividades.fixedCellSizeProperty().bind(
+                    tblActividades.heightProperty().subtract(29).divide(filas.size())
+            );
+        }
     }
 
     @FXML

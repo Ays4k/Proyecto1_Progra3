@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -23,18 +20,18 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <DatePicker layoutX="22.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
-                  <DatePicker layoutX="160.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
-                  <Button layoutX="297.0" layoutY="36.0" mnemonicParsing="false" text="Agregar" />
+                  <DatePicker fx:id="dpDesdeRecursos" layoutX="22.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
+                  <DatePicker fx:id="dpHastaRecursos" layoutX="160.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
+                  <Button fx:id="btnAgregarRecursos" layoutX="297.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleCargarRecursos" text="Agregar" />
                   <Label layoutX="29.0" layoutY="71.0" text="Estadísticas">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TableView layoutX="23.0" layoutY="91.0" prefHeight="83.0" prefWidth="335.0">
+                  <TableView fx:id="tblEstadRecursos" layoutX="23.0" layoutY="91.0" prefHeight="83.0" prefWidth="335.0">
                      <columns>
-                        <TableColumn prefWidth="167.0" text="Categorias" />
-                        <TableColumn prefWidth="167.0" text="Cantidad" />
+                        <TableColumn fx:id="colCategoriaRecursos" prefWidth="167.0" text="Categorias" />
+                        <TableColumn fx:id="colCantidadRecursos" prefWidth="167.0" text="Cantidad" />
                      </columns>
                   </TableView>
                   <Label layoutX="24.0" layoutY="182.0" text="Gráfico">
@@ -42,14 +39,10 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <BarChart layoutX="25.0" layoutY="213.0" prefHeight="202.0" prefWidth="332.0">
-                     <xAxis>
-                        <CategoryAxis side="BOTTOM" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis side="LEFT" />
-                     </yAxis>
-                  </BarChart>
+                  <AnchorPane fx:id="paneGraficoRecursos" layoutX="25.0" layoutY="213.0" prefHeight="202.0" prefWidth="332.0">
+                     <children>
+                        <Label layoutX="113.0" layoutY="92.0" text="Grafico sin contenido" />
+                     </children></AnchorPane>
                </children>
             </AnchorPane>
          </content>
@@ -59,25 +52,25 @@
       </TitledPane>
       <TitledPane collapsible="false" layoutX="410.0" layoutY="14.0" prefHeight="450.0" prefWidth="383.0" text="Actividades">
          <content>
-            <AnchorPane prefHeight="370.0" prefWidth="348.0">
+            <AnchorPane prefHeight="370.0" prefWidth="381.0">
                <children>
                   <Label layoutX="28.0" layoutY="14.0" text="Fechas Desde y Hasta">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <DatePicker layoutX="22.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
-                  <DatePicker layoutX="160.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
-                  <Button layoutX="297.0" layoutY="36.0" mnemonicParsing="false" text="Agregar" />
+                  <DatePicker fx:id="dpDesdeActividades" layoutX="22.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
+                  <DatePicker fx:id="dpHastaActividades" layoutX="160.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" />
+                  <Button fx:id="btnAgregarActividades" layoutX="297.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleCargarActividades" text="Agregar" />
                   <Label layoutX="29.0" layoutY="71.0" text="Estadísticas">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TableView layoutX="23.0" layoutY="91.0" prefHeight="83.0" prefWidth="335.0">
+                  <TableView fx:id="tblEstadActividades" layoutX="23.0" layoutY="91.0" prefHeight="83.0" prefWidth="335.0">
                      <columns>
-                        <TableColumn prefWidth="167.0" text="Categorias" />
-                        <TableColumn prefWidth="167.0" text="Cantidad" />
+                        <TableColumn fx:id="colSemanaActividades" prefWidth="167.0" text="Categorias" />
+                        <TableColumn fx:id="colCantidadActividades" prefWidth="167.0" text="Cantidad" />
                      </columns>
                   </TableView>
                   <Label layoutX="24.0" layoutY="182.0" text="Gráfico">
@@ -85,14 +78,10 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <BarChart layoutX="25.0" layoutY="213.0" prefHeight="202.0" prefWidth="332.0">
-                     <xAxis>
-                        <CategoryAxis prefWidth="274.0" side="BOTTOM" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis side="LEFT" />
-                     </yAxis>
-                  </BarChart>
+                  <AnchorPane fx:id="paneGraficoActividades" layoutX="25.0" layoutY="213.0" prefHeight="202.0" prefWidth="332.0">
+                     <children>
+                        <Label layoutX="113.0" layoutY="92.0" text="Grafico sin contenido" />
+                     </children></AnchorPane>
                </children>
             </AnchorPane>
          </content>

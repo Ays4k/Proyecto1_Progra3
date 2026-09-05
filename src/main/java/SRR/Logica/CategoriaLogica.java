@@ -6,7 +6,9 @@ import java.util.List;
 public class CategoriaLogica {
 
     private CategoriaDatos datos = new CategoriaDatos();
+    
     public List<CategoriaDTO> obtenerCategorias() {
+        datos.deserializar();   // relee por si otra pantalla agrego o modifico una categoria
         return datos.listar();
     }
 

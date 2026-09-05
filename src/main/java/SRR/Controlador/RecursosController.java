@@ -47,6 +47,22 @@ public class RecursosController {
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
+        // Centrar texto de las columnas
+        colId.setStyle("-fx-alignment: CENTER;");
+        colCategoria.setStyle("-fx-alignment: CENTER;");
+        colDescripcion.setStyle("-fx-alignment: CENTER;");
+
+        // Ajustar alto de filas cuando cambien los ítems, la lista o la altura de la tabla
+        tablaRecursos.heightProperty().addListener((obs, oldH, newH) -> ajustarAltoFilas(tablaRecursos, tablaRecursos.getItems()));
+        tablaRecursos.itemsProperty().addListener((obs, oldList, newList) -> {
+            if (newList != null) {
+                ajustarAltoFilas(tablaRecursos, newList);
+                newList.addListener((javafx.collections.ListChangeListener.Change<? extends RecursoDTO> c) ->
+                        ajustarAltoFilas(tablaRecursos, newList)
+                );
+            }
+        });
+
         cbFormCategoria.setOnShowing(event->{
             cargarCategorias();
         });
@@ -169,5 +185,27 @@ public class RecursosController {
         txtBuscarDesc.clear();
         tablaRecursos.setItems(recursoList);
         tablaRecursos.getSelectionModel().clearSelection();
+    }
+
+    private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {
+        tabla.fixedCellSizeProperty().unbind();
+
+        if (lista == null || lista.isEmpty()) {
+            tabla.setFixedCellSize(-1);
+            return;
+        }
+
+        double alturaEstandar = 25.0;
+        double altoEncabezado = 29.0;
+        double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
+        double altoCalculado = altoDisponible / lista.size();
+
+        if (altoCalculado >= alturaEstandar) {
+            tabla.fixedCellSizeProperty().bind(
+                    tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
+            );
+        } else {
+            tabla.setFixedCellSize(alturaEstandar);
+        }
     }
 }
