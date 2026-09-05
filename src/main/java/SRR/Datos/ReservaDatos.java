@@ -74,10 +74,6 @@ public class ReservaDatos {
         }
     }
 
-    public ReservaDTO buscarPorId(String id) {
-        return mapaReservas.get(id);
-    }
-
     public List<ReservaDTO> listar() {
         return new ArrayList<>(mapaReservas.values());
     }
@@ -95,16 +91,6 @@ public class ReservaDatos {
     public void borrar(String id) {
         mapaReservas.remove(id);
         serializar();
-    }
-
-    public List<ReservaDTO> buscarPorFuncionario(String idFuncionario) {
-        List<ReservaDTO> resultado = new ArrayList<>();
-        for (ReservaDTO reserva : mapaReservas.values()) {
-            if (idFuncionario.equalsIgnoreCase(reserva.getIdFuncionario())) {
-                resultado.add(reserva);
-            }
-        }
-        return resultado;
     }
 
     private static class Contenedor {

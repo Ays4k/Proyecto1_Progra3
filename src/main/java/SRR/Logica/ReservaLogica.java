@@ -4,8 +4,8 @@ import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Datos.CategoriaDatos;
-import SRR.Datos.RecursoDatos;
+import SRR.Logica.CategoriaLogica;
+import SRR.Logica.RecursoLogica;
 import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
@@ -22,9 +22,31 @@ import java.util.List;
 public class ReservaLogica {
 
     private final ReservaDatos datos = new ReservaDatos();
-    private final RecursoDatos recursoDatos = new RecursoDatos();
-    private final CategoriaDatos categoriaDatos = new CategoriaDatos();
+    private final RecursoLogica recursoLogica = new RecursoLogica();
+    private final CategoriaLogica categoriaLogica = new CategoriaLogica();
     private final GeminiService ai = new GeminiService();
+
+    public ReservaDTO buscarPorId(String id) {
+        for (ReservaDTO reserva : datos.listar()) {
+            if (reserva.getId().equals(id)) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
+    public List<ReservaDTO> buscarPorFuncionario(String idFuncionario) {
+        List<ReservaDTO> resultado = new ArrayList<>();
+        if (idFuncionario == null) {
+            return resultado;
+        }
+        for (ReservaDTO reserva : datos.listar()) {
+            if (idFuncionario.equalsIgnoreCase(reserva.getIdFuncionario())) {
+                resultado.add(reserva);
+            }
+        }
+        return resultado;
+    }
 
      //Un recurso esta libre si ninguna reserva ACTIVA lo usa en esa fecha
      // dentro de un rango que se traslape con el pedido.
@@ -60,7 +82,7 @@ public class ReservaLogica {
     public List<RecursoDTO> recursosDisponibles(String idCategoria, String fecha,
                                                 String horaInicio, String horaFin) {
         List<RecursoDTO> libres = new ArrayList<>();
-        for (RecursoDTO recurso : recursoDatos.buscarPorCategoria(idCategoria)) {
+        for (RecursoDTO recurso : recursoLogica.obtenerRecursosPorCategoria(idCategoria)) {
             if (estaDisponible(recurso.getId(), fecha, horaInicio, horaFin)) {
                 libres.add(recurso);
             }
@@ -98,7 +120,7 @@ public class ReservaLogica {
     }
 
     public void cancelarReserva(String idReserva) {
-        ReservaDTO reserva = datos.buscarPorId(idReserva);
+        ReservaDTO reserva = buscarPorId(idReserva);
         if (reserva == null) {
             throw new IllegalArgumentException("No existe la reserva " + idReserva);
         }
@@ -124,7 +146,7 @@ public class ReservaLogica {
     }
 
     public List<ReservaDTO> reservasDe(String idFuncionario) {
-        return datos.buscarPorFuncionario(idFuncionario);
+        return buscarPorFuncionario(idFuncionario);
     }
 
     public List<ReservaDTO> reservasActivasDe(String idFuncionario){
@@ -160,7 +182,7 @@ public class ReservaLogica {
     }
 
     private String descripcionCategoria(String idCategoria) {
-        CategoriaDTO categoria = categoriaDatos.buscarPorId(idCategoria);
+        CategoriaDTO categoria = categoriaLogica.buscarPorId(idCategoria);
         return categoria == null ? idCategoria : categoria.getDescripcion();
     }
 

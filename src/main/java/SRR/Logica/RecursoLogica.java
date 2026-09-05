@@ -3,6 +3,7 @@ package SRR.Logica;
 import SRR.Datos.RecursoDatos;
 import SRR.DTO.RecursoDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +16,17 @@ public class RecursoLogica {
         return datos.listar();
     }
 
+    public RecursoDTO buscarPorId(String id) {
+        for(RecursoDTO recurso : datos.listar()) {
+            if(recurso.getId().equals(id)) {
+                return recurso;
+            }
+        }
+        return null;
+    }
+
     public int guardarRecurso(RecursoDTO recurso) {
-        RecursoDTO busqueda = datos.buscarPorId(recurso.getId());
+        RecursoDTO busqueda = buscarPorId(recurso.getId());
         if (busqueda == null) {
             datos.agregar(recurso);
             return 1; // Recurso Agregado
@@ -27,19 +37,36 @@ public class RecursoLogica {
     }
 
     public boolean eliminarRecurso(String id) {
-        if (datos.buscarPorId(id) != null) {
+        if (buscarPorId(id) != null) {
             datos.borrar(id);
             return true;
         }
         return false;
     }
 
-    public List<RecursoDTO> buscarPorDescripcion(String descripcion) {
-        return datos.buscarPorDescripcion(descripcion);
+    public List<RecursoDTO> buscarPorDescripcion(String texto) {
+        List<RecursoDTO> resultado = new ArrayList<>();
+        if (texto == null) {
+            return resultado;
+        }
+        String busqueda = texto.toLowerCase();
+        for (RecursoDTO recurso : datos.listar()) {
+            String descripcion = recurso.getDescripcion();
+            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
+                resultado.add(recurso);
+            }
+        }
+        return resultado;
     }
 
     public List<RecursoDTO> obtenerRecursosPorCategoria(String idCategoria) {
-        return datos.buscarPorCategoria(idCategoria);
+        List<RecursoDTO> resultado = new ArrayList<>();
+        for (RecursoDTO recurso : datos.listar()) {
+            if (idCategoria.equals(recurso.getIdCategoria())) {
+                resultado.add(recurso);
+            }
+        }
+        return resultado;
     }
 
     public List<RecursoDTO> filtrarRecursos(String idCategoria, String descripcion) {

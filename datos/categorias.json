@@ -19,6 +19,10 @@
     {
       "id": "4",
       "descripcion": "Salas para 5 personas"
+    },
+    {
+      "id": "123",
+      "descripcion": "Prueba"
     }
   ]
 }

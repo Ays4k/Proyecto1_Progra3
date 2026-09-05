@@ -1,6 +1,8 @@
 package SRR.Logica;
 import SRR.Datos.CategoriaDatos;
 import SRR.DTO.CategoriaDTO;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaLogica {
@@ -12,8 +14,32 @@ public class CategoriaLogica {
         return datos.listar();
     }
 
+    public CategoriaDTO buscarPorId(String id) {
+        for (CategoriaDTO categoria : datos.listar()) {
+            if (categoria.getId().equals(id)) {
+                return categoria;
+            }
+        }
+        return null;
+    }
+
+    public List<CategoriaDTO> buscarPorDescripcion(String texto) {
+        List<CategoriaDTO> resultado = new ArrayList<>();
+        if (texto == null) {
+            return resultado;
+        }
+        String busqueda = texto.toLowerCase();
+        for (CategoriaDTO categoria : datos.listar()) {
+            String descripcion = categoria.getDescripcion();
+            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
+                resultado.add(categoria);
+            }
+        }
+        return resultado;
+    }
+
     public int agregarCategoria(CategoriaDTO categoria) {
-        CategoriaDTO busqueda = datos.buscarPorId(categoria.getId());
+        CategoriaDTO busqueda = buscarPorId(categoria.getId());
 
         if(busqueda == null){
             datos.agregar(categoria);

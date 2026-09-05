@@ -2,6 +2,8 @@ package SRR;
 
 import SRR.DTO.*;
 import SRR.Datos.*;
+import SRR.Logica.RecursoLogica;
+import SRR.Logica.ReservaLogica;
 
 import java.util.List;
 
@@ -39,8 +41,9 @@ public class PruebaDatos {
             datos.agregar(new RecursoDTO("34343", "Sala 1 primer piso", "CAT-000001"));
         }
         System.out.println("Recursos: " + new RecursoDatos().listar().size());
+        // la busqueda por categoria ahora vive en la capa de logica
         System.out.println("De categoria CAT-000002: "
-                + new RecursoDatos().buscarPorCategoria("CAT-000002").size());
+                + new RecursoLogica().obtenerRecursosPorCategoria("CAT-000002").size());
     }
 
     static void probarReservas() {
@@ -52,7 +55,8 @@ public class PruebaDatos {
                     "2026-08-05", "09:00", "11:00", "ACTIVA"));
         }
         System.out.println("Reservas: " + new ReservaDatos().listar().size());
+        // la busqueda por funcionario ahora vive en la capa de logica
         System.out.println("Por funcionario 111: "
-                + new ReservaDatos().buscarPorFuncionario("111").size());
+                + new ReservaLogica().buscarPorFuncionario("111").size());
     }
 }

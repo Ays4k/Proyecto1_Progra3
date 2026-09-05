@@ -76,10 +76,6 @@ public class CategoriaDatos {
         }
     }
 
-    public CategoriaDTO buscarPorId(String id) {
-        return mapaCategorias.get(id);
-    }
-
     public List<CategoriaDTO> listar() {
         return new ArrayList<>(mapaCategorias.values());
     }
@@ -97,18 +93,6 @@ public class CategoriaDatos {
     public void borrar(String id) {
         mapaCategorias.remove(id);
         serializar();
-    }
-
-    public List<CategoriaDTO> buscarPorDescripcion(String texto) {
-        List<CategoriaDTO> resultado = new ArrayList<>();
-        String busqueda = texto.toLowerCase();
-        for (CategoriaDTO categoria : mapaCategorias.values()) {
-            String descripcion = categoria.getDescripcion();
-            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
-                resultado.add(categoria);
-            }
-        }
-        return resultado;
     }
 
     private static class Contenedor {

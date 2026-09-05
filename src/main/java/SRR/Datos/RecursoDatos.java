@@ -74,10 +74,6 @@ public class RecursoDatos {
         }
     }
 
-    public RecursoDTO buscarPorId(String id) {
-        return mapaRecursos.get(id);
-    }
-
     public List<RecursoDTO> listar() {
         return new ArrayList<>(mapaRecursos.values());
     }
@@ -95,28 +91,6 @@ public class RecursoDatos {
     public void borrar(String id) {
         mapaRecursos.remove(id);
         serializar();
-    }
-
-    public List<RecursoDTO> buscarPorDescripcion(String texto) {
-        List<RecursoDTO> resultado = new ArrayList<>();
-        String busqueda = texto.toLowerCase();
-        for (RecursoDTO recurso : mapaRecursos.values()) {
-            String descripcion = recurso.getDescripcion();
-            if (descripcion != null && descripcion.toLowerCase().contains(busqueda)) {
-                resultado.add(recurso);
-            }
-        }
-        return resultado;
-    }
-
-    public List<RecursoDTO> buscarPorCategoria(String idCategoria) {
-        List<RecursoDTO> resultado = new ArrayList<>();
-        for (RecursoDTO recurso : mapaRecursos.values()) {
-            if (idCategoria.equals(recurso.getIdCategoria())) {
-                resultado.add(recurso);
-            }
-        }
-        return resultado;
     }
 
     private static class Contenedor {

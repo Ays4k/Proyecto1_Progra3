@@ -3,8 +3,8 @@ package SRR;
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Datos.CategoriaDatos;
-import SRR.Datos.RecursoDatos;
+import SRR.Logica.CategoriaLogica;
+import SRR.Logica.RecursoLogica;
 import SRR.Logica.ReservaLogica;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
@@ -73,13 +73,13 @@ public class PruebaReservas {
     }
 
     private static void prepararDatos() {
-        CategoriaDatos categorias = new CategoriaDatos();
+        CategoriaLogica categorias = new CategoriaLogica();
         if (categorias.buscarPorId("CAT-000002") == null) {
-            categorias.agregar(new CategoriaDTO("CAT-000002", "Laptop windows 11"));
+            categorias.agregarCategoria(new CategoriaDTO("CAT-000002", "Laptop windows 11"));
         }
-        RecursoDatos recursos = new RecursoDatos();
+        RecursoLogica recursos = new RecursoLogica();
         if (recursos.buscarPorId("238715") == null) {
-            recursos.agregar(new RecursoDTO("238715", "Laptop #238715", "CAT-000002"));
+            recursos.guardarRecurso(new RecursoDTO("238715", "Laptop #238715", "CAT-000002"));
         }
     }
 }
