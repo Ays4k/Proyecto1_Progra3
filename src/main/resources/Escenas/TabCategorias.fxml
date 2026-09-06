@@ -21,7 +21,7 @@
                   <Label layoutX="14.0" layoutY="25.0" text="Descripcion" />
                   <TextField fx:id="txtSearch" layoutX="86.0" layoutY="21.0" />
                   <Button fx:id="btnSearch" layoutX="248.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Buscar" />
-                  <Button layoutX="336.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Imprimir" />
+                  <Button fx:id="btnImprimir" layoutX="336.0" layoutY="17.0" mnemonicParsing="false" onAction="#handleImprimir" prefHeight="33.0" prefWidth="98.0" text="Imprimir" />
                   <Label fx:id="lblSearch" layoutX="86.0" layoutY="57.0" prefHeight="15.0" prefWidth="334.0" text="                                                                                      ">
                      <font>
                         <Font size="9.0" />

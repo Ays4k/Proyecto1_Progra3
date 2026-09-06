@@ -10,6 +10,14 @@ import javafx.scene.control.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.w3c.dom.Text;
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import javafx.event.ActionEvent;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoriasController {
 
@@ -25,6 +33,7 @@ public class CategoriasController {
     @FXML private TextField txtSearch;
     @FXML private Button btnSearch;
     @FXML private Label lblSearch;
+    @FXML private Button btnImprimir;
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
 
     @FXML
@@ -157,6 +166,34 @@ public class CategoriasController {
             );
         } else {
             tabla.setFixedCellSize(alturaEstandar);
+        }
+    }
+
+    @FXML
+    public void handleImprimir(ActionEvent event) {
+        List<CategoriaDTO> visibles = catTable.getItems();
+        if (visibles.isEmpty()) {
+            Avisos.advertencia("No hay categorias para imprimir");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("categorias.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;   // el usuario cancelo
+        }
+
+        List<String[]> filas = new ArrayList<>();
+        for (CategoriaDTO categoria : visibles) {
+            filas.add(new String[]{categoria.getId(), categoria.getDescripcion()});
+        }
+
+        try {
+            ReportePdf.generar("Listado de Categorias",
+                    new String[]{"Id", "Descripcion"}, filas, destino);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
         }
     }
 

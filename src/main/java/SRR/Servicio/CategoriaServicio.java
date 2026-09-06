@@ -20,4 +20,6 @@ public class CategoriaServicio {
     public void eliminarCategoria(String id) {
         logica.eliminarCategoria(id);
     }
+
+    public CategoriaDTO buscarPorId(String id) {return logica.buscarPorId(id);}
 }

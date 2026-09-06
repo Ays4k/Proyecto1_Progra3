@@ -12,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
@@ -33,6 +32,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import org.jfree.chart.ChartUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class EstadisticasController {
 
     // ---- Panel de Recursos ----
@@ -43,6 +52,9 @@ public class EstadisticasController {
     @FXML private TableColumn<Map<String, String>, String> colCategoriaRecursos;
     @FXML private TableColumn<Map<String, String>, String> colCantidadRecursos;
     @FXML private AnchorPane paneGraficoRecursos;
+    @FXML private Button btnImprimirRecursos;
+    //se guarda para exportar al PDF
+    private JFreeChart graficoRecursos;
 
     // ---- Panel de Actividades ----
     @FXML private DatePicker dpDesdeActividades;
@@ -52,6 +64,9 @@ public class EstadisticasController {
     @FXML private TableColumn<Map<String, String>, String> colSemanaActividades;
     @FXML private TableColumn<Map<String, String>, String> colCantidadActividades;
     @FXML private AnchorPane paneGraficoActividades;
+    @FXML private Button btnImprimirActividades;
+    //se guarda para exportar al PDF
+    private JFreeChart graficoActividades;
 
     private final ReservaServicio reservaServicio = new ReservaServicio();
     private final RecursoServicio recursoServicio = new RecursoServicio();
@@ -93,7 +108,7 @@ public class EstadisticasController {
 
         tblEstadRecursos.setItems(filas);
         ajustarAltoFilas(tblEstadRecursos, filas);
-        mostrarGrafico(paneGraficoRecursos, "Recursos Usados", "Categoria", "Cantidad",
+        graficoRecursos = mostrarGrafico(paneGraficoRecursos, "Recursos Usados", "Categoria", "Cantidad",
                 "Recurso", Color.BLUE, conteo);
     }
 
@@ -111,7 +126,7 @@ public class EstadisticasController {
 
         tblEstadActividades.setItems(filas);
         ajustarAltoFilas(tblEstadActividades, filas);
-        mostrarGrafico(paneGraficoActividades, "Actividades Realizadas", "Semana", "Cantidad",
+        graficoActividades = mostrarGrafico(paneGraficoActividades, "Actividades Realizadas", "Semana", "Cantidad",
                 "Semana", Color.RED, conteo);
     }
 
@@ -245,7 +260,7 @@ public class EstadisticasController {
 
     // Arma un grafico de barras con JFreeChart a partir del conteo y lo coloca dentro del
     // AnchorPane que viene del FXML, estirandolo para que ocupe tudo el espacio disponible.
-    private void mostrarGrafico(AnchorPane contenedor, String titulo, String ejeCategorias,
+    private JFreeChart mostrarGrafico(AnchorPane contenedor, String titulo, String ejeCategorias,
                                 String ejeValores, String nombreSerie, Color color,
                                 Map<String, Integer> conteo) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -270,26 +285,75 @@ public class EstadisticasController {
         // Se limpia el contenedor por si ya tenia un grafico de una consulta anterior
         contenedor.getChildren().clear();
         contenedor.getChildren().add(visor);
+        return grafico;
     }
 
     // Valida que ambas fechas esten seleccionadas y que "desde" no sea posterior a "hasta"
     private boolean fechasValidas(LocalDate desde, LocalDate hasta) {
         if (desde == null || hasta == null) {
-            mostrarAlerta("Atencion", "Debe seleccionar ambas fechas.");
+            Avisos.advertencia("Debe seleccionar ambas fechas.");
             return false;
         }
         if (desde.isAfter(hasta)) {
-            mostrarAlerta("Atencion", "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.");
+            Avisos.advertencia("La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.");
             return false;
         }
         return true;
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    @FXML
+    public void handleImprimirRecursos(ActionEvent event) {
+        imprimirPanel(tblEstadRecursos, graficoRecursos, "Categoria",
+                "Estadisticas de Recursos", "estadisticas-recursos.pdf",
+                dpDesdeRecursos.getValue(), dpHastaRecursos.getValue(),
+                btnImprimirRecursos);
+    }
+
+    @FXML
+    public void handleImprimirActividades(ActionEvent event) {
+        imprimirPanel(tblEstadActividades, graficoActividades, "Semana",
+                "Estadisticas de Actividades", "estadisticas-actividades.pdf",
+                dpDesdeActividades.getValue(), dpHastaActividades.getValue(),
+                btnImprimirActividades);
+    }
+
+    private void imprimirPanel(TableView<Map<String, String>> tabla, JFreeChart grafico,
+                               String nombrePrimeraColumna, String titulo, String nombreArchivo,
+                               LocalDate desde, LocalDate hasta, Button boton) {
+
+        if (tabla.getItems().isEmpty()) {
+            Avisos.advertencia("Cargue primero las estadisticas");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf(nombreArchivo, boton.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        List<String[]> filas = new ArrayList<>();
+        for (Map<String, String> fila : tabla.getItems()) {
+            filas.add(new String[]{fila.get("etiqueta"), fila.get("cantidad")});
+        }
+
+        try {
+            ReportePdf.generarConGrafico(
+                    titulo + " del " + desde + " al " + hasta,
+                    new String[]{nombrePrimeraColumna, "Cantidad"},
+                    filas, graficoComoPng(grafico), destino);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
+        }
+    }
+
+    // JFreeChart exporta a PNG, e iText inserta la imagen en el PDF
+    private byte[] graficoComoPng(JFreeChart grafico) {
+        try (ByteArrayOutputStream salida = new ByteArrayOutputStream()) {
+            ChartUtils.writeChartAsPNG(salida, grafico, 700, 400);
+            return salida.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("No se pudo exportar el grafico", e);
+        }
     }
 }

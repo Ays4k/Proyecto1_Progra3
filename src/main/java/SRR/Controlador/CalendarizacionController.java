@@ -20,6 +20,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import java.io.File;
+
 public class CalendarizacionController {
 
     @FXML private DatePicker dpFecha;
@@ -81,6 +86,7 @@ public class CalendarizacionController {
         TableColumn<Map<String, String>, String> colHora = new TableColumn<>("Hora");
         colHora.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("Hora")));
         colHora.setStyle("-fx-alignment: CENTER;");
+        colHora.setSortable(false);
         colHora.setMinWidth(110); // Fija el tamaño de la columna Hora para que no se estire en exceso
         colHora.setMaxWidth(110);
         tblCalendarizacion.getColumns().add(colHora);
@@ -95,6 +101,7 @@ public class CalendarizacionController {
             TableColumn<Map<String, String>, String> colRecurso = new TableColumn<>(rec.getDescripcion());
             colRecurso.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(rec.getId())));
             colRecurso.setStyle("-fx-alignment: CENTER;");
+            colRecurso.setSortable(false);;
             colRecurso.setPrefWidth(anchoRecurso);
             nuevasColumnas.add(colRecurso);
         }
@@ -149,7 +156,26 @@ public class CalendarizacionController {
 
     @FXML
     public void handleImprimir(ActionEvent event) {
-        mostrarAlerta("Imprimir", "Enviando tabla de calendarización a la impresora...");
+        if (tblCalendarizacion.getItems().isEmpty()) {
+            Avisos.advertencia("Cargue primero la calendarizacion");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("calendarizacion.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        String titulo = "Calendarizacion de " + cbCategoria.getValue().getDescripcion()
+                + " - " + dpFecha.getValue();
+
+        try {
+            ReportePdf.generarDesdeTabla(titulo, tblCalendarizacion, destino, true);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
+        }
     }
 
     private List<ReservaDTO> obtenerReservasActivasPorFecha(String fecha) {

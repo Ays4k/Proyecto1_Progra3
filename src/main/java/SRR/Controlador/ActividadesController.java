@@ -2,6 +2,8 @@ package SRR.Controlador;
 
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.ReservaServicio;
+import SRR.DTO.UsuarioDTO;
+import SRR.Servicio.UsuarioServicio;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,6 +18,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import java.io.File;
+
 public class ActividadesController {
 
     @FXML private DatePicker dpFechaReferencia;
@@ -24,6 +31,7 @@ public class ActividadesController {
     @FXML private TableView<Map<String, String>> tblActividades;
 
     private final ReservaServicio reservaServicio = new ReservaServicio();
+    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML
@@ -45,6 +53,8 @@ public class ActividadesController {
             // Centrar texto de la columna
             col.setStyle("-fx-alignment: CENTER;");
 
+            col.setSortable(false);
+
             // Fijar ancho de la columna Hora y dejar que el resto se divida equitativamente
             if ("Hora".equals(dia)) {
                 col.setMinWidth(100);
@@ -53,6 +63,12 @@ public class ActividadesController {
 
             tblActividades.getColumns().add(col);
         }
+    }
+
+    private String nombreFuncionario(String idFuncionario) {
+        UsuarioDTO usuario = usuarioServicio.buscarPorId(idFuncionario);
+        return usuario == null || usuario.getNombre() == null
+                ? idFuncionario : usuario.getNombre();
     }
 
     @FXML
@@ -93,7 +109,7 @@ public class ActividadesController {
                         LocalTime resFin = LocalTime.parse(res.getHoraFin());
 
                         if (horaInicio.isBefore(resFin) && resInicio.isBefore(siguienteHora)) {
-                            actividadesDia = res.getActividad();
+                            actividadesDia = res.getActividad() + " (" + nombreFuncionario(res.getIdFuncionario()) + ")";
                             break;
                         }
                     }
@@ -117,7 +133,26 @@ public class ActividadesController {
 
     @FXML
     public void handleImprimir(ActionEvent event) {
-        mostrarAlerta("Imprimir", "Enviando tabla de actividades semanales a la impresora...");
+        if (tblActividades.getItems().isEmpty()) {
+            Avisos.advertencia("Cargue primero la programacion de actividades");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("actividades.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        LocalDate lunes = dpFechaReferencia.getValue().with(DayOfWeek.MONDAY);
+        String titulo = "Actividades del " + lunes + " al " + lunes.plusDays(6);
+
+        try {
+            ReportePdf.generarDesdeTabla(titulo, tblActividades, destino, true);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
+        }
     }
 
     private List<ReservaDTO> obtenerReservasEnRango(LocalDate inicio, LocalDate fin) {

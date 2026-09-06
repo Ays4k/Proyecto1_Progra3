@@ -22,6 +22,12 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import javafx.event.ActionEvent;
+import java.io.File;
+
 
 public class ReservasController {
 
@@ -51,6 +57,7 @@ public class ReservasController {
     @FXML private Button btnReservar;
     @FXML private Button btnCan;
     @FXML private Button btnClear;
+    @FXML private Button btnImprimir;
 
     @FXML private TextField txtAi;
 
@@ -70,8 +77,13 @@ public class ReservasController {
         idColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         actColum.setCellValueFactory(new PropertyValueFactory<>("actividad"));
         fchColum.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        horColum.setCellValueFactory(new PropertyValueFactory<>("id"));
-        recColum.setCellValueFactory(new PropertyValueFactory<>("idsRecursos"));
+        //horColum.setCellValueFactory(new PropertyValueFactory<>("id"));
+        horColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
+                dato.getValue().getHoraInicio() + " - " + dato.getValue().getHoraFin()));
+        //recColum.setCellValueFactory(new PropertyValueFactory<>("idsRecursos"));
+        recColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
+                dato.getValue().getIdsRecursos() == null ? ""
+                        : String.join(", ", dato.getValue().getIdsRecursos())));
         estColum.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
         // Centrar texto de las columnas
@@ -327,6 +339,39 @@ public class ReservasController {
             );
         } else {
             tabla.setFixedCellSize(alturaEstandar);
+        }
+    }
+
+    @FXML
+    public void handleImprimir(ActionEvent event) {
+        List<ReservaDTO> visibles = tableRes.getItems();
+        if (visibles.isEmpty()) {
+            Avisos.advertencia("No hay reservas para imprimir");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("reservas.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        List<String[]> filas = new ArrayList<>();
+        for (ReservaDTO reserva : visibles) {
+            String horario = reserva.getHoraInicio() + " - " + reserva.getHoraFin();
+            String recursos = reserva.getIdsRecursos() == null
+                    ? "" : String.join(", ", reserva.getIdsRecursos());
+            filas.add(new String[]{reserva.getId(), reserva.getActividad(),
+                    reserva.getFecha(), horario, recursos, reserva.getEstado()});
+        }
+
+        try {
+            ReportePdf.generar("Mis Reservas",
+                    new String[]{"Id", "Actividad", "Fecha", "Horario", "Recursos", "Estado"},
+                    filas, destino);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
         }
     }
 }

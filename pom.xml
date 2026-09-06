@@ -58,7 +58,12 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-core</artifactId>
+            <version>8.0.5</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -71,14 +76,6 @@
                     <mainClass>SRR.Launch</mainClass>
                 </configuration>
             </plugin>
-            <!-- <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>${javafx.maven.plugin.version}</version>
-                <configuration>
-                    <mainClass>avi.App</mainClass>
-                </configuration>
-            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

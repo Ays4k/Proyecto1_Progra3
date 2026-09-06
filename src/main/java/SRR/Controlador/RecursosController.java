@@ -5,6 +5,14 @@ import SRR.DTO.RecursoDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.RecursoServicio;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import javafx.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -206,6 +214,37 @@ public class RecursosController {
             );
         } else {
             tabla.setFixedCellSize(alturaEstandar);
+        }
+    }
+
+    @FXML
+    public void handleImprimir(ActionEvent event) {
+        List<RecursoDTO> visibles = tablaRecursos.getItems();
+        if (visibles.isEmpty()) {
+            Avisos.advertencia("No hay recursos para imprimir");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("recursos.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        List<String[]> filas = new ArrayList<>();
+        for (RecursoDTO recurso : visibles) {
+            CategoriaDTO categoria = categoriaServicio.buscarPorId(recurso.getIdCategoria());
+            String nombreCategoria = categoria == null
+                    ? recurso.getIdCategoria() : categoria.getDescripcion();
+            filas.add(new String[]{recurso.getId(), nombreCategoria, recurso.getDescripcion()});
+        }
+
+        try {
+            ReportePdf.generar("Listado de Recursos",
+                    new String[]{"Id", "Categoria", "Descripcion"}, filas, destino);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
         }
     }
 }

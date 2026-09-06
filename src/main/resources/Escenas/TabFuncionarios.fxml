@@ -22,7 +22,7 @@
                   <TextField fx:id="txtSearchName" layoutX="189.0" layoutY="18.0" />
                   <TextField fx:id="txtSearchId" layoutX="26.0" layoutY="18.0" prefHeight="25.0" prefWidth="102.0" />
                   <Button fx:id="btnSearch" layoutX="372.0" layoutY="17.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="Buscar" />
-                  <Button layoutX="504.0" layoutY="14.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="80.0" text="Imprimir" />
+                  <Button fx:id="btnImprimir" layoutX="504.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleImprimir" prefHeight="34.0" prefWidth="80.0" text="Imprimir" />
                   <Button fx:id="btnCleanSearch" layoutX="375.0" layoutY="45.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Limpiar">
                      <font>
                         <Font size="9.0" />

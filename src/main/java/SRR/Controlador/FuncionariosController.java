@@ -12,6 +12,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import SRR.Servicio.UsuarioServicio;
 import jdk.jfr.Event;
 
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.ReportePdf;
+import SRR.Utilidades.RutaDestino;
+import javafx.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class FuncionariosController {
 
     private final UsuarioServicio userService = new UsuarioServicio();
@@ -27,6 +35,7 @@ public class FuncionariosController {
     @FXML private TextField txtSearchName;
     @FXML private Button btnSearch;
     @FXML private Button btnCleanSearch;
+    @FXML private Button btnImprimir;
 
     @FXML private TableView<UsuarioDTO> tableUsers;
     @FXML private TableColumn<UsuarioDTO, String> colId;
@@ -201,6 +210,35 @@ public class FuncionariosController {
             );
         } else {
             tabla.setFixedCellSize(alturaEstandar);
+        }
+    }
+
+    @FXML
+    public void handleImprimir(ActionEvent event) {
+        List<UsuarioDTO> visibles = tableUsers.getItems();
+        if (visibles.isEmpty()) {
+            Avisos.advertencia("No hay funcionarios para imprimir");
+            return;
+        }
+
+        File destino = RutaDestino.pedirDestinoPdf("funcionarios.pdf",
+                btnImprimir.getScene().getWindow());
+        if (destino == null) {
+            return;
+        }
+
+        List<String[]> filas = new ArrayList<>();
+        for (UsuarioDTO usuario : visibles) {
+            filas.add(new String[]{usuario.getId(), usuario.getNombre(),
+                    usuario.getTelefono(), usuario.getRol()});
+        }
+
+        try {
+            ReportePdf.generar("Listado de Funcionarios",
+                    new String[]{"Id", "Nombre", "Telefono", "Rol"}, filas, destino);
+            Avisos.info("Reporte generado");
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo generar el reporte");
         }
     }
 
