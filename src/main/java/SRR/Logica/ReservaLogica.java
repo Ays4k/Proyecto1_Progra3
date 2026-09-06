@@ -132,7 +132,7 @@ public class ReservaLogica {
         try{
             String[] datos = ai.enviarMensaje(prompt).split(",");
             if(!datos[0].contains("COMPLETO")){
-                throw new IOException("Error al generar el contenido");
+                throw new IOException("Error al generar el contenido" + String.join("",datos));
             }
             ReservaAiDTO res = new ReservaAiDTO(datos[1], LocalDate.parse(datos[2])
                     ,LocalTime.parse(datos[3]),LocalTime.parse(datos[4]),

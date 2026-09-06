@@ -18,7 +18,7 @@
       "id": "user",
       "nombre": "user",
       "telefono": "user",
-      "contrasena": "user",
+      "contrasena": "suser",
       "rol": "FUNCIONARIO"
     },
     {
@@ -27,6 +27,20 @@
       "telefono": "86263598",
       "contrasena": "1234",
       "rol": "ADMINISTRADOR"
+    },
+    {
+      "id": "1010",
+      "nombre": "Isaac",
+      "telefono": "20225432",
+      "contrasena": "UsuarioPrueba",
+      "rol": "ADMINISTRADOR"
+    },
+    {
+      "id": "2345",
+      "nombre": "Saul",
+      "telefono": "12345678",
+      "contrasena": "UsuarioPrueba1",
+      "rol": "FUNCIONARIO"
     }
   ]
 }

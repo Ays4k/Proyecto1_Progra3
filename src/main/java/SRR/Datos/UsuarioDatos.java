@@ -26,6 +26,7 @@ public class UsuarioDatos {
         this("datos/usuarios.json");
     }
 
+
     public String getRutaArchivo() {
         return rutaArchivo;
     }

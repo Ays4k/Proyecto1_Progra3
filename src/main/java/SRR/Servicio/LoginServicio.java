@@ -6,7 +6,14 @@ import SRR.Logica.LoginLogica;
 
 public class LoginServicio {
 
-    private final LoginLogica loginLogica = new LoginLogica();
+    private final LoginLogica loginLogica;
+
+    public LoginServicio(){
+        this.loginLogica = new LoginLogica();
+    }
+    public LoginServicio(String rutaTemporal){
+        this.loginLogica = new LoginLogica(rutaTemporal);
+    }
 
     public UsuarioDTO iniciarSesion(LoginDTO login) {
         return loginLogica.iniciarSesion(login);

@@ -53,7 +53,6 @@ public class GeminiService {
             throws IOException, InterruptedException {
         String url = ENDPOINT_BASE + MODELO + ":generateContent";
         String prompt = generarContexto()+textoUsuario;
-        System.out.println(prompt);
         JSONObject parte = new JSONObject().put("text",prompt);
         JSONObject contenido = new JSONObject()
                 .put("parts", new JSONArray().put(parte));

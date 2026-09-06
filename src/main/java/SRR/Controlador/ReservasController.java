@@ -247,19 +247,22 @@ public class ReservasController {
                 });
 
             }catch (Exception e){
-                Alert alerta = new Alert(Alert.AlertType.ERROR);
-                alerta.setHeaderText("Error con la IA");
-                alerta.setContentText("Error: " + e.getMessage());
-                alerta.showAndWait();
-                lblAi.setText("Intentelo Nuevamente");
-                lblAi.setStyle("-fx-text-fill: red");
-                txtAi.setDisable(false);
-                txtActividad.setDisable(false);
-                date.setDisable(false);
-                cmbInicio.setDisable(false);
-                cmbFinal.setDisable(false);
-                listCategoria.setDisable(false);
-                txtAi.setText("");
+                Platform.runLater(()->{
+                    Alert alerta = new Alert(Alert.AlertType.ERROR);
+                    alerta.setHeaderText("Error con la IA");
+                    alerta.setContentText("Error: " + e.getMessage());
+                    alerta.showAndWait();
+                    lblAi.setText("Intentelo Nuevamente");
+                    lblAi.setStyle("-fx-text-fill: red");
+                    txtAi.setDisable(false);
+                    txtActividad.setDisable(false);
+                    date.setDisable(false);
+                    cmbInicio.setDisable(false);
+                    cmbFinal.setDisable(false);
+                    listCategoria.setDisable(false);
+                    txtAi.setText("");
+                });
+
             }
         });
 

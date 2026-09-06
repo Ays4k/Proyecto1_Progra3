@@ -6,7 +6,15 @@ import SRR.Datos.UsuarioDatos;
 
 public class LoginLogica {
 
-    private final UsuarioDatos datos = new UsuarioDatos();
+    private final UsuarioDatos datos;
+
+    public LoginLogica(){
+        this.datos = new UsuarioDatos();
+    }
+
+    public LoginLogica(String rutaTemporal){
+        this.datos = new UsuarioDatos(rutaTemporal);
+    }
 
    //devuelve el usuario sin contrasena si las credenciales son validas, devuelve null si no.
     public UsuarioDTO iniciarSesion(LoginDTO login) {

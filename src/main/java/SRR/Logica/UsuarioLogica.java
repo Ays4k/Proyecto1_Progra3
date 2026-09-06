@@ -9,7 +9,15 @@ import java.util.List;
 
 public class UsuarioLogica {
 
-    private final UsuarioDatos datos = new UsuarioDatos();
+    private UsuarioDatos datos;
+
+    public UsuarioLogica(){
+        this.datos = new UsuarioDatos();
+    }
+
+    public UsuarioLogica(String rutaTemporal){
+        this.datos = new UsuarioDatos(rutaTemporal);
+    }
 
     public List<UsuarioDTO> obtenerUsuarios() {
         return datos.listar(); //los usuarios vienen sin contrasenas

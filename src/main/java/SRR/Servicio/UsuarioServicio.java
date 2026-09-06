@@ -8,7 +8,15 @@ import java.util.List;
 
 public class UsuarioServicio {
 
-    private final UsuarioLogica usuarioLogica = new UsuarioLogica();
+    private final UsuarioLogica usuarioLogica;
+
+    public UsuarioServicio(){
+        this.usuarioLogica = new UsuarioLogica();
+    }
+
+    public UsuarioServicio(String rutaTemporal){
+        this.usuarioLogica = new UsuarioLogica(rutaTemporal);
+    }
 
     public List<UsuarioDTO> obtenerUsuarios() {
         return usuarioLogica.obtenerUsuarios();
