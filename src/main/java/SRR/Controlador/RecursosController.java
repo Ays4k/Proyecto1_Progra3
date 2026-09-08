@@ -5,6 +5,7 @@ import SRR.DTO.RecursoDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.RecursoServicio;
 
+import SRR.Servicio.ReservaServicio;
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
@@ -44,6 +45,7 @@ public class RecursosController {
 
     private final RecursoServicio recursoServicio = new RecursoServicio();
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
+    private final ReservaServicio reservaServicio = new ReservaServicio();
 
 
 
@@ -90,6 +92,7 @@ public class RecursosController {
                 seleccionarRecurso(newSel);
             }
         });
+        cargarCategorias();
     }
 
     private void cargarCategorias() {
@@ -153,10 +156,20 @@ public class RecursosController {
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.OK) {
-            if (recursoServicio.eliminarRecurso(seleccionado.getId())) {
-                recursoList.remove(seleccionado);
-                limpiarCampos();
+
+            if(!reservaServicio.estaDisponible(seleccionado.getId())) {
+                Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                alert2.setTitle("Error al eliminar");
+                alert.setHeaderText("No puede eliminar un recurso que sigue asignado");
+                alert.showAndWait();
             }
+            else if (recursoServicio.eliminarRecurso(seleccionado.getId())) {
+                recursoList.remove(seleccionado);
+            }
+
+
+
+            limpiarCampos();
         }
     }
 

@@ -25,7 +25,7 @@
       "id": "1234",
       "nombre": "Yariela",
       "telefono": "86263598",
-      "contrasena": "1234",
+      "contrasena": "4321",
       "rol": "ADMINISTRADOR"
     },
     {
@@ -41,6 +41,12 @@
       "telefono": "12345678",
       "contrasena": "UsuarioPrueba1",
       "rol": "FUNCIONARIO"
+    },
+    {
+      "id": "US-000001",
+      "nombre": "Pepe",
+      "telefono": "123456",
+      "rol": "ADMINISTRADOR"
     }
   ]
 }

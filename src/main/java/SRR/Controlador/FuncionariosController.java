@@ -46,6 +46,9 @@ public class FuncionariosController {
     @FXML private ObservableList<UsuarioDTO> userList;
     @FXML
     public void initialize() {
+
+        txtId.setDisable(true);
+        //no se debe poder tocar, solo ver
         tableUsers.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -161,20 +164,19 @@ public class FuncionariosController {
             return;
         }
 
-        String id = txtId.getText().trim();
         String name = txtName.getText().trim();
         String phone = txtPhone.getText().trim();
         String rol = ((RadioButton) grupoRol.getSelectedToggle()).getText().toUpperCase();
 
         txtId.setDisable(false); // Habilitar el campo de ID para evitar cambios
-        UsuarioDTO newUser = new UsuarioDTO(id, name, phone, null, rol);
+        UsuarioDTO newUser = new UsuarioDTO(txtId.getText().isEmpty() ? null : txtId.getText().trim(), name, phone, null, rol);
         int resultado = userService.cambiosUsuario(newUser);
 
         if(resultado == 1) {
             userList.add(newUser);
         } else if(resultado == 2) {
             for (int i = 0; i < userList.size(); i++) {
-                if (userList.get(i).getId().equals(id)) {
+                if (userList.get(i).getId().equals(txtId.getId())) {
                     userList.set(i, newUser);
                     break;
                 }
@@ -188,7 +190,6 @@ public class FuncionariosController {
         txtName.clear();
         txtPhone.clear();
         grupoRol.selectToggle(null); // Deseleccionar cualquier rol seleccionado
-        txtId.setDisable(false); // Habilitar el campo de ID para nuevas entradas
     }
 
     private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {

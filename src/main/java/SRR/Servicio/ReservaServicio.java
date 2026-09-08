@@ -35,6 +35,9 @@ public class ReservaServicio {
                                   String horaInicio, String horaFin) {
         return reservaLogica.estaDisponible(idRecurso, fecha, horaInicio, horaFin);
     }
+    public boolean estaDisponible(String idRecurso){
+        return reservaLogica.estaDisponible(idRecurso);
+    }
 
     public List<RecursoDTO> recursosDisponibles(String idCategoria, String fecha,
                                                 String horaInicio, String horaFin) {

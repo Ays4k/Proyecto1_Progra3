@@ -21,11 +21,24 @@ import java.util.List;
 
 public class ReservaLogica {
 
-    private final ReservaDatos datos = new ReservaDatos();
-    private final RecursoLogica recursoLogica = new RecursoLogica();
+    private final ReservaDatos datos;
+    private final RecursoLogica recursoLogica;
     private final CategoriaLogica categoriaLogica = new CategoriaLogica();
-    private final GeminiService ai = new GeminiService();
+    private  GeminiService ai;
+    private boolean funcionalidadai;
 
+   public ReservaLogica(){
+        try {
+            this.ai = new GeminiService();
+            funcionalidadai = true;
+        }catch (Exception e){
+            this.ai = null;
+            funcionalidadai = false;
+        }
+
+        datos = new ReservaDatos();
+        recursoLogica = new RecursoLogica();
+    }
     public ReservaDTO buscarPorId(String id) {
         for (ReservaDTO reserva : datos.listar()) {
             if (reserva.getId().equals(id)) {
@@ -79,6 +92,17 @@ public class ReservaLogica {
         return true;
     }
 
+    public boolean estaDisponible(String idRecurso) {
+
+        for (ReservaDTO reserva : datos.listar()) {
+            for(String usados : reserva.getIdsRecursos()){
+                if(usados.equals(idRecurso)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public List<RecursoDTO> recursosDisponibles(String idCategoria, String fecha,
                                                 String horaInicio, String horaFin) {
         List<RecursoDTO> libres = new ArrayList<>();
@@ -129,10 +153,13 @@ public class ReservaLogica {
     }
 
     public ReservaAiDTO crearReservaAi(String prompt){
+        if(!funcionalidadai){
+            throw new RuntimeException("Actualmente no se encuentra en funcionamiento el servicio de IA, por favor, revise su configuración e intentelo más tarde");
+        }
         try{
             String[] datos = ai.enviarMensaje(prompt).split(",");
             if(!datos[0].contains("COMPLETO")){
-                throw new IOException("Error al generar el contenido" + String.join("",datos));
+                throw new IOException(String.join("",datos));
             }
             ReservaAiDTO res = new ReservaAiDTO(datos[1], LocalDate.parse(datos[2])
                     ,LocalTime.parse(datos[3]),LocalTime.parse(datos[4]),

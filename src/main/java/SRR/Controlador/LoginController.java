@@ -24,15 +24,15 @@ public class LoginController {
     public void handleIngresar(ActionEvent event) {
         lblMensaje.setText("");
 
-        String id = txtUsuario.getText().trim();
+        String user = txtUsuario.getText().trim();
         String clave = txtPassword.getText();
 
-        if (id.isEmpty() || clave.isEmpty()) {
+        if (user.isEmpty() || clave.isEmpty()) {
             lblMensaje.setText("Ingrese su id y su clave");
             return;
         }
 
-        UsuarioDTO usuario = loginServicio.iniciarSesion(new LoginDTO(id, clave));
+        UsuarioDTO usuario = loginServicio.iniciarSesion(new LoginDTO(user, clave));
 
         if (usuario == null) {
             lblMensaje.setText("Usuario o clave incorrectos");
@@ -49,7 +49,7 @@ public class LoginController {
     public void handleCambiar(ActionEvent event) {
         String id = txtUsuario.getText().trim();
         if (id.isEmpty()) {
-            lblMensaje.setText("Escriba su id primero");
+            lblMensaje.setText("Escriba su user primero");
             return;
         }
         CambiarClaveController.setIdPendiente(id);

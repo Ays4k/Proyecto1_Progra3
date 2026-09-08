@@ -24,25 +24,28 @@ public class LoginLogica {
             return null;
         }
 
-        if (!datos.validarCredenciales(login.getId(), login.getContrasena())) {
+        String userid = datos.validarCredenciales(login.getId(), login.getContrasena());
+
+        if(userid == null){
             return null;
         }
 
         for (UsuarioDTO usuario : datos.listar()) {
-            if (usuario.getId().equals(login.getId())) {
+            if (usuario.getId().equals(userid)) {
                 return usuario;
             }
         }
         return null;
     }
 
-    public void cambiarClave(String id, String actual, String nueva, String confirmacion) {
+    public void cambiarClave(String user, String actual, String nueva, String confirmacion) {
         datos.deserializar();
 
-        if (id == null || id.isBlank()) {
+        if (user == null || user.isBlank()) {
             throw new IllegalArgumentException("Debe indicar su id");
         }
-        if (!datos.validarCredenciales(id, actual)) {
+        String id = datos.validarCredenciales(user, actual);
+        if (id == null) {
             throw new IllegalArgumentException("Id o clave actual incorrectos");
         }
         if (nueva == null || nueva.isBlank()) {

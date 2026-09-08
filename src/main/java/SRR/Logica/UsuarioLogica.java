@@ -1,6 +1,7 @@
 package SRR.Logica;
 
 import SRR.DTO.LoginDTO;
+import SRR.DTO.ReservaDTO;
 import SRR.DTO.UsuarioDTO;
 import SRR.Datos.UsuarioDatos;
 
@@ -17,6 +18,21 @@ public class UsuarioLogica {
 
     public UsuarioLogica(String rutaTemporal){
         this.datos = new UsuarioDatos(rutaTemporal);
+    }
+
+    private String generarId() {
+        int mayor = 0;
+        for (UsuarioDTO usuario : datos.listar()) {
+            String id = usuario.getId();
+            if (id != null && id.startsWith("US-")) {
+                try {
+                    mayor = Math.max(mayor, Integer.parseInt(id.substring(4)));
+                } catch (NumberFormatException e) {
+                    // formato distinto, se ignora
+                }
+            }
+        }
+        return String.format("US-%06d", mayor + 1);
     }
 
     public List<UsuarioDTO> obtenerUsuarios() {
@@ -49,13 +65,16 @@ public class UsuarioLogica {
 
     //devuelve 2 si se modifica un usuario existente, 1 si agrega uno nuevo
     public int cambiosUsuario(UsuarioDTO usuario) {
-        if (buscarPorId(usuario.getId()) != null) {
-            datos.modificar(usuario);
-            return 2;
-        } else {
+        if(usuario.getId() == null){
+            usuario.setId(generarId());
             datos.agregar(usuario);
             return 1;
         }
+        if (buscarPorId(usuario.getId()) != null) {
+            datos.modificar(usuario);
+            return 2;
+        }
+        return -1;
     }
 
     public boolean eliminarUsuario(String id) {
