@@ -165,6 +165,7 @@ public class RecursosController {
             }
             else if (recursoServicio.eliminarRecurso(seleccionado.getId())) {
                 recursoList.remove(seleccionado);
+                Avisos.info("Recurso eliminado correctamente.");
             }
 
 

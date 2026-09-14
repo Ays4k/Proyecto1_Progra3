@@ -1,6 +1,5 @@
 package SRR.Servicio;
 
-import SRR.DTO.LoginDTO;
 import SRR.Logica.UsuarioLogica;
 import SRR.DTO.UsuarioDTO;
 

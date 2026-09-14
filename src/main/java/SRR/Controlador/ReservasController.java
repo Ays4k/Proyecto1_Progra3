@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
-import java.security.spec.ECField;
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDate;
@@ -268,12 +267,18 @@ public class ReservasController {
 
     }
     private void cancelar(){
-        if(tableRes.getSelectionModel().getSelectedItem() == null){
+        ReservaDTO res = tableRes.getSelectionModel().getSelectedItem();
+        if (res == null) {
+            Avisos.error("Debe seleccionar una reserva primero.");
             return;
         }
-        ReservaDTO res = tableRes.getSelectionModel().getSelectedItem();
-        resList.remove(res);
-        servicio.cancelarReserva(res.getId());
+        try {
+            servicio.cancelarReserva(res.getId());
+            resList.remove(res);
+            Avisos.info("Reserva cancelada correctamente.");
+        } catch (IllegalArgumentException e) {
+            Avisos.error(e.getMessage());
+        }
     }
 
     private void reservar(){

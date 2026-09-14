@@ -1,7 +1,5 @@
 package SRR.Logica;
 
-import SRR.DTO.LoginDTO;
-import SRR.DTO.ReservaDTO;
 import SRR.DTO.UsuarioDTO;
 import SRR.Datos.UsuarioDatos;
 

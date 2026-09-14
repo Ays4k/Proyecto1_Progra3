@@ -1,10 +1,18 @@
 {
   "reservas": [
-    { "id": "RES-000001", "idFuncionario": "30303030", "idsRecursos": ["SALA-101", "LAP-001"], "actividad": "Reunión de equipo", "fecha": "2026-08-05", "horaInicio": "09:00", "horaFin": "11:00", "estado": "ACTIVA" },
-    { "id": "RES-000002", "idFuncionario": "40404040", "idsRecursos": ["PROY-001"], "actividad": "Presentación a cliente", "fecha": "2026-08-06", "horaInicio": "14:00", "horaFin": "16:00", "estado": "ACTIVA" },
-    { "id": "RES-000003", "idFuncionario": "50505050", "idsRecursos": ["VEH-001"], "actividad": "Visita a proveedor", "fecha": "2026-08-10", "horaInicio": "08:00", "horaFin": "12:00", "estado": "ACTIVA" },
-    { "id": "RES-000004", "idFuncionario": "30303030", "idsRecursos": ["SALA-102"], "actividad": "Entrevista de trabajo", "fecha": "2026-07-20", "horaInicio": "10:00", "horaFin": "11:00", "estado": "CANCELADA" },
-    { "id": "RES-000005", "idFuncionario": "60606060", "idsRecursos": ["LAP-002", "LAP-003"], "actividad": "Taller de Excel avanzado", "fecha": "2026-08-12", "horaInicio": "13:00", "horaFin": "17:00", "estado": "ACTIVA" },
-    { "id": "RES-000006", "idFuncionario": "70707070", "idsRecursos": ["SALA-101"], "actividad": "Sesión de retroalimentación", "fecha": "2026-06-15", "horaInicio": "09:00", "horaFin": "10:00", "estado": "ACTIVA" }
+    { "id": "RES-000001", "idFuncionario": "user", "idsRecursos": ["SALA-101", "LAP-001"], "actividad": "Reunion de equipo", "fecha": "2026-08-05", "horaInicio": "09:00", "horaFin": "11:00", "estado": "ACTIVA" },
+    { "id": "RES-000002", "idFuncionario": "user", "idsRecursos": ["PROY-001"], "actividad": "Presentacion a cliente", "fecha": "2026-08-06", "horaInicio": "14:00", "horaFin": "16:00", "estado": "ACTIVA" },
+    { "id": "RES-000003", "idFuncionario": "user", "idsRecursos": ["VEH-001"], "actividad": "Visita a proveedor", "fecha": "2026-08-10", "horaInicio": "08:00", "horaFin": "12:00", "estado": "ACTIVA" },
+    { "id": "RES-000004", "idFuncionario": "user", "idsRecursos": ["SALA-102"], "actividad": "Entrevista de trabajo", "fecha": "2026-07-20", "horaInicio": "10:00", "horaFin": "11:00", "estado": "CANCELADA" },
+    { "id": "RES-000005", "idFuncionario": "30303030", "idsRecursos": ["LAP-002", "LAP-003"], "actividad": "Taller de Excel avanzado", "fecha": "2026-08-12", "horaInicio": "13:00", "horaFin": "17:00", "estado": "ACTIVA" },
+    { "id": "RES-000006", "idFuncionario": "40404040", "idsRecursos": ["SALA-101"], "actividad": "Sesion de retroalimentacion", "fecha": "2026-06-15", "horaInicio": "09:00", "horaFin": "10:00", "estado": "ACTIVA" },
+    { "id": "RES-000007", "idFuncionario": "user", "idsRecursos": ["CAM-001", "TAB-001"], "actividad": "Cobertura de evento", "fecha": "2026-08-14", "horaInicio": "08:00", "horaFin": "12:00", "estado": "ACTIVA" },
+    { "id": "RES-000008", "idFuncionario": "50505050", "idsRecursos": ["SALA-103"], "actividad": "Capacitacion de onboarding", "fecha": "2026-08-15", "horaInicio": "09:00", "horaFin": "12:00", "estado": "ACTIVA" },
+    { "id": "RES-000009", "idFuncionario": "60606060", "idsRecursos": ["VEH-002"], "actividad": "Entrega de documentos", "fecha": "2026-08-18", "horaInicio": "07:00", "horaFin": "09:00", "estado": "ACTIVA" },
+    { "id": "RES-000010", "idFuncionario": "user", "idsRecursos": ["LAP-004"], "actividad": "Trabajo remoto supervisado", "fecha": "2026-05-02", "horaInicio": "08:00", "horaFin": "16:00", "estado": "CANCELADA" },
+    { "id": "RES-000011", "idFuncionario": "70707070", "idsRecursos": ["PROY-002", "SALA-102"], "actividad": "Demo de producto", "fecha": "2026-08-19", "horaInicio": "10:00", "horaFin": "12:00", "estado": "ACTIVA" },
+    { "id": "RES-000012", "idFuncionario": "80808080", "idsRecursos": ["TAB-002", "TAB-003"], "actividad": "Encuesta de satisfaccion en campo", "fecha": "2026-08-20", "horaInicio": "13:00", "horaFin": "15:00", "estado": "ACTIVA" },
+    { "id": "RES-000013", "idFuncionario": "90909090", "idsRecursos": ["CAM-002"], "actividad": "Sesion de fotos institucional", "fecha": "2026-04-10", "horaInicio": "09:00", "horaFin": "11:00", "estado": "ACTIVA" },
+    { "id": "RES-000014", "idFuncionario": "user", "idsRecursos": ["LAP-005", "PROY-003"], "actividad": "Feria de proyectos", "fecha": "2026-08-21", "horaInicio": "08:00", "horaFin": "17:00", "estado": "ACTIVA" }
   ]
 }

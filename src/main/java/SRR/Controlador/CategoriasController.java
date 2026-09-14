@@ -2,22 +2,18 @@ package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
 
-import SRR.Launch;
 import SRR.Servicio.CategoriaServicio;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.w3c.dom.Text;
 
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
 import javafx.event.ActionEvent;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;

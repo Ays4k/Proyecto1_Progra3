@@ -5,12 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import SRR.Servicio.UsuarioServicio;
-import jdk.jfr.Event;
 
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;

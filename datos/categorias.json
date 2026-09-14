@@ -3,6 +3,8 @@
     { "id": "CAT-000001", "descripcion": "Sala de reuniones" },
     { "id": "CAT-000002", "descripcion": "Laptop" },
     { "id": "CAT-000003", "descripcion": "Proyector" },
-    { "id": "CAT-000004", "descripcion": "Vehículo" }
+    { "id": "CAT-000004", "descripcion": "Vehículo" },
+    { "id": "CAT-000005", "descripcion": "Cámara" },
+    { "id": "CAT-000006", "descripcion": "Tablet" }
   ]
 }
