@@ -32,9 +32,10 @@ public class LoginLogica {
 
         for (UsuarioDTO usuario : datos.listar()) {
             if (usuario.getId().equals(userid)) {
-                return usuario;
+                return new UsuarioDTO(usuario);
             }
         }
+
         return null;
     }
 

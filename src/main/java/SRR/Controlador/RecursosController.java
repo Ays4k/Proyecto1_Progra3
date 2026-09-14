@@ -119,7 +119,7 @@ public class RecursosController {
 
     private void guardarRecurso() {
         if (cbFormCategoria.getValue() == null || txtId.getText().trim().isEmpty()) {
-            System.out.println("Error: Complete los campos requeridos.");
+            Avisos.error("Complete los campos requeridos.");
             return;
         }
 
@@ -146,7 +146,7 @@ public class RecursosController {
     private void eliminarRecurso() {
         RecursoDTO seleccionado = tablaRecursos.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            System.out.println("Error: No se ha seleccionado un recurso.");
+            Avisos.error("Debe seleccionar un recurso primero.");
             return;
         }
 
@@ -160,8 +160,8 @@ public class RecursosController {
             if(!reservaServicio.estaDisponible(seleccionado.getId())) {
                 Alert alert2 = new Alert(Alert.AlertType.ERROR);
                 alert2.setTitle("Error al eliminar");
-                alert.setHeaderText("No puede eliminar un recurso que sigue asignado");
-                alert.showAndWait();
+                alert2.setHeaderText("No puede eliminar un recurso que sigue asignado");
+                alert2.showAndWait();
             }
             else if (recursoServicio.eliminarRecurso(seleccionado.getId())) {
                 recursoList.remove(seleccionado);

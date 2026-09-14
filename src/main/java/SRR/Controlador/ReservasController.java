@@ -77,10 +77,8 @@ public class ReservasController {
         idColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         actColum.setCellValueFactory(new PropertyValueFactory<>("actividad"));
         fchColum.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        //horColum.setCellValueFactory(new PropertyValueFactory<>("id"));
         horColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
                 dato.getValue().getHoraInicio() + " - " + dato.getValue().getHoraFin()));
-        //recColum.setCellValueFactory(new PropertyValueFactory<>("idsRecursos"));
         recColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
                 dato.getValue().getIdsRecursos() == null ? ""
                         : String.join(", ", dato.getValue().getIdsRecursos())));
@@ -108,23 +106,12 @@ public class ReservasController {
         try{
             resList = FXCollections.observableList(servicio.reservasActivasDe(Sesion.getId()));
         }catch (Exception e){
-            e.printStackTrace();
+            Avisos.error("No se pudieron cargar sus reservas.");
         }
         tableRes.setItems(resList);
 
         lblAi.setText("");
 
-        /*
-        tableRes.getSelectionModel().selectedItemProperty().addListener((obj, oldv, newv)->{
-            txtActividad.setText(obj.getValue().getActividad());
-            cmbInicio.getItems().clear();
-            cmbInicio.setValue(LocalTime.parse(obj.getValue().getHoraInicio()));
-            cmbFinal.getItems().clear();
-            cmbFinal.setValue(LocalTime.parse(obj.getValue().getHoraFin()));
-            date.setValue(LocalDate.parse(obj.getValue().getFecha()));
-        });
-        nota: podria llenarse los campos si se selecciona
-        */
         date.setDayCellFactory(seleccion -> new DateCell(){
             @Override
             public void updateItem(LocalDate item, boolean empty) {
@@ -241,7 +228,6 @@ public class ReservasController {
                         for(int i = 0; i<listCategoria.getItems().size(); i++){
                             if(listCategoria.getItems().get(i).getDescripcion().equals(categoria)){
                                 listCategoria.getSelectionModel().select(i);
-                                System.out.println(1);
                                 break;
                             }
                         }
@@ -307,7 +293,7 @@ public class ReservasController {
             reserva = servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
             resList.add(reserva);
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            Avisos.error(e.getMessage());
         }
 
     }

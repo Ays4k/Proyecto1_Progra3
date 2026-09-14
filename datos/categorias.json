@@ -1,28 +1,8 @@
 {
   "categorias": [
-    {
-      "id": "1",
-      "descripcion": "pepe"
-    },
-    {
-      "id": "222",
-      "descripcion": "fer"
-    },
-    {
-      "id": "CAT-000002",
-      "descripcion": "Laptop windows 11"
-    },
-    {
-      "id": "3",
-      "descripcion": "Salas para 10 personas"
-    },
-    {
-      "id": "4",
-      "descripcion": "Salas para 5 personas"
-    },
-    {
-      "id": "123",
-      "descripcion": "Prueba"
-    }
+    { "id": "CAT-000001", "descripcion": "Sala de reuniones" },
+    { "id": "CAT-000002", "descripcion": "Laptop" },
+    { "id": "CAT-000003", "descripcion": "Proyector" },
+    { "id": "CAT-000004", "descripcion": "Vehículo" }
   ]
 }

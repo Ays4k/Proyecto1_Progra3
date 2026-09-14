@@ -1,23 +1,30 @@
 package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
+
 import SRR.Launch;
 import SRR.Servicio.CategoriaServicio;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.w3c.dom.Text;
+
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import SRR.Excepciones.CategoriaEnUsoException;
+import SRR.Utilidades.Avisos;
 
 public class CategoriasController {
 
@@ -87,8 +94,8 @@ public class CategoriasController {
     }
 
     private void eliminarCategoria() {
-        if(catTable.getSelectionModel().getSelectedItem() == null) {
-            //TODO Mostrar mensaje de error responsivo al usuario
+        if (catTable.getSelectionModel().getSelectedItem() == null) {
+            Avisos.error("Debe seleccionar una categoría primero.");
             return;
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -96,13 +103,16 @@ public class CategoriasController {
         alert.setHeaderText("¿Está seguro de que desea eliminar esta categoría?");
         alert.setContentText("Esta acción no se puede deshacer.");
         alert.showAndWait();
-        if(alert.getResult() == ButtonType.OK) {
+        if (alert.getResult() == ButtonType.OK) {
             CategoriaDTO categoriaSeleccionada = catTable.getSelectionModel().getSelectedItem();
-            categoriaServicio.eliminarCategoria(categoriaSeleccionada.getId());
-            categoriaList.remove(categoriaSeleccionada);
-            limpiarCampos();
-            //TODO Mostrar mensaje de éxito responsivo al usuario donde se indique que tiene que
-            //reasignar los recursos que estaban asignados a esta categoría
+            try {
+                categoriaServicio.eliminarCategoria(categoriaSeleccionada.getId());
+                categoriaList.remove(categoriaSeleccionada);
+                limpiarCampos();
+                Avisos.info("Categoría eliminada correctamente.");
+            } catch (CategoriaEnUsoException e) {
+                Avisos.error(e.getMessage());
+            }
         }
     }
 

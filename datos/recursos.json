@@ -1,24 +1,39 @@
 {
   "recursos": [
     {
-      "id": "238715",
-      "descripcion": "Laptop #238715",
+      "id": "SALA-101",
+      "descripcion": "Sala de reuniones - Piso 1",
+      "idCategoria": "CAT-000001"
+    },
+    {
+      "id": "LAP-001",
+      "descripcion": "Laptop Dell Latitude #1",
       "idCategoria": "CAT-000002"
     },
     {
-      "id": "888",
-      "descripcion": "sala",
-      "idCategoria": "1"
+      "id": "LAP-002",
+      "descripcion": "Laptop Dell Latitude #2",
+      "idCategoria": "CAT-000002"
     },
     {
-      "id": "777",
-      "descripcion": "VegetaPlay",
-      "idCategoria": "222"
+      "id": "LAP-003",
+      "descripcion": "Laptop HP Elitebook #3",
+      "idCategoria": "CAT-000002"
     },
     {
-      "id": "555",
-      "descripcion": "Sala grande para 10 personas",
-      "idCategoria": "3"
+      "id": "PROY-001",
+      "descripcion": "Proyector Epson #1",
+      "idCategoria": "CAT-000003"
+    },
+    {
+      "id": "PROY-002",
+      "descripcion": "Proyector BenQ #2",
+      "idCategoria": "CAT-000003"
+    },
+    {
+      "id": "VEH-001",
+      "descripcion": "Vehículo Toyota Hilux",
+      "idCategoria": "CAT-000004"
     }
   ]
 }

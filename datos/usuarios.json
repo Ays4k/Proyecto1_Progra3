@@ -1,52 +1,14 @@
 {
   "usuarios": [
-    {
-      "id": "111",
-      "nombre": "Juan Perez",
-      "telefono": "1234",
-      "contrasena": "111",
-      "rol": "FUNCIONARIO"
-    },
-    {
-      "id": "admin",
-      "nombre": "Administrador",
-      "telefono": "",
-      "contrasena": "admin",
-      "rol": "ADMINISTRADOR"
-    },
-    {
-      "id": "user",
-      "nombre": "user",
-      "telefono": "user",
-      "contrasena": "suser",
-      "rol": "FUNCIONARIO"
-    },
-    {
-      "id": "1234",
-      "nombre": "Yariela",
-      "telefono": "86263598",
-      "contrasena": "4321",
-      "rol": "ADMINISTRADOR"
-    },
-    {
-      "id": "1010",
-      "nombre": "Isaac",
-      "telefono": "20225432",
-      "contrasena": "UsuarioPrueba",
-      "rol": "ADMINISTRADOR"
-    },
-    {
-      "id": "2345",
-      "nombre": "Saul",
-      "telefono": "12345678",
-      "contrasena": "UsuarioPrueba1",
-      "rol": "FUNCIONARIO"
-    },
-    {
-      "id": "US-000001",
-      "nombre": "Pepe",
-      "telefono": "123456",
-      "rol": "ADMINISTRADOR"
-    }
+    { "id": "admin", "nombre": "Admin", "telefono": "0000-0000", "contrasena": "admin", "rol": "ADMINISTRADOR" },
+    { "id": "user", "nombre": "User", "telefono": "0000-0000", "contrasena": "user", "rol": "FUNCIONARIO" },
+    { "id": "10101010", "nombre": "María Fernández", "telefono": "8888-1111", "contrasena": "maria123", "rol": "ADMINISTRADOR" },
+    { "id": "20202020", "nombre": "Carlos Jiménez", "telefono": "8888-2222", "contrasena": "carlos123", "rol": "ADMINISTRADOR" },
+    { "id": "30303030", "nombre": "Ana Rodríguez", "telefono": "8888-3333", "contrasena": "ana123", "rol": "FUNCIONARIO" },
+    { "id": "40404040", "nombre": "Luis Vargas", "telefono": "8888-4444", "contrasena": "luis123", "rol": "FUNCIONARIO" },
+    { "id": "50505050", "nombre": "Sofía Chacón", "telefono": "8888-5555", "contrasena": "sofia123", "rol": "FUNCIONARIO" },
+    { "id": "60606060", "nombre": "Diego Mora", "telefono": "8888-6666", "contrasena": "diego123", "rol": "FUNCIONARIO" },
+    { "id": "70707070", "nombre": "Valeria Solís", "telefono": "8888-7777", "contrasena": "valeria123", "rol": "FUNCIONARIO" },
+    { "id": "80808080", "nombre": "Pablo Araya", "telefono": "8888-8888", "contrasena": "pablo123", "rol": "FUNCIONARIO" }
   ]
 }

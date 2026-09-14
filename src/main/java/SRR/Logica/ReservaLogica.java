@@ -9,9 +9,7 @@ import SRR.Logica.RecursoLogica;
 import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
-import javax.swing.text.html.ListView;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class ReservaLogica {
     private  GeminiService ai;
     private boolean funcionalidadai;
 
-   public ReservaLogica(){
+    public ReservaLogica(){
         try {
             this.ai = new GeminiService();
             funcionalidadai = true;
@@ -39,6 +37,7 @@ public class ReservaLogica {
         datos = new ReservaDatos();
         recursoLogica = new RecursoLogica();
     }
+
     public ReservaDTO buscarPorId(String id) {
         for (ReservaDTO reserva : datos.listar()) {
             if (reserva.getId().equals(id)) {
@@ -93,16 +92,22 @@ public class ReservaLogica {
     }
 
     public boolean estaDisponible(String idRecurso) {
-
         for (ReservaDTO reserva : datos.listar()) {
-            for(String usados : reserva.getIdsRecursos()){
-                if(usados.equals(idRecurso)){
+            if (!"ACTIVA".equalsIgnoreCase(reserva.getEstado())) {
+                continue;
+            }
+            if (reserva.getIdsRecursos() == null) {
+                continue;
+            }
+            for (String usados : reserva.getIdsRecursos()) {
+                if (usados.equals(idRecurso)) {
                     return false;
                 }
             }
         }
         return true;
     }
+
     public List<RecursoDTO> recursosDisponibles(String idCategoria, String fecha,
                                                 String horaInicio, String horaFin) {
         List<RecursoDTO> libres = new ArrayList<>();
@@ -147,6 +152,9 @@ public class ReservaLogica {
         ReservaDTO reserva = buscarPorId(idReserva);
         if (reserva == null) {
             throw new IllegalArgumentException("No existe la reserva " + idReserva);
+        }
+        if (java.time.LocalDate.parse(reserva.getFecha()).isBefore(java.time.LocalDate.now())) {
+            throw new IllegalArgumentException("No se puede cancelar una reserva que ya pasó.");
         }
         reserva.setEstado("CANCELADA");
         datos.modificar(reserva);

@@ -100,6 +100,7 @@ public class FuncionariosController {
     private void textosBusqueda(boolean condition, TextField event) {
         event.setDisable(condition);
     }
+
     private void buscarFuncionario() {
         String searchId = txtSearchId.getText().trim();
         String searchName = txtSearchName.getText().trim();
@@ -128,6 +129,7 @@ public class FuncionariosController {
         tableUsers.setItems(filteredList);
 
     }
+
     private void limpiarBusqueda() {
         txtSearchId.clear();
         txtSearchName.clear();
@@ -135,9 +137,10 @@ public class FuncionariosController {
         txtSearchId.setDisable(false);
         txtSearchName.setDisable(false);
     }
+
     private void eliminarFuncionario() {
-        if(txtId.getText().isEmpty()) {
-            System.out.println("Error: No se ha seleccionado un funcionario.");
+        if(tableUsers.getSelectionModel().getSelectedItem() == null) {
+            Avisos.error("Debe seleccionar un funcionario primero.");
             return;
         }
         if(userService.eliminarUsuario(txtId.getText())) {
@@ -145,6 +148,7 @@ public class FuncionariosController {
         }
         limpiarCampos();
     }
+
     private void seleccionarFuncionario(UsuarioDTO funcionario) {
         txtId.setText(funcionario.getId());
         txtId.setDisable(true); // Deshabilitar el campo de ID para evitar cambios
@@ -158,9 +162,10 @@ public class FuncionariosController {
             }
         }
     }
+
     private void guardarFuncionario() {
         if(grupoRol.getSelectedToggle() == null) {
-            System.out.println("Error: No se ha seleccionado un rol.");
+            Avisos.error("Debe seleccionar un rol.");
             return;
         }
 

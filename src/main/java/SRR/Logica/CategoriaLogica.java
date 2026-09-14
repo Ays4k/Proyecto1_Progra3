@@ -1,6 +1,8 @@
 package SRR.Logica;
 import SRR.Datos.CategoriaDatos;
 import SRR.DTO.CategoriaDTO;
+import SRR.Excepciones.CategoriaEnUsoException;
+import SRR.Logica.RecursoLogica;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +53,11 @@ public class CategoriaLogica {
     }
 
     public void eliminarCategoria(String id) {
+        RecursoLogica recursoLogica = new RecursoLogica();
+        if (!recursoLogica.obtenerRecursosPorCategoria(id).isEmpty()) {
+            throw new CategoriaEnUsoException(
+                    "No se puede eliminar la categoría: todavía tiene recursos asociados. Reasígnelos primero.");
+        }
         datos.borrar(id);
     }
 }
