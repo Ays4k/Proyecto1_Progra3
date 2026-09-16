@@ -65,17 +65,11 @@ public class ActividadesController {
         }
     }
 
-    private String nombreFuncionario(String idFuncionario) {
-        UsuarioDTO usuario = usuarioServicio.buscarPorId(idFuncionario);
-        return usuario == null || usuario.getNombre() == null
-                ? idFuncionario : usuario.getNombre();
-    }
-
     @FXML
     public void handleCargar(ActionEvent event) {
         LocalDate fechaRef = dpFechaReferencia.getValue();
         if (fechaRef == null) {
-            mostrarAlerta("Atención", "Seleccione una fecha de referencia.");
+            Avisos.advertencia("Seleccione una fecha de referencia.");
             return;
         }
 
@@ -109,7 +103,7 @@ public class ActividadesController {
                         LocalTime resFin = LocalTime.parse(res.getHoraFin());
 
                         if (horaInicio.isBefore(resFin) && resInicio.isBefore(siguienteHora)) {
-                            actividadesDia = res.getActividad() + " (" + nombreFuncionario(res.getIdFuncionario()) + ")";
+                            actividadesDia = res.getActividad() + " (" + usuarioServicio.nombreDe(res.getIdFuncionario()) + ")";
                             break;
                         }
                     }
@@ -166,13 +160,5 @@ public class ActividadesController {
             }
         }
         return result;
-    }
-
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
     }
 }

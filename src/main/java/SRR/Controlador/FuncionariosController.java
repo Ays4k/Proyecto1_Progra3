@@ -1,6 +1,7 @@
 package SRR.Controlador;
 
 import SRR.DTO.UsuarioDTO;
+import SRR.Excepciones.UsuarioEnUsoException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -137,14 +138,29 @@ public class FuncionariosController {
     }
 
     private void eliminarFuncionario() {
-        if(tableUsers.getSelectionModel().getSelectedItem() == null) {
+        UsuarioDTO seleccionado = tableUsers.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
             Avisos.error("Debe seleccionar un funcionario primero.");
             return;
         }
-        if(userService.eliminarUsuario(txtId.getText())) {
-            userList.remove(tableUsers.getSelectionModel().getSelectedItem());
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación de eliminación");
+        alert.setHeaderText("¿Está seguro de que desea eliminar este funcionario?");
+        alert.setContentText("Esta acción no se puede deshacer.");
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.OK) {
+            try {
+                if (userService.eliminarUsuario(seleccionado.getId())) {
+                    userList.remove(seleccionado);
+                    limpiarCampos();
+                    Avisos.info("Funcionario eliminado correctamente.");
+                }
+            } catch (UsuarioEnUsoException e) {
+                Avisos.error(e.getMessage());
+            }
         }
-        limpiarCampos();
     }
 
     private void seleccionarFuncionario(UsuarioDTO funcionario) {

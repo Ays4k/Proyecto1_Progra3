@@ -25,6 +25,8 @@ public class UsuarioServicio {
         return usuarioLogica.buscarPorId(id);
     }
 
+    public String nombreDe(String id) { return usuarioLogica.nombreDe(id);}
+
     public List<UsuarioDTO> buscarPorNombre(String texto) {
         return usuarioLogica.buscarPorNombre(texto);
     }

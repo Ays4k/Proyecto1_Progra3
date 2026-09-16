@@ -2,6 +2,7 @@ package SRR.Logica;
 
 import SRR.DTO.UsuarioDTO;
 import SRR.Datos.UsuarioDatos;
+import SRR.Excepciones.UsuarioEnUsoException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,14 @@ public class UsuarioLogica {
         return null;
     }
 
+    // devuelve el nombre del usuario, o un texto de respaldo si el usuario ya no existe
+    // lo usan las pantallas que muestran reservas, donde solo se guarda el id
+    public String nombreDe(String id) {
+        UsuarioDTO usuario = buscarPorId(id);
+        return usuario == null || usuario.getNombre() == null
+                ? "Usuario desconocido" : usuario.getNombre();
+    }
+
     public List<UsuarioDTO> buscarPorNombre(String texto) {
         List<UsuarioDTO> resultado = new ArrayList<>();
         if (texto == null) {
@@ -76,11 +85,18 @@ public class UsuarioLogica {
     }
 
     public boolean eliminarUsuario(String id) {
-        if (buscarPorId(id) != null) {
-            datos.borrar(id);
-            return true; // Usuario eliminado exitosamente
-        } else {
-            return false; // Usuario no encontrado
+        if (buscarPorId(id) == null) {
+            return false;
         }
+
+        // solo no deja borrar cuando el usuario tiene reservas activas
+        ReservaLogica reservaLogica = new ReservaLogica();
+        if (!reservaLogica.reservasActivasDe(id).isEmpty()) {
+            throw new UsuarioEnUsoException(
+                    "No se puede eliminar el funcionario: tiene reservas activas.");
+        }
+
+        datos.borrar(id);
+        return true;
     }
 }

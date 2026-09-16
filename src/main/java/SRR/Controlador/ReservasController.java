@@ -38,6 +38,12 @@ public class ReservasController {
 
     private ObservableList<CategoriaDTO> listaCategorias;
 
+    private static final LocalTime HORA_APERTURA = LocalTime.of(8, 0);
+
+    private static final LocalTime ULTIMA_HORA_INICIO = LocalTime.of(16, 30);
+
+    private static final LocalTime HORA_CIERRE = LocalTime.of(17, 0);
+
     private ObservableList<ReservaDTO> resList;
     @FXML private TableView<ReservaDTO> tableRes;
     @FXML private TableColumn<ReservaDTO,String> idColum;
@@ -121,22 +127,20 @@ public class ReservasController {
                 }
             }
         });
-        date.valueProperty().addListener((evento,oldvalue,newvalue)->{
+        cmbInicio.setDisable(true);
+        cmbFinal.setDisable(true);
 
-            int horaActual;
-            int minutos;
-            if(newvalue.equals(LocalDate.now())){
-                horaActual = LocalTime.now().getMinute()<30 ? LocalTime.now().getHour() : LocalTime.now().getHour() + 1;
-                minutos = LocalTime.now().getMinute()<30 ? 30 : 0;
-            }
-            else{
-                horaActual = 8;
-                minutos = 0;
-            }
-            for(LocalTime hora = LocalTime.of(horaActual,minutos); !hora.isAfter(LocalTime.of(16,30)); hora = hora.plusMinutes(30)){
-                cmbInicio.getItems().add(hora);
-            }
-        });
+        date.valueProperty().addListener(
+                (evento, fechaAnterior, fechaNueva) ->
+                        cargarHorasInicio(fechaNueva)
+        );
+
+        cmbInicio.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (evento, horaAnterior, horaNueva) ->
+                                cargarHorasFin(horaNueva)
+                );
 
         cargarCategorias();
 
@@ -151,13 +155,101 @@ public class ReservasController {
         btnClear.setOnAction(event -> {
             limpiar();
         });
+    }
 
-        cmbInicio.getSelectionModel().selectedItemProperty().addListener((event, viejo, nuevo) ->{
-            cmbFinal.getItems().clear();
-            for(LocalTime hora = nuevo.plusMinutes(30); !hora.isAfter(LocalTime.of(17,0)); hora = hora.plusMinutes(30)){
-                cmbFinal.getItems().add(hora);
+    private void cargarHorasInicio(LocalDate fecha) {
+        cmbInicio.getSelectionModel().clearSelection();
+        cmbInicio.getItems().clear();
+
+        cmbFinal.getSelectionModel().clearSelection();
+        cmbFinal.getItems().clear();
+        cmbFinal.setDisable(true);
+
+        if (fecha == null) {
+            cmbInicio.setDisable(true);
+            cmbInicio.setPromptText("Seleccione una fecha");
+            return;
+        }
+
+        LocalDate hoy = LocalDate.now();
+
+        if (fecha.isBefore(hoy)) {
+            cmbInicio.setDisable(true);
+            cmbInicio.setPromptText("La fecha ya pasó");
+            return;
+        }
+
+        LocalTime primeraHora = HORA_APERTURA;
+
+        if (fecha.equals(hoy)) {
+            LocalTime siguienteHora = siguienteMediaHora(LocalTime.now());
+
+            if (siguienteHora == null) {
+                mostrarSinHorarios();
+                return;
             }
-        });
+
+            // Impide que hoy, antes de las 08:00, se ofrezcan horas como 03:30.
+            if (siguienteHora.isAfter(primeraHora)) {
+                primeraHora = siguienteHora;
+            }
+        }
+
+        if (primeraHora.isAfter(ULTIMA_HORA_INICIO)) {
+            mostrarSinHorarios();
+            return;
+        }
+
+        cmbInicio.setDisable(false);
+        cmbInicio.setPromptText("Seleccione una hora");
+
+        for (LocalTime hora = primeraHora;
+             !hora.isAfter(ULTIMA_HORA_INICIO);
+             hora = hora.plusMinutes(30)) {
+
+            cmbInicio.getItems().add(hora);
+        }
+    }
+
+    private void cargarHorasFin(LocalTime horaInicio) {
+        cmbFinal.getSelectionModel().clearSelection();
+        cmbFinal.getItems().clear();
+
+        if (horaInicio == null) {
+            cmbFinal.setDisable(true);
+            cmbFinal.setPromptText("Seleccione primero la hora de inicio");
+            return;
+        }
+
+        cmbFinal.setDisable(false);
+        cmbFinal.setPromptText("Seleccione una hora");
+
+        for (LocalTime hora = horaInicio.plusMinutes(30);
+             !hora.isAfter(HORA_CIERRE);
+             hora = hora.plusMinutes(30)) {
+
+            cmbFinal.getItems().add(hora);
+        }
+    }
+
+    private LocalTime siguienteMediaHora(LocalTime horaActual) {
+        int minutosActuales = horaActual.getHour() * 60 + horaActual.getMinute();
+        int siguienteBloque = ((minutosActuales / 30) + 1) * 30;
+
+        if (siguienteBloque >= 24 * 60) {
+            return null;
+        }
+
+        return LocalTime.of(siguienteBloque / 60, siguienteBloque % 60);
+    }
+
+    private void mostrarSinHorarios() {
+        cmbInicio.setDisable(true);
+        cmbInicio.setPromptText("No quedan horarios disponibles para hoy");
+
+        Avisos.advertencia(
+                "Ya no quedan horarios disponibles para reservar en la fecha de hoy."
+        );
     }
 
     private void cargarCategorias() {

@@ -6,6 +6,7 @@ import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.RecursoServicio;
 import SRR.Servicio.ReservaServicio;
+import SRR.Servicio.UsuarioServicio;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -36,6 +37,7 @@ public class CalendarizacionController {
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
     private final RecursoServicio recursoServicio = new RecursoServicio();
     private final ReservaServicio reservaServicio = new ReservaServicio();
+    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
 
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -72,7 +74,7 @@ public class CalendarizacionController {
         CategoriaDTO categoria = cbCategoria.getValue();
 
         if (fecha == null || categoria == null) {
-            mostrarAlerta("Atención", "Seleccione una fecha y una categoría.");
+            Avisos.advertencia("Seleccione una fecha y una categoría.");
             return;
         }
 
@@ -132,7 +134,7 @@ public class CalendarizacionController {
                         LocalTime resFin = LocalTime.parse(res.getHoraFin());
 
                         if (horaInicio.isBefore(resFin) && resInicio.isBefore(siguienteHora)) {
-                            estado = "Ocupado: " + res.getActividad();
+                            estado = res.getActividad() + " (" + usuarioServicio.nombreDe(res.getIdFuncionario()) + ")";
                             break;
                         }
                     }
@@ -186,13 +188,5 @@ public class CalendarizacionController {
             }
         }
         return result;
-    }
-
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
     }
 }

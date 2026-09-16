@@ -39,26 +39,31 @@ public class LoginLogica {
         return null;
     }
 
-    public void cambiarClave(String user, String actual, String nueva, String confirmacion) {
+    public void cambiarClave(String id, String actual, String nueva, String confirmacion) {
         datos.deserializar();
 
-        if (user == null || user.isBlank()) {
-            throw new IllegalArgumentException("Debe indicar su id");
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Debe indicar su ID");
         }
-        String id = datos.validarCredenciales(user, actual);
-        if (id == null) {
-            throw new IllegalArgumentException("Id o clave actual incorrectos");
+
+        String idValidado = datos.validarCredenciales(id, actual);
+
+        if (idValidado == null) {
+            throw new IllegalArgumentException("ID o clave actual incorrectos");
         }
+
         if (nueva == null || nueva.isBlank()) {
-            throw new IllegalArgumentException("La clave nueva no puede estar vacia");
+            throw new IllegalArgumentException("La clave nueva no puede estar vacía");
         }
+
         if (!nueva.equals(confirmacion)) {
             throw new IllegalArgumentException("Las claves nuevas no coinciden");
         }
+
         if (nueva.equals(actual)) {
             throw new IllegalArgumentException("La clave nueva debe ser distinta de la actual");
         }
 
-        datos.cambiarContrasena(id, nueva);
+        datos.cambiarContrasena(idValidado, nueva);
     }
 }

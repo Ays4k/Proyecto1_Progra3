@@ -83,17 +83,25 @@ public class UsuarioDatos {
         return listaUsuarios;
     }
 
-    public String validarCredenciales(String username, String contrasena) {
-        if(contrasena == null || username == null) return null;
-        for(UsuarioDTO user : mapaUsuarios.values()){
-            if(username.equals(user.getNombre())){
-                if((user.getContrasena() == null) ? contrasena.equals(user.getId()) : contrasena.equals(user.getContrasena())){
-                    return user.getId();
-                }
-            }
+    public String validarCredenciales(String id, String contrasena) {
+        if (id == null || contrasena == null) {
+            return null;
         }
-        return null;
 
+        UsuarioDTO usuario = mapaUsuarios.get(id);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        String contrasenaGuardada = usuario.getContrasena() == null ? usuario.getId()
+                : usuario.getContrasena();
+
+        if (!contrasena.equals(contrasenaGuardada)) {
+            return null;
+        }
+
+        return usuario.getId();
     }
 
     public void cambiarContrasena(String id, String nuevaContrasena) {

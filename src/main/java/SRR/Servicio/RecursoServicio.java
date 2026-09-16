@@ -13,13 +13,9 @@ public class RecursoServicio {
         return logica.obtenerRecursos();
     }
 
-    public int servicioRecursos(RecursoDTO recurso) {
-        return logica.guardarRecurso(recurso);
-    }
+    public int guardarRecurso(RecursoDTO recurso) { return logica.guardarRecurso(recurso); }
 
-    public boolean eliminarRecurso(String id) {
-        return logica.eliminarRecurso(id);
-    }
+    public void eliminarRecurso(String id) { logica.eliminarRecurso(id); }
 
     public List<RecursoDTO> buscarPorDescripcion(String descripcion) {
         return logica.buscarPorDescripcion(descripcion);

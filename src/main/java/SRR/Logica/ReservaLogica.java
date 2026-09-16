@@ -194,25 +194,91 @@ public class ReservaLogica {
         return activas;
     }
 
-    private void validar(String idFuncionario, String actividad, String fecha,
-                         String horaInicio, String horaFin, List<String> idsCategorias) {
+    private void validar(String idFuncionario,
+                         String actividad,
+                         String fecha,
+                         String horaInicio,
+                         String horaFin,
+                         List<String> idsCategorias) {
+
         if (idFuncionario == null || idFuncionario.isBlank()) {
-            throw new IllegalArgumentException("No hay un funcionario activo");
+            throw new IllegalArgumentException(
+                    "No hay un funcionario activo"
+            );
         }
+
         if (actividad == null || actividad.isBlank()) {
-            throw new IllegalArgumentException("Debe describir la actividad");
+            throw new IllegalArgumentException(
+                    "Debe describir la actividad"
+            );
         }
+
         if (fecha == null || fecha.isBlank()) {
-            throw new IllegalArgumentException("Debe indicar la fecha");
+            throw new IllegalArgumentException(
+                    "Debe indicar la fecha"
+            );
         }
+
         if (horaInicio == null || horaFin == null) {
-            throw new IllegalArgumentException("Debe indicar las horas");
+            throw new IllegalArgumentException(
+                    "Debe indicar las horas"
+            );
         }
-        if (!LocalTime.parse(horaInicio).isBefore(LocalTime.parse(horaFin))) {
-            throw new IllegalArgumentException("La hora de fin debe ser posterior a la de inicio");
+
+        LocalDate fechaReserva;
+        LocalTime inicio;
+        LocalTime fin;
+
+        try {
+            fechaReserva = LocalDate.parse(fecha);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "La fecha no tiene un formato válido"
+            );
         }
+
+        try {
+            inicio = LocalTime.parse(horaInicio);
+            fin = LocalTime.parse(horaFin);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Las horas no tienen un formato válido"
+            );
+        }
+
+        if (fechaReserva.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "No se puede reservar en una fecha pasada"
+            );
+        }
+
+        if (fechaReserva.equals(LocalDate.now())
+                && !inicio.isAfter(LocalTime.now())) {
+
+            throw new IllegalArgumentException(
+                    "La hora de inicio ya pasó"
+            );
+        }
+
+        if (!inicio.isBefore(fin)) {
+            throw new IllegalArgumentException(
+                    "La hora de fin debe ser posterior a la de inicio"
+            );
+        }
+
+        // Conservar solamente si 08:00-17:00 fue una regla confirmada.
+        if (inicio.isBefore(LocalTime.of(8, 0))
+                || fin.isAfter(LocalTime.of(17, 0))) {
+
+            throw new IllegalArgumentException(
+                    "Las reservas deben realizarse entre las 08:00 y las 17:00"
+            );
+        }
+
         if (idsCategorias == null || idsCategorias.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar al menos una categoria");
+            throw new IllegalArgumentException(
+                    "Debe seleccionar al menos una categoría"
+            );
         }
     }
 

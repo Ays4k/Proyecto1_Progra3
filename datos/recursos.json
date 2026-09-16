@@ -1,22 +1,94 @@
 {
   "recursos": [
-    { "id": "SALA-101", "descripcion": "Sala de reuniones - Piso 1", "idCategoria": "CAT-000001" },
-    { "id": "SALA-102", "descripcion": "Sala de reuniones - Piso 2", "idCategoria": "CAT-000001" },
-    { "id": "SALA-103", "descripcion": "Sala de reuniones - Piso 3", "idCategoria": "CAT-000001" },
-    { "id": "LAP-001", "descripcion": "Laptop Dell Latitude #1", "idCategoria": "CAT-000002" },
-    { "id": "LAP-002", "descripcion": "Laptop Dell Latitude #2", "idCategoria": "CAT-000002" },
-    { "id": "LAP-003", "descripcion": "Laptop HP Elitebook #3", "idCategoria": "CAT-000002" },
-    { "id": "LAP-004", "descripcion": "Laptop HP Elitebook #4", "idCategoria": "CAT-000002" },
-    { "id": "LAP-005", "descripcion": "Laptop Lenovo Thinkpad #5", "idCategoria": "CAT-000002" },
-    { "id": "PROY-001", "descripcion": "Proyector Epson #1", "idCategoria": "CAT-000003" },
-    { "id": "PROY-002", "descripcion": "Proyector BenQ #2", "idCategoria": "CAT-000003" },
-    { "id": "PROY-003", "descripcion": "Proyector Epson #3", "idCategoria": "CAT-000003" },
-    { "id": "VEH-001", "descripcion": "Vehículo Toyota Hilux", "idCategoria": "CAT-000004" },
-    { "id": "VEH-002", "descripcion": "Vehículo Toyota Corolla", "idCategoria": "CAT-000004" },
-    { "id": "CAM-001", "descripcion": "Cámara Canon EOS #1", "idCategoria": "CAT-000005" },
-    { "id": "CAM-002", "descripcion": "Cámara Sony Alpha #2", "idCategoria": "CAT-000005" },
-    { "id": "TAB-001", "descripcion": "Tablet Samsung Tab #1", "idCategoria": "CAT-000006" },
-    { "id": "TAB-002", "descripcion": "Tablet Samsung Tab #2", "idCategoria": "CAT-000006" },
-    { "id": "TAB-003", "descripcion": "Tablet iPad #3", "idCategoria": "CAT-000006" }
+    {
+      "id": "SALA-101",
+      "descripcion": "Sala de reuniones - Piso 1",
+      "idCategoria": "CAT-000001"
+    },
+    {
+      "id": "SALA-102",
+      "descripcion": "Sala de reuniones - Piso 2",
+      "idCategoria": "CAT-000001"
+    },
+    {
+      "id": "SALA-103",
+      "descripcion": "Sala de reuniones - Piso 3",
+      "idCategoria": "CAT-000001"
+    },
+    {
+      "id": "LAP-001",
+      "descripcion": "Laptop Dell Latitude #1",
+      "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "LAP-002",
+      "descripcion": "Laptop Dell Latitude #2",
+      "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "LAP-003",
+      "descripcion": "Laptop HP Elitebook #3",
+      "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "LAP-004",
+      "descripcion": "Laptop HP Elitebook #4",
+      "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "LAP-005",
+      "descripcion": "Laptop Lenovo Thinkpad #5",
+      "idCategoria": "CAT-000002"
+    },
+    {
+      "id": "PROY-001",
+      "descripcion": "Proyector Epson #1",
+      "idCategoria": "CAT-000003"
+    },
+    {
+      "id": "PROY-002",
+      "descripcion": "Proyector BenQ #2",
+      "idCategoria": "CAT-000003"
+    },
+    {
+      "id": "PROY-003",
+      "descripcion": "Proyector Epson #3",
+      "idCategoria": "CAT-000003"
+    },
+    {
+      "id": "VEH-001",
+      "descripcion": "Vehículo Toyota Hilux",
+      "idCategoria": "CAT-000004"
+    },
+    {
+      "id": "VEH-002",
+      "descripcion": "Vehículo Toyota Corolla",
+      "idCategoria": "CAT-000004"
+    },
+    {
+      "id": "CAM-001",
+      "descripcion": "Cámara Canon EOS #1",
+      "idCategoria": "CAT-000005"
+    },
+    {
+      "id": "CAM-002",
+      "descripcion": "Cámara Sony Alpha #2",
+      "idCategoria": "CAT-000005"
+    },
+    {
+      "id": "TAB-001",
+      "descripcion": "Tablet Samsung Tab #1",
+      "idCategoria": "CAT-000006"
+    },
+    {
+      "id": "TAB-002",
+      "descripcion": "Tablet Samsung Tab #2",
+      "idCategoria": "CAT-000006"
+    },
+    {
+      "id": "TAB-003",
+      "descripcion": "Tablet iPad #3",
+      "idCategoria": "CAT-000006"
+    }
   ]
 }

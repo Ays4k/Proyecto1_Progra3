@@ -2,10 +2,9 @@ package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
+import SRR.Excepciones.RecursoException;
 import SRR.Servicio.CategoriaServicio;
 import SRR.Servicio.RecursoServicio;
-
-import SRR.Servicio.ReservaServicio;
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
@@ -45,7 +44,6 @@ public class RecursosController {
 
     private final RecursoServicio recursoServicio = new RecursoServicio();
     private final CategoriaServicio categoriaServicio = new CategoriaServicio();
-    private final ReservaServicio reservaServicio = new ReservaServicio();
 
 
 
@@ -118,29 +116,54 @@ public class RecursosController {
     }
 
     private void guardarRecurso() {
-        if (cbFormCategoria.getValue() == null || txtId.getText().trim().isEmpty()) {
-            Avisos.error("Complete los campos requeridos.");
-            return;
-        }
-
         String id = txtId.getText().trim();
         String descripcion = txtDesc.getText().trim();
-        String idCategoria = cbFormCategoria.getValue().getId();
+        CategoriaDTO categoriaSeleccionada = cbFormCategoria.getValue();
 
-        RecursoDTO nuevoRecurso = new RecursoDTO(id, descripcion, idCategoria);
-        int resultado = recursoServicio.servicioRecursos(nuevoRecurso);
+           // si no se selecciono una categoría se envia null
+           // RecursoLogica será responsable de rechazarlo
 
-        if (resultado == 1) {
-            recursoList.add(nuevoRecurso);
-        } else if (resultado == 2) {
-            for (int i = 0; i < recursoList.size(); i++) {
-                if (recursoList.get(i).getId().equals(id)) {
-                    recursoList.set(i, nuevoRecurso);
-                    break;
+        String idCategoria = categoriaSeleccionada == null
+                ? null : categoriaSeleccionada.getId();
+
+        RecursoDTO nuevoRecurso =
+                new RecursoDTO(
+                        id,
+                        descripcion,
+                        idCategoria
+                );
+
+        try {
+            int resultado =
+                    recursoServicio.guardarRecurso(nuevoRecurso);
+
+            if (resultado == 1) {
+                recursoList.add(nuevoRecurso);
+
+                Avisos.info("Recurso agregado correctamente.");
+
+            } else if (resultado == 2) {
+                for (int i = 0; i < recursoList.size(); i++) {
+                    if (recursoList.get(i)
+                            .getId()
+                            .equals(nuevoRecurso.getId())) {
+
+                        recursoList.set(i, nuevoRecurso);
+                        break;
+                    }
                 }
+
+                Avisos.info("Recurso modificado correctamente.");
             }
+
+              // solo se limpian los campos si la operación
+              // fue exitosa.
+
+            limpiarCampos();
+
+        } catch (RecursoException e) {
+            Avisos.error(e.getMessage());
         }
-        limpiarCampos();
     }
 
     private void eliminarRecurso() {
@@ -157,20 +180,23 @@ public class RecursosController {
 
         if (alert.getResult() == ButtonType.OK) {
 
-            if(!reservaServicio.estaDisponible(seleccionado.getId())) {
-                Alert alert2 = new Alert(Alert.AlertType.ERROR);
-                alert2.setTitle("Error al eliminar");
-                alert2.setHeaderText("No puede eliminar un recurso que sigue asignado");
-                alert2.showAndWait();
-            }
-            else if (recursoServicio.eliminarRecurso(seleccionado.getId())) {
+            try {
+
+                 // el controlador solamente solicita la eliminacion
+                 // RecursoLogica decide si puede hacerse
+
+                recursoServicio.eliminarRecurso(seleccionado.getId());
+
                 recursoList.remove(seleccionado);
-                Avisos.info("Recurso eliminado correctamente.");
+                limpiarCampos();
+
+                Avisos.info(
+                        "Recurso eliminado correctamente."
+                );
+
+            } catch (RecursoException e) {
+                Avisos.error(e.getMessage());
             }
-
-
-
-            limpiarCampos();
         }
     }
 
