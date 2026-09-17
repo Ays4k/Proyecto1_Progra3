@@ -1,13 +1,17 @@
-package IntegrationTest;
+package SRR.Logica;
 
 import SRR.DTO.ReservaAiDTO;
-import SRR.Logica.GeminiService;
-import SRR.Logica.ReservaLogica;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GeminiServiceIT {
 
@@ -44,5 +48,33 @@ public class GeminiServiceIT {
         assertNotNull(reservaAi.getHoraFinal(), "La hora final no debe ser nula");
         assertNotNull(reservaAi.getCategorias(), "Las categorías no deben ser nulas");
         assertFalse(reservaAi.getCategorias().isEmpty(), "Debe haber al menos una categoría");
+    }
+
+    @Test
+    @DisplayName("Gemini responde con texto NO parseable y no se procesa la reserva")
+    void geminiDevuelveRespuestaNOProcesable() throws Exception {
+        String apiKey = System.getenv("GEMINI_API_KEY");
+        Assumptions.assumeTrue(apiKey != null && !apiKey.isBlank(),
+                "Se requiere GEMINI_API_KEY para ejecutar esta prueba de integración real");
+
+        String prompt = "Necesito que me digas como está hoy el clima en andorra";
+        GeminiService geminiService = new GeminiService();
+
+        String respuesta;
+        try{
+            respuesta = geminiService.enviarMensaje(prompt);
+        }catch (Exception e){
+            respuesta = e.getMessage();
+        }
+
+        assertNotNull(respuesta, "La respuesta de Gemini no debe ser nula");
+        assertFalse(respuesta.isBlank(), "La respuesta de Gemini no debe estar vacía");
+        assertTrue(respuesta.toLowerCase().contains("error"),
+                "La respuesta debe ser con el formato para recibir errores");
+
+        ReservaLogica reservaLogica = new ReservaLogica();
+        assertThrows(RuntimeException.class,() -> reservaLogica.crearReservaAi(prompt),
+                "Debería dar error al no cumplir la función que se le pidió");
+
     }
 }
