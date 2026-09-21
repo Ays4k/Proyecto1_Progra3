@@ -4,8 +4,6 @@ import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Logica.CategoriaLogica;
-import SRR.Logica.RecursoLogica;
 import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 

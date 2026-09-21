@@ -2,7 +2,6 @@ package SRR.Controlador;
 
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.ReservaServicio;
-import SRR.DTO.UsuarioDTO;
 import SRR.Servicio.UsuarioServicio;
 
 import javafx.beans.property.SimpleStringProperty;

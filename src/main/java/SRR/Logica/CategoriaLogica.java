@@ -2,7 +2,6 @@ package SRR.Logica;
 import SRR.Datos.CategoriaDatos;
 import SRR.DTO.CategoriaDTO;
 import SRR.Excepciones.CategoriaEnUsoException;
-import SRR.Logica.RecursoLogica;
 
 import java.util.ArrayList;
 import java.util.List;

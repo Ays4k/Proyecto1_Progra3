@@ -10,8 +10,6 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import SRR.Logica.CategoriaLogica;
-
 public class GeminiService {
     private static final String MODELO = "gemini-3.5-flash-lite";
     private static final String ENDPOINT_BASE =

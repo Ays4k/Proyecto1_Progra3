@@ -30,11 +30,4 @@ public class Sesion {
         return usuarioActual == null ? null : usuarioActual.getId();
     }
 
-    public static String getRol() {
-        return usuarioActual == null ? null : usuarioActual.getRol();
-    }
-
-    public static boolean esAdministrador() {
-        return "ADMINISTRADOR".equalsIgnoreCase(getRol());
-    }
 }
