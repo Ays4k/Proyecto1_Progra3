@@ -21,7 +21,7 @@
          <content>
             <AnchorPane prefHeight="283.0" prefWidth="754.0">
                <children>
-                  <Label fx:id="lblAi" layoutX="640.0" layoutY="61.0" prefHeight="17.0" prefWidth="89.0" text="Cargando..." />
+                  <Label fx:id="lblAi" layoutX="634.0" layoutY="61.0" prefHeight="62.0" prefWidth="103.0" text="Cargando..." />
                   <TextField fx:id="txtAi" layoutX="72.0" layoutY="9.0" prefHeight="50.0" prefWidth="546.0" />
                   <Button fx:id="btnClear" layoutX="647.0" layoutY="221.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="76.0" text="Limpiar" />
                   <Button fx:id="btnAi" layoutX="636.0" layoutY="17.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="98.0" text="Extraer AI" />
