@@ -49,10 +49,20 @@ public class RecursosController {
 
     @FXML
     public void initialize() {
+        txtId.setDisable(true);   // el id lo genera la base, solo se muestra
+        txtId.setPromptText("Automático");
         tablaRecursos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
+        // la celda guarda el id de la categoria, pero la tabla muestra su nombre
+        colCategoria.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(String idCat, boolean empty) {
+                super.updateItem(idCat, empty);
+                setText(empty || idCat == null ? null : nombreDeCategoria(idCat));
+            }
+        });
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
         // Centrar texto de las columnas
@@ -91,6 +101,17 @@ public class RecursosController {
             }
         });
         cargarCategorias();
+    }
+
+    private String nombreDeCategoria(String idCat) {
+        if (categoriaList != null) {
+            for (CategoriaDTO cat : categoriaList) {
+                if (cat.getId().equals(idCat)) {
+                    return cat.getDescripcion();
+                }
+            }
+        }
+        return idCat;   // si no la encuentra, muestra el numero
     }
 
     private void cargarCategorias() {
@@ -163,6 +184,8 @@ public class RecursosController {
 
         } catch (RecursoException e) {
             Avisos.error(e.getMessage());
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo guardar el recurso: " + e.getMessage());
         }
     }
 
@@ -196,6 +219,8 @@ public class RecursosController {
 
             } catch (RecursoException e) {
                 Avisos.error(e.getMessage());
+            } catch (RuntimeException e) {
+                Avisos.error("No se pudo eliminar el recurso: " + e.getMessage());
             }
         }
     }
@@ -226,7 +251,6 @@ public class RecursosController {
 
     private void limpiarCampos() {
         txtId.clear();
-        txtId.setDisable(false);
         txtDesc.clear();
         cbFormCategoria.setValue(null);
         cbFiltroCategoria.setValue(null);

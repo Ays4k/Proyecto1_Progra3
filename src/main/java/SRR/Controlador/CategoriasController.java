@@ -108,6 +108,8 @@ public class CategoriasController {
                 Avisos.info("Categoría eliminada correctamente.");
             } catch (CategoriaEnUsoException e) {
                 Avisos.error(e.getMessage());
+            } catch (RuntimeException e) {
+                Avisos.error("No se pudo eliminar la categoría: " + e.getMessage());
             }
         }
     }

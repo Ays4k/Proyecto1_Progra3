@@ -1,92 +1,22 @@
 package SRR.Datos;
 
 import SRR.DTO.UsuarioDTO;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class UsuarioDatos {
-    private String rutaArchivo;
-    private Map<String, UsuarioDTO> mapaUsuarios = new LinkedHashMap<>();
 
-    public UsuarioDatos(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-        deserializar();
-    }
 
     public UsuarioDatos() {
-        this("datos/usuarios.json");
     }
 
-
-    public String getRutaArchivo() {
-        return rutaArchivo;
-    }
-
-    public void setRutaArchivo(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-    }
-
-    public void serializar() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Contenedor contenedor = new Contenedor();
-        contenedor.usuarios = new ArrayList<>(this.mapaUsuarios.values());
-
-        File archivo = new File(rutaArchivo);
-        File carpeta = archivo.getParentFile();
-        if (carpeta != null) {
-            carpeta.mkdirs();
-        }
-
-        try (FileWriter escritor = new FileWriter(archivo)) {
-            gson.toJson(contenedor, escritor);
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo escribir " + rutaArchivo, e);
-        }
-    }
-
-    public void deserializar() {
-        mapaUsuarios.clear();
-
-        File archivo = new File(rutaArchivo);
-        if (!archivo.exists()) {
-            return;
-        }
-
-        Gson gson = new Gson();
-        try (FileReader lector = new FileReader(archivo)) {
-            Contenedor contenedor = gson.fromJson(lector, Contenedor.class);
-            if (contenedor == null || contenedor.usuarios == null) {
-                return;
-            }
-            for (UsuarioDTO funcionario : contenedor.usuarios) {
-                mapaUsuarios.put(funcionario.getId(), funcionario);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo leer " + rutaArchivo, e);
-        }
-    }
 
     public List<UsuarioDTO> listar() {
-        /*
-        List<UsuarioDTO> listaUsuarios = new ArrayList<>();
-        for(UsuarioDTO x : mapaUsuarios.values()){
-            listaUsuarios.add(new UsuarioDTO(x));
-        }
-         */
-
         List<UsuarioDTO> listaUsuarios = new ArrayList<>();
         String sql = "SELECT u.identificacion, u.nombre, u.telefono, r.nombre AS rol "+
                 "FROM usuario u "+
@@ -107,9 +37,39 @@ public class UsuarioDatos {
             }
 
         }catch (SQLException e){
-            e.printStackTrace();
+            throw new RuntimeException("No se pudo obtener los usuarios",e);
         }
         return listaUsuarios;
+    }
+
+    // devuelve el usuario (sin contrasena) con esa identificacion, o null si no existe
+    public UsuarioDTO buscarPorId(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        String sql = "SELECT u.identificacion, u.nombre, u.telefono, r.nombre AS rol "
+                + "FROM usuario u JOIN rol r ON r.id = u.id_rol "
+                + "WHERE u.identificacion = ?";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, id.trim());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new UsuarioDTO(
+                            rs.getString("identificacion"),
+                            rs.getString("nombre"),
+                            rs.getString("telefono"),
+                            null,
+                            rs.getString("rol"));
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo buscar el usuario", e);
+        }
     }
 
     public String validarCredenciales(String id, String contrasena) {
@@ -132,7 +92,7 @@ public class UsuarioDatos {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error al validar credenciales",e);
         }
         return null;
     }
@@ -205,7 +165,4 @@ public class UsuarioDatos {
         }
     }
 
-    private static class Contenedor {
-        List<UsuarioDTO> usuarios = new ArrayList<>();
-    }
 }

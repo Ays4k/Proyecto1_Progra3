@@ -9,7 +9,6 @@ import SRR.Excepciones.RecursoException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecursoLogica {
 
@@ -19,31 +18,25 @@ public class RecursoLogica {
 
 
     public List<RecursoDTO> obtenerRecursos() {
-        datos.deserializar();   // relee por si otra pantalla agrego o modifico un recurso
         return datos.listar();
     }
 
     public RecursoDTO buscarPorId(String id) {
-        for(RecursoDTO recurso : datos.listar()) {
-            if(recurso.getId().equals(id)) {
-                return recurso;
-            }
-        }
-        return null;
+        return datos.buscarPorId(id);
     }
 
     public int guardarRecurso(RecursoDTO recurso) {
         validarRecurso(recurso);
 
-        RecursoDTO recursoExistente = buscarPorId(recurso.getId());
+        String id = recurso.getId();
 
-        if (recursoExistente == null) {
+        if (id == null || id.isBlank()) {
             datos.agregar(recurso);
-            return 1; //recurso agregado
+            return 1;
         }
 
         datos.modificar(recurso);
-        return 2; //recurso modificado
+        return 2;
     }
 
     private void validarRecurso(RecursoDTO recurso) {
@@ -53,11 +46,6 @@ public class RecursoLogica {
             );
         }
 
-        if (recurso.getId() == null || recurso.getId().isBlank()) {
-            throw new RecursoException(
-                    "Debe indicar el ID o número de activo."
-            );
-        }
 
         if (recurso.getDescripcion() == null || recurso.getDescripcion().isBlank()) {
             throw new RecursoException(
@@ -141,20 +129,10 @@ public class RecursoLogica {
     }
 
     public List<RecursoDTO> obtenerRecursosPorCategoria(String idCategoria) {
-        List<RecursoDTO> resultado = new ArrayList<>();
-        for (RecursoDTO recurso : datos.listar()) {
-            if (idCategoria.equals(recurso.getIdCategoria())) {
-                resultado.add(recurso);
-            }
-        }
-        return resultado;
+        return datos.listarPorCategoria(idCategoria);
     }
 
     public List<RecursoDTO> filtrarRecursos(String idCategoria, String descripcion) {
-        List<RecursoDTO> lista = datos.listar();
-        return lista.stream()
-                .filter(r -> idCategoria == null || idCategoria.isEmpty() || r.getIdCategoria().equals(idCategoria))
-                .filter(r -> descripcion == null || descripcion.isEmpty() || r.getDescripcion().toLowerCase().contains(descripcion.toLowerCase()))
-                .collect(Collectors.toList());
+        return datos.filtrar(idCategoria, descripcion);
     }
 }

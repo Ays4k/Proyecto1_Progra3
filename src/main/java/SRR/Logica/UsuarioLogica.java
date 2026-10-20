@@ -16,7 +16,7 @@ public class UsuarioLogica {
     }
 
     public UsuarioLogica(String rutaTemporal){
-        this.datos = new UsuarioDatos(rutaTemporal);
+        this.datos = new UsuarioDatos();
     }
 
     // la identificacion es la cedula: solo numeros (se ajusta aqui si cambia el formato)
@@ -27,12 +27,7 @@ public class UsuarioLogica {
     }
 
     public UsuarioDTO buscarPorId(String id) {
-        for (UsuarioDTO usuario : datos.listar()) {
-            if (usuario.getId().equals(id)) {
-                return usuario;
-            }
-        }
-        return null;
+        return datos.buscarPorId(id);
     }
 
     // devuelve el nombre del usuario, o un texto de respaldo si el usuario ya no existe

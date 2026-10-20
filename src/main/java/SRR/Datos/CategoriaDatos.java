@@ -6,96 +6,86 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import SRR.Excepciones.CategoriaEnUsoException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class CategoriaDatos {
-    private String rutaArchivo;
-    private Map<String, CategoriaDTO> mapaCategorias = new LinkedHashMap<>();
 
-    public CategoriaDatos(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-        deserializar();
-    }
 
     public CategoriaDatos() {
-        this("datos/categorias.json");
     }
 
-    public String getRutaArchivo() {
-        return rutaArchivo;
-    }
-
-    public void setRutaArchivo(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-    }
-
-    public void serializar() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        Contenedor contenedor = new Contenedor();
-        contenedor.categorias = new ArrayList<>(this.mapaCategorias.values());
-
-        File archivo = new File(rutaArchivo);
-        File carpeta = archivo.getParentFile();
-        if (carpeta != null) {
-            carpeta.mkdirs();
-        }
-
-        try (FileWriter escritor = new FileWriter(archivo)) {
-            gson.toJson(contenedor, escritor);
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo escribir " + rutaArchivo, e);
-        }
-    }
-
-    public void deserializar() {
-        mapaCategorias.clear();
-
-        File archivo = new File(rutaArchivo);
-        if (!archivo.exists()) {
-            return;
-        }
-
-        Gson gson = new Gson();
-
-        try (FileReader lector = new FileReader(archivo)) {
-            Contenedor contenedor = gson.fromJson(lector, Contenedor.class);
-            if (contenedor == null || contenedor.categorias == null) {
-                return;
-            }
-            for (CategoriaDTO categoria : contenedor.categorias) {
-                mapaCategorias.put(categoria.getId(), categoria);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo leer " + rutaArchivo, e);
-        }
-    }
 
     public List<CategoriaDTO> listar() {
-        return new ArrayList<>(mapaCategorias.values());
+
+        List<CategoriaDTO> lista = new ArrayList<>();
+        String sql = "SELECT c.id, c.descripcion FROM categoria AS c ORDER BY c.id";
+
+        try(Connection c = ConexionBD.obtenerConexion();
+            PreparedStatement ps = c.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()){
+
+            while (rs.next()){
+                lista.add(new CategoriaDTO(rs.getString("id"),rs.getString("descripcion")));
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo listar las categorías",e);
+        }
+        return lista;
     }
 
     public void agregar(CategoriaDTO categoria) {
-        mapaCategorias.put(categoria.getId(), categoria);
-        serializar();
+
+        String sql = "INSERT INTO categoria(descripcion) VALUES (?)";
+
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,categoria.getDescripcion());
+            ps.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo agregar la categoría",e);
+        }
+
     }
 
     public void modificar(CategoriaDTO categoria) {
-        mapaCategorias.put(categoria.getId(), categoria);
-        serializar();
+        String sql = "UPDATE categoria SET descripcion = ? WHERE id = ?";
+
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,categoria.getDescripcion());
+            ps.setString(2,categoria.getId());
+            ps.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo modificar la categoría",e);
+        }
     }
 
     public void borrar(String id) {
-        mapaCategorias.remove(id);
-        serializar();
+        String sql = "DELETE FROM categoria WHERE id = ?";
+
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,id);
+            ps.executeUpdate();
+            if (ps.executeUpdate() == 0) {
+                throw new IllegalArgumentException("La categoría no existe.");
+            }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1451) {
+                throw new CategoriaEnUsoException(
+                        "No se puede eliminar la categoría: todavía tiene recursos asociados.");
+            }
+            throw new RuntimeException("No se pudo eliminar la categoría", e);
+        }
+
     }
 
-    private static class Contenedor {
-        List<CategoriaDTO> categorias = new ArrayList<>();
-    }
 }

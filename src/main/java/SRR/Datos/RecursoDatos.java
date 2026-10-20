@@ -1,99 +1,184 @@
 package SRR.Datos;
 
 import SRR.DTO.RecursoDTO;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import SRR.Excepciones.RecursoException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecursoDatos {
-    private String rutaArchivo;
-    private Map<String, RecursoDTO> mapaRecursos = new LinkedHashMap<>();
 
-    public RecursoDatos(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-        deserializar();
-    }
-
-    public RecursoDatos() {
-        this("datos/recursos.json");
-    }
-
-    public String getRutaArchivo() {
-        return rutaArchivo;
-    }
-
-    public void setRutaArchivo(String rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-    }
-
-    public void serializar() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Contenedor contenedor = new Contenedor();
-        contenedor.recursos = new ArrayList<>(this.mapaRecursos.values());
-
-        File archivo = new File(rutaArchivo);
-        File carpeta = archivo.getParentFile();
-        if (carpeta != null) {
-            carpeta.mkdirs();
-        }
-
-        try (FileWriter escritor = new FileWriter(archivo)) {
-            gson.toJson(contenedor, escritor);
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo escribir " + rutaArchivo, e);
-        }
-    }
-
-    public void deserializar() {
-        mapaRecursos.clear();
-
-        File archivo = new File(rutaArchivo);
-        if (!archivo.exists()) {
-            return;
-        }
-
-        Gson gson = new Gson();
-        try (FileReader lector = new FileReader(archivo)) {
-            Contenedor contenedor = gson.fromJson(lector, Contenedor.class);
-            if (contenedor == null || contenedor.recursos == null) {
-                return;
-            }
-            for (RecursoDTO recurso : contenedor.recursos) {
-                mapaRecursos.put(recurso.getId(), recurso);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo leer " + rutaArchivo, e);
-        }
-    }
+    // codigos de error de MySQL
+    private static final int ERROR_CATEGORIA_INEXISTENTE = 1452; // llave foranea: la categoria no existe
+    private static final int ERROR_RECURSO_EN_USO = 1451;        // llave foranea: el recurso esta en una reserva
 
     public List<RecursoDTO> listar() {
-        return new ArrayList<>(mapaRecursos.values());
+        List<RecursoDTO> lista = new ArrayList<>();
+        String sql = "SELECT id, descripcion, id_categoria FROM recurso ORDER BY id";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                lista.add(convertir(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron obtener los recursos", e);
+        }
+        return lista;
+    }
+
+    // devuelve el recurso con ese id, o null si no existe
+    public RecursoDTO buscarPorId(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        long idNumerico;
+        try {
+            idNumerico = Long.parseLong(id.trim());
+        } catch (NumberFormatException e) {
+            return null;   // un id que no es numero no puede existir
+        }
+
+        String sql = "SELECT id, descripcion, id_categoria FROM recurso WHERE id = ?";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setLong(1, idNumerico);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? convertir(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo buscar el recurso", e);
+        }
+    }
+
+    public List<RecursoDTO> listarPorCategoria(String idCategoria) {
+        return filtrar(idCategoria, null);
+    }
+
+    // idCategoria o descripcion vacios (o null) significan "sin filtro"
+    // la descripcion se busca como texto contenido, sin distinguir mayusculas
+    public List<RecursoDTO> filtrar(String idCategoria, String descripcion) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT id, descripcion, id_categoria FROM recurso WHERE 1 = 1");
+        List<Object> parametros = new ArrayList<>();
+
+        if (idCategoria != null && !idCategoria.isBlank()) {
+            try {
+                parametros.add(Long.parseLong(idCategoria.trim()));
+            } catch (NumberFormatException e) {
+                return new ArrayList<>();   // una categoria que no es numero no tiene recursos
+            }
+            sql.append(" AND id_categoria = ?");
+        }
+        if (descripcion != null && !descripcion.isBlank()) {
+            parametros.add("%" + escaparLike(descripcion) + "%");
+            sql.append(" AND descripcion LIKE ?");
+        }
+        sql.append(" ORDER BY id");
+
+        List<RecursoDTO> lista = new ArrayList<>();
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                ps.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(convertir(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron filtrar los recursos", e);
+        }
+        return lista;
+    }
+
+    private RecursoDTO convertir(ResultSet rs) throws SQLException {
+        return new RecursoDTO(
+                String.valueOf(rs.getLong("id")),
+                rs.getString("descripcion"),
+                rs.getString("id_categoria"));
+    }
+
+    // para que % y _ escritos por el usuario se busquen como texto normal
+    private String escaparLike(String texto) {
+        return texto.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     public void agregar(RecursoDTO recurso) {
-        mapaRecursos.put(recurso.getId(), recurso);
-        serializar();
+        String sql = "INSERT INTO recurso (descripcion, id_categoria) VALUES (?, ?)";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, recurso.getDescripcion());
+            ps.setLong(2, Long.parseLong(recurso.getIdCategoria()));
+            ps.executeUpdate();
+
+            try (ResultSet claves = ps.getGeneratedKeys()) {
+                if (claves.next()) {
+                    recurso.setId(String.valueOf(claves.getLong(1)));   // id que genero la base
+                }
+            }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == ERROR_CATEGORIA_INEXISTENTE) {
+                throw new RecursoException("La categoría seleccionada no existe.");
+            }
+            throw new RuntimeException("No se pudo agregar el recurso", e);
+        }
     }
 
     public void modificar(RecursoDTO recurso) {
-        mapaRecursos.put(recurso.getId(), recurso);
-        serializar();
+        String sql = "UPDATE recurso SET descripcion = ?, id_categoria = ? WHERE id = ?";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, recurso.getDescripcion());
+            ps.setLong(2, Long.parseLong(recurso.getIdCategoria()));
+            ps.setLong(3, Long.parseLong(recurso.getId()));
+
+            if (ps.executeUpdate() == 0) {
+                throw new RecursoException("No existe el recurso " + recurso.getId() + ".");
+            }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == ERROR_CATEGORIA_INEXISTENTE) {
+                throw new RecursoException("La categoría seleccionada no existe.");
+            }
+            throw new RuntimeException("No se pudo modificar el recurso", e);
+        }
     }
 
     public void borrar(String id) {
-        mapaRecursos.remove(id);
-        serializar();
-    }
+        String sql = "DELETE FROM recurso WHERE id = ?";
 
-    private static class Contenedor {
-        List<RecursoDTO> recursos = new ArrayList<>();
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setLong(1, Long.parseLong(id));
+
+            if (ps.executeUpdate() == 0) {
+                throw new RecursoException("No existe el recurso " + id + ".");
+            }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == ERROR_RECURSO_EN_USO) {
+                throw new RecursoException(
+                        "No se puede eliminar el recurso porque está asignado a una reserva.");
+            }
+            throw new RuntimeException("No se pudo eliminar el recurso", e);
+        }
     }
 }

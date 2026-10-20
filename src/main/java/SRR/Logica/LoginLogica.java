@@ -13,13 +13,11 @@ public class LoginLogica {
     }
 
     public LoginLogica(String rutaTemporal){
-        this.datos = new UsuarioDatos(rutaTemporal);
+        this.datos = new UsuarioDatos();
     }
 
    //devuelve el usuario sin contrasena si las credenciales son validas, devuelve null si no.
     public UsuarioDTO iniciarSesion(LoginDTO login) {
-        datos.deserializar();   // relee por si otra instancia escribio
-
         if (login == null || login.getId() == null || login.getId().isBlank()) {
             return null;
         }
@@ -40,8 +38,6 @@ public class LoginLogica {
     }
 
     public void cambiarClave(String id, String actual, String nueva, String confirmacion) {
-        datos.deserializar();
-
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Debe indicar su ID");
         }
