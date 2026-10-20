@@ -8,6 +8,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,9 +80,34 @@ public class UsuarioDatos {
     }
 
     public List<UsuarioDTO> listar() {
+        /*
         List<UsuarioDTO> listaUsuarios = new ArrayList<>();
         for(UsuarioDTO x : mapaUsuarios.values()){
             listaUsuarios.add(new UsuarioDTO(x));
+        }
+         */
+
+        List<UsuarioDTO> listaUsuarios = new ArrayList<>();
+        String sql = "SELECT u.identificacion, u.nombre, u.telefono, r.nombre AS rol "+
+                "FROM usuario u "+
+                "Join rol r ON r.id = u.id_rol " +
+                "ORDER BY u.id";
+
+        try(Connection c = ConexionBD.obtenerConexion();
+            PreparedStatement ps = c.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()){
+
+            while (rs.next()){
+                listaUsuarios.add(new UsuarioDTO(
+                        rs.getString("identificacion"),
+                        rs.getString("nombre"),
+                        rs.getString("telefono"),
+                        null,
+                        rs.getString("rol")));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
         }
         return listaUsuarios;
     }
@@ -87,49 +116,93 @@ public class UsuarioDatos {
         if (id == null || contrasena == null) {
             return null;
         }
+        String sql = "SELECT u.identificacion FROM usuario u "
+                + "WHERE u.identificacion = ? "
+                + "AND COALESCE(u.clave, u.identificacion) = BINARY ?";
 
-        UsuarioDTO usuario = mapaUsuarios.get(id);
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
-        if (usuario == null) {
-            return null;
+            ps.setString(1, id);
+            ps.setString(2, contrasena);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("identificacion");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        String contrasenaGuardada = usuario.getContrasena() == null ? usuario.getId()
-                : usuario.getContrasena();
-
-        if (!contrasena.equals(contrasenaGuardada)) {
-            return null;
-        }
-
-        return usuario.getId();
+        return null;
     }
 
     public void cambiarContrasena(String id, String nuevaContrasena) {
-        UsuarioDTO usuario = mapaUsuarios.get(id);
-        if (usuario == null) {
-            return;
+        String sql = "UPDATE usuario SET clave = ? WHERE identificacion = ?";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, nuevaContrasena);
+            ps.setString(2, id);
+
+            if (ps.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Usuario no encontrado");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo cambiar la contraseña", e);
         }
-        usuario.setContrasena(nuevaContrasena);
-        serializar();
     }
     public void agregar(UsuarioDTO funcionario) {
-        mapaUsuarios.put(funcionario.getId(), funcionario);
-        serializar();
+        String sql = "INSERT INTO usuario (identificacion, nombre, clave, telefono, id_rol) VALUES (?,?,?,?,(SELECT id FROM rol WHERE nombre = ?))";
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,funcionario.getId());
+            ps.setString(2,funcionario.getNombre());
+            ps.setString(3,funcionario.getContrasena());
+            ps.setString(4,funcionario.getTelefono());
+            ps.setString(5,funcionario.getRol());
+
+            ps.executeUpdate();
+            /*
+            try (ResultSet claves = ps.getGeneratedKeys()) {
+                if (claves.next()) {
+                    funcionario.setId(String.valueOf(claves.getLong(1)));
+                }
+            }
+            */
+
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo agregar el usuario", e);
+        }
     }
 
     public void modificar(UsuarioDTO funcionario) {
-        // Mantener la contraseña existente si el usuario ya existe
-        UsuarioDTO existente = mapaUsuarios.get(funcionario.getId());
-        if (existente != null) {
-            funcionario.setContrasena(existente.getContrasena());
+        String sql = "UPDATE usuario SET nombre = ?, telefono = ?, id_rol = (SELECT r.id FROM rol AS r WHERE r.nombre = ?)" +
+                " WHERE identificacion = ?";
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,funcionario.getNombre());
+            ps.setString(2,funcionario.getTelefono());
+            ps.setString(3,funcionario.getRol());
+            ps.setString(4,funcionario.getId());
+
+
+            ps.executeUpdate();
+
+
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo modificar el usuario", e);
         }
-        mapaUsuarios.put(funcionario.getId(), funcionario);
-        serializar();
     }
 
     public void borrar(String id) {
-        mapaUsuarios.remove(id);
-        serializar();
+        String sql = "DELETE FROM usuario WHERE  identificacion = ?";
+        try(Connection c = ConexionBD.obtenerConexion(); PreparedStatement ps = c.prepareStatement(sql)){
+            ps.setString(1,id);
+            ps.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo eliminar el usuario", e);
+        }
     }
 
     private static class Contenedor {

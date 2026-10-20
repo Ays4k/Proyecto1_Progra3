@@ -46,8 +46,8 @@ public class FuncionariosController {
     @FXML
     public void initialize() {
 
-        txtId.setDisable(true);
-        //no se debe poder tocar, solo ver
+        // la cedula se escribe al crear un funcionario; se bloquea al seleccionar uno existente
+        txtId.setPromptText("Cédula");
         tableUsers.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -187,24 +187,28 @@ public class FuncionariosController {
         String phone = txtPhone.getText().trim();
         String rol = ((RadioButton) grupoRol.getSelectedToggle()).getText().toUpperCase();
 
-        txtId.setDisable(false); // Habilitar el campo de ID para evitar cambios
-        UsuarioDTO newUser = new UsuarioDTO(txtId.getText().isEmpty() ? null : txtId.getText().trim(), name, phone, null, rol);
-        int resultado = userService.cambiosUsuario(newUser);
+        String cedula = txtId.getText().trim();
+        boolean esNuevo = !txtId.isDisabled();   // con una fila seleccionada el campo esta bloqueado
 
-        if(resultado == 1) {
-            userList.add(newUser);
-        } else if(resultado == 2) {
-            for (int i = 0; i < userList.size(); i++) {
-                if (userList.get(i).getId().equals(txtId.getId())) {
-                    userList.set(i, newUser);
-                    break;
-                }
-            }
+        if (esNuevo && userService.buscarPorId(cedula) != null) {
+            Avisos.error("Ya existe un funcionario con esa cédula.");
+            return;
         }
+
+        try {
+            userService.cambiosUsuario(new UsuarioDTO(cedula, name, phone, null, rol));
+        } catch (RuntimeException e) {
+            Avisos.error(e.getMessage());
+            return;
+        }
+
+        userList.setAll(userService.obtenerUsuarios());
         limpiarCampos();
     }
 
     private void limpiarCampos() {
+        tableUsers.getSelectionModel().clearSelection();
+        txtId.setDisable(false);   // vuelve a permitir escribir la cedula de un funcionario nuevo
         txtId.clear();
         txtName.clear();
         txtPhone.clear();

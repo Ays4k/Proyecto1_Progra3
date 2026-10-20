@@ -19,20 +19,8 @@ public class UsuarioLogica {
         this.datos = new UsuarioDatos(rutaTemporal);
     }
 
-    private String generarId() {
-        int mayor = 0;
-        for (UsuarioDTO usuario : datos.listar()) {
-            String id = usuario.getId();
-            if (id != null && id.startsWith("US-")) {
-                try {
-                    mayor = Math.max(mayor, Integer.parseInt(id.substring(4)));
-                } catch (NumberFormatException e) {
-                    // formato distinto, se ignora
-                }
-            }
-        }
-        return String.format("US-%06d", mayor + 1);
-    }
+    // la identificacion es la cedula: solo numeros (se ajusta aqui si cambia el formato)
+    private static final String FORMATO_IDENTIFICACION = "\\d{9,12}";
 
     public List<UsuarioDTO> obtenerUsuarios() {
         return datos.listar(); //los usuarios vienen sin contrasenas
@@ -72,16 +60,20 @@ public class UsuarioLogica {
 
     //devuelve 2 si se modifica un usuario existente, 1 si agrega uno nuevo
     public int cambiosUsuario(UsuarioDTO usuario) {
-        if(usuario.getId() == null){
-            usuario.setId(generarId());
-            datos.agregar(usuario);
-            return 1;
-        }
         if (buscarPorId(usuario.getId()) != null) {
             datos.modificar(usuario);
             return 2;
         }
-        return -1;
+        validarIdentificacion(usuario.getId());
+        datos.agregar(usuario);
+        return 1;
+    }
+
+    private void validarIdentificacion(String id) {
+        if (id == null || !id.matches(FORMATO_IDENTIFICACION)) {
+            throw new IllegalArgumentException(
+                    "La cédula debe tener solo números (entre 9 y 12 dígitos).");
+        }
     }
 
     public boolean eliminarUsuario(String id) {
