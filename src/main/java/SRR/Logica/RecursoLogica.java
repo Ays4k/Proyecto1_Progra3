@@ -96,7 +96,6 @@ public class RecursoLogica {
     }
 
     private boolean estaAsignadoAReservaActiva(String idRecurso) {
-        reservaDatos.deserializar();
 
         for (ReservaDTO reserva : reservaDatos.listar()) {
             if (!"ACTIVA".equalsIgnoreCase(reserva.getEstado())) {

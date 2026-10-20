@@ -43,6 +43,9 @@ public class CategoriasController {
     public void initialize() {
         catTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        txtShowId.setDisable(true);   // el id lo genera la base, solo se muestra
+        txtShowId.setPromptText("Automático");
+
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
@@ -81,12 +84,11 @@ public class CategoriasController {
     private void limpiarCampos() {
         txtShowId.clear();
         txtShowDesc.clear();
-        txtShowId.setDisable(false); // Habilitar el campo de ID para nuevas entradas
+        catTable.getSelectionModel().clearSelection();
     }
     private void llenarCampos(CategoriaDTO categoria) {
         txtShowId.setText(categoria.getId());
         txtShowDesc.setText(categoria.getDescripcion());
-        txtShowId.setDisable(true); // Deshabilitar el campo de ID para evitar cambios
     }
 
     private void eliminarCategoria() {
@@ -136,23 +138,22 @@ public class CategoriasController {
     }
 
     public void guardarCategoria() {
-        String id = txtShowId.getText();
-        String descripcion = txtShowDesc.getText();
-        CategoriaDTO categoria = new CategoriaDTO(id, descripcion);
-        int resultado = categoriaServicio.servicioCategorias(categoria);
-        if(resultado == 1) {
-            categoriaList.add(categoria);
-        } else if (resultado == 2) {
-            // Actualizar la categoría existente en la lista observable
-            for (int i = 0; i < categoriaList.size(); i++) {
-                if (categoriaList.get(i).getId().equals(id)) {
-                    categoriaList.set(i, categoria);
-                    break;
-                }
-            }
-
+        String id = txtShowId.getText().trim();
+        String descripcion = txtShowDesc.getText().trim();
+        if (descripcion.isEmpty()) {
+            Avisos.error("La descripción es obligatoria.");
+            return;
         }
-        limpiarCampos();
+        CategoriaDTO categoria = new CategoriaDTO(id, descripcion);
+        try {
+            int resultado = categoriaServicio.servicioCategorias(categoria);
+            Avisos.info(resultado == 1 ? "Categoría agregada correctamente."
+                                       : "Categoría modificada correctamente.");
+            categoriaList.setAll(categoriaServicio.obtenerCategorias());   // relee de la base
+            limpiarCampos();
+        } catch (RuntimeException e) {
+            Avisos.error(e.getMessage());
+        }
     }
 
     private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {

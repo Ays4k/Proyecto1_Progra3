@@ -301,7 +301,6 @@ public class ReservaLogica {
     }
 
     public List<ReservaDTO> obtenerTodasLasReservas() {
-        datos.deserializar();   // relee por si otra pantalla creo o cancelo una reserva
         return datos.listar();
     }
 }
