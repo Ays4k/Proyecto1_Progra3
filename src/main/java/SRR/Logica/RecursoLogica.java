@@ -4,7 +4,6 @@ import SRR.Datos.RecursoDatos;
 import SRR.DTO.RecursoDTO;
 import SRR.Datos.ReservaDatos;
 import SRR.DTO.CategoriaDTO;
-import SRR.DTO.ReservaDTO;
 import SRR.Excepciones.RecursoException;
 
 import java.util.ArrayList;
@@ -96,20 +95,7 @@ public class RecursoLogica {
     }
 
     private boolean estaAsignadoAReservaActiva(String idRecurso) {
-
-        for (ReservaDTO reserva : reservaDatos.listar()) {
-            if (!"ACTIVA".equalsIgnoreCase(reserva.getEstado())) {
-                continue;
-            }
-
-            if (reserva.getIdsRecursos() != null
-                    && reserva.getIdsRecursos().contains(idRecurso)) {
-
-                return true;
-            }
-        }
-
-        return false;
+        return reservaDatos.recursoEnReservaActiva(idRecurso);
     }
 
     public List<RecursoDTO> buscarPorDescripcion(String texto) {

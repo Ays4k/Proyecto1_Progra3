@@ -7,64 +7,97 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ReservaDatos {
 
     // codigos de error de MySQL
-    private static final int ERROR_NULO = 1048;             // el funcionario no existe (la subconsulta devolvio NULL)
-    private static final int ERROR_LLAVE_INEXISTENTE = 1452; // el recurso no existe
-
-    // una reserva ocupa varias filas (una por recurso), por eso el LEFT JOIN;
-    // las demas consultas solo le agregan un WHERE
-    private static final String SELECT_RESERVAS =
-            "SELECT r.id, u.identificacion, r.descripcion, r.fecha, r.hora_inicio, r.hora_fin, "
-          + "r.estado, rr.id_recurso "
-          + "FROM reserva r "
-          + "JOIN usuario u ON u.id = r.id_usuario "
-          + "LEFT JOIN reserva_recurso rr ON rr.id_reserva = r.id ";
-    private static final String ORDEN = " ORDER BY r.id, rr.id_recurso";
-
-    public ReservaDatos() {
-    }
-
-    // ------------------------------------------------------------------ consultas
+    private static final int ERROR_FUNCIONARIO_INEXISTENTE = 1048; // la subconsulta de usuario devolvio NULL
+    private static final int ERROR_RECURSO_INEXISTENTE = 1452;     // llave foranea: el recurso no existe
 
     public List<ReservaDTO> listar() {
-        return consultar(SELECT_RESERVAS + ORDEN, "No se pudieron obtener las reservas");
+        List<ReservaDTO> lista = new ArrayList<>();
+        String sql = "SELECT r.id, u.identificacion, r.descripcion, r.fecha, r.hora_inicio, r.hora_fin, r.estado "
+                   + "FROM reserva r JOIN usuario u ON u.id = r.id_usuario ORDER BY r.id";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                lista.add(convertir(rs));
+            }
+            cargarRecursos(c, lista);
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron obtener las reservas", e);
+        }
+        return lista;
     }
 
     // devuelve la reserva con ese id, o null si no existe
     public ReservaDTO buscarPorId(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
         long idNumerico;
         try {
             idNumerico = Long.parseLong(id.trim());
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException e) {
             return null;   // un id que no es numero no puede existir
         }
-        List<ReservaDTO> lista = consultar(SELECT_RESERVAS + "WHERE r.id = ?" + ORDEN,
-                "No se pudo buscar la reserva", idNumerico);
-        return lista.isEmpty() ? null : lista.get(0);
+
+        String sql = "SELECT r.id, u.identificacion, r.descripcion, r.fecha, r.hora_inicio, r.hora_fin, r.estado "
+                   + "FROM reserva r JOIN usuario u ON u.id = r.id_usuario WHERE r.id = ?";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setLong(1, idNumerico);
+
+            List<ReservaDTO> lista = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(convertir(rs));
+                }
+            }
+            cargarRecursos(c, lista);
+            return lista.isEmpty() ? null : lista.get(0);
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudo buscar la reserva", e);
+        }
     }
 
     // reservas de un funcionario, por su cedula
     public List<ReservaDTO> listarPorFuncionario(String cedula) {
-        if (cedula == null) {
-            return new ArrayList<>();
+        List<ReservaDTO> lista = new ArrayList<>();
+        if (cedula == null || cedula.isBlank()) {
+            return lista;
         }
-        return consultar(SELECT_RESERVAS + "WHERE u.identificacion = ?" + ORDEN,
-                "No se pudieron obtener las reservas del funcionario", cedula);
+        String sql = "SELECT r.id, u.identificacion, r.descripcion, r.fecha, r.hora_inicio, r.hora_fin, r.estado "
+                   + "FROM reserva r JOIN usuario u ON u.id = r.id_usuario "
+                   + "WHERE u.identificacion = ? ORDER BY r.id";
+
+        try (Connection c = ConexionBD.obtenerConexion();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, cedula.trim());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(convertir(rs));
+                }
+            }
+            cargarRecursos(c, lista);
+        } catch (SQLException e) {
+            throw new RuntimeException("No se pudieron obtener las reservas del funcionario", e);
+        }
+        return lista;
     }
 
-    // true si el recurso esta en alguna reserva ACTIVA que se traslapa con el rango pedido
+    // true si el recurso esta en una reserva ACTIVA que se traslapa con ese rango
     public boolean recursoOcupado(String idRecurso, String fecha, String horaInicio, String horaFin) {
-        String sql = "SELECT 1 FROM reserva_recurso rr "
-                   + "JOIN reserva r ON r.id = rr.id_reserva "
+        String sql = "SELECT 1 FROM reserva_recurso rr JOIN reserva r ON r.id = rr.id_reserva "
                    + "WHERE rr.id_recurso = ? AND r.estado = 'ACTIVA' AND r.fecha = ? "
                    + "AND ? < r.hora_fin AND r.hora_inicio < ? LIMIT 1";
 
@@ -72,9 +105,9 @@ public class ReservaDatos {
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setLong(1, Long.parseLong(idRecurso));
-            ps.setObject(2, LocalDate.parse(fecha));
-            ps.setObject(3, LocalTime.parse(horaInicio));
-            ps.setObject(4, LocalTime.parse(horaFin));
+            ps.setString(2, fecha);
+            ps.setString(3, horaInicio);
+            ps.setString(4, horaFin);
 
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
@@ -86,8 +119,7 @@ public class ReservaDatos {
 
     // true si el recurso esta en alguna reserva ACTIVA, sin importar la fecha
     public boolean recursoEnReservaActiva(String idRecurso) {
-        String sql = "SELECT 1 FROM reserva_recurso rr "
-                   + "JOIN reserva r ON r.id = rr.id_reserva "
+        String sql = "SELECT 1 FROM reserva_recurso rr JOIN reserva r ON r.id = rr.id_reserva "
                    + "WHERE rr.id_recurso = ? AND r.estado = 'ACTIVA' LIMIT 1";
 
         try (Connection c = ConexionBD.obtenerConexion();
@@ -103,46 +135,35 @@ public class ReservaDatos {
         }
     }
 
-    private List<ReservaDTO> consultar(String sql, String mensajeError, Object... parametros) {
-        // LinkedHashMap: conserva el orden y junta las filas de una misma reserva
-        Map<Long, ReservaDTO> reservas = new LinkedHashMap<>();
+    // arma el DTO con los datos de la reserva; los recursos se cargan aparte
+    private ReservaDTO convertir(ResultSet rs) throws SQLException {
+        return new ReservaDTO(
+                String.valueOf(rs.getLong("id")),
+                rs.getString("identificacion"),
+                new ArrayList<>(),
+                rs.getString("descripcion"),
+                rs.getString("fecha"),                          // yyyy-MM-dd
+                rs.getString("hora_inicio").substring(0, 5),    // HH:mm:ss -> HH:mm
+                rs.getString("hora_fin").substring(0, 5),
+                rs.getString("estado"));
+    }
 
-        try (Connection c = ConexionBD.obtenerConexion();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+    // llena idsRecursos de cada reserva con una consulta a reserva_recurso
+    private void cargarRecursos(Connection c, List<ReservaDTO> reservas) throws SQLException {
+        String sql = "SELECT id_recurso FROM reserva_recurso WHERE id_reserva = ? ORDER BY id_recurso";
 
-            for (int i = 0; i < parametros.length; i++) {
-                ps.setObject(i + 1, parametros[i]);
-            }
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            for (ReservaDTO reserva : reservas) {
+                ps.setLong(1, Long.parseLong(reserva.getId()));
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    long id = rs.getLong("id");
-                    ReservaDTO reserva = reservas.get(id);
-                    if (reserva == null) {
-                        reserva = new ReservaDTO(
-                                String.valueOf(id),
-                                rs.getString("identificacion"),
-                                new ArrayList<>(),
-                                rs.getString("descripcion"),
-                                rs.getObject("fecha", LocalDate.class).toString(),          // yyyy-MM-dd
-                                rs.getObject("hora_inicio", LocalTime.class).toString(),    // HH:mm
-                                rs.getObject("hora_fin", LocalTime.class).toString(),
-                                rs.getString("estado"));
-                        reservas.put(id, reserva);
-                    }
-                    long idRecurso = rs.getLong("id_recurso");
-                    if (!rs.wasNull()) {   // LEFT JOIN: una reserva sin recursos trae NULL
-                        reserva.getIdsRecursos().add(String.valueOf(idRecurso));
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        reserva.getIdsRecursos().add(String.valueOf(rs.getLong("id_recurso")));
                     }
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(mensajeError, e);
         }
-        return new ArrayList<>(reservas.values());
     }
-
-    // ------------------------------------------------------------------ escritura
 
     // guarda la reserva y sus recursos en una transaccion: o se guarda todo o nada
     public void agregar(ReservaDTO reserva) {
@@ -155,9 +176,9 @@ public class ReservaDatos {
                 long idNuevo;
                 try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, reserva.getActividad());
-                    ps.setObject(2, LocalDate.parse(reserva.getFecha()));
-                    ps.setObject(3, LocalTime.parse(reserva.getHoraInicio()));
-                    ps.setObject(4, LocalTime.parse(reserva.getHoraFin()));
+                    ps.setString(2, reserva.getFecha());
+                    ps.setString(3, reserva.getHoraInicio());
+                    ps.setString(4, reserva.getHoraFin());
                     ps.setString(5, reserva.getIdFuncionario());
                     ps.setString(6, reserva.getEstado());
                     ps.executeUpdate();
@@ -179,7 +200,7 @@ public class ReservaDatos {
         }
     }
 
-    // actualiza la reserva y vuelve a escribir sus recursos, todo en una transaccion
+    // actualiza la reserva y vuelve a escribir sus recursos, en una transaccion
     public void modificar(ReservaDTO reserva) {
         String sql = "UPDATE reserva SET descripcion = ?, fecha = ?, hora_inicio = ?, hora_fin = ?, "
                    + "estado = ? WHERE id = ?";
@@ -191,9 +212,9 @@ public class ReservaDatos {
 
                 try (PreparedStatement ps = c.prepareStatement(sql)) {
                     ps.setString(1, reserva.getActividad());
-                    ps.setObject(2, LocalDate.parse(reserva.getFecha()));
-                    ps.setObject(3, LocalTime.parse(reserva.getHoraInicio()));
-                    ps.setObject(4, LocalTime.parse(reserva.getHoraFin()));
+                    ps.setString(2, reserva.getFecha());
+                    ps.setString(3, reserva.getHoraInicio());
+                    ps.setString(4, reserva.getHoraFin());
                     ps.setString(5, reserva.getEstado());
                     ps.setLong(6, id);
 
@@ -234,7 +255,7 @@ public class ReservaDatos {
         }
     }
 
-    // una fila en reserva_recurso por cada recurso, con la misma conexion de la transaccion
+    // una fila en reserva_recurso por recurso, con la misma conexion de la transaccion
     private void insertarRecursos(Connection c, long idReserva, List<String> idsRecursos) throws SQLException {
         if (idsRecursos == null || idsRecursos.isEmpty()) {
             return;
@@ -245,17 +266,16 @@ public class ReservaDatos {
             for (String idRecurso : idsRecursos) {
                 ps.setLong(1, idReserva);
                 ps.setLong(2, Long.parseLong(idRecurso));
-                ps.addBatch();
+                ps.executeUpdate();
             }
-            ps.executeBatch();
         }
     }
 
     private RuntimeException traducir(SQLException e, String mensaje) {
-        if (e.getErrorCode() == ERROR_NULO) {
+        if (e.getErrorCode() == ERROR_FUNCIONARIO_INEXISTENTE) {
             return new IllegalArgumentException("El funcionario de la reserva no existe.");
         }
-        if (e.getErrorCode() == ERROR_LLAVE_INEXISTENTE) {
+        if (e.getErrorCode() == ERROR_RECURSO_INEXISTENTE) {
             return new IllegalArgumentException("Alguno de los recursos de la reserva no existe.");
         }
         return new RuntimeException(mensaje, e);

@@ -44,7 +44,11 @@ public class CalendarizacionController {
     @FXML
     public void initialize() {
         dpFecha.setValue(LocalDate.now());
-        cargarCategorias();
+        try {
+            cargarCategorias();
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudieron cargar las categorías: " + e.getMessage());
+        }
     }
 
     private void cargarCategorias() {
@@ -70,6 +74,14 @@ public class CalendarizacionController {
 
     @FXML
     public void handleCargar(ActionEvent event) {
+        try {
+            cargarCalendario();
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudo cargar la calendarización: " + e.getMessage());
+        }
+    }
+
+    private void cargarCalendario() {
         LocalDate fecha = dpFecha.getValue();
         CategoriaDTO categoria = cbCategoria.getValue();
 

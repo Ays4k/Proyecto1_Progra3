@@ -66,6 +66,14 @@ public class ActividadesController {
 
     @FXML
     public void handleCargar(ActionEvent event) {
+        try {
+            cargarSemana();
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudieron cargar las actividades: " + e.getMessage());
+        }
+    }
+
+    private void cargarSemana() {
         LocalDate fechaRef = dpFechaReferencia.getValue();
         if (fechaRef == null) {
             Avisos.advertencia("Seleccione una fecha de referencia.");

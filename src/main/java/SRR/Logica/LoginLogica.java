@@ -12,9 +12,6 @@ public class LoginLogica {
         this.datos = new UsuarioDatos();
     }
 
-    public LoginLogica(String rutaTemporal){
-        this.datos = new UsuarioDatos();
-    }
 
    //devuelve el usuario sin contrasena si las credenciales son validas, devuelve null si no.
     public UsuarioDTO iniciarSesion(LoginDTO login) {

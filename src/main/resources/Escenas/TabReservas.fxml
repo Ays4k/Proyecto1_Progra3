@@ -53,10 +53,10 @@
       <TableView fx:id="tableRes" layoutX="14.0" layoutY="378.0" prefHeight="95.0" prefWidth="771.0">
          <columns>
             <TableColumn fx:id="idColum" prefWidth="112.0" text="ID" />
-            <TableColumn fx:id="actColum" prefWidth="174.0" text="Actividad" />
-            <TableColumn fx:id="fchColum" prefWidth="105.0" text="Fecha" />
-            <TableColumn fx:id="horColum" prefWidth="124.0" text="Horario" />
-            <TableColumn fx:id="recColum" prefWidth="130.0" text="Recursos" />
+            <TableColumn fx:id="actColum" prefWidth="147.0" text="Actividad" />
+            <TableColumn fx:id="fchColum" prefWidth="119.0" text="Fecha" />
+            <TableColumn fx:id="horColum" prefWidth="119.0" text="Horario" />
+            <TableColumn fx:id="recColum" prefWidth="148.0" text="Recursos" />
             <TableColumn fx:id="estColum" prefWidth="125.0" text="Estado" />
          </columns>
       </TableView>

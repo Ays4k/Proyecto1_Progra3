@@ -11,9 +11,6 @@ public class LoginServicio {
     public LoginServicio(){
         this.loginLogica = new LoginLogica();
     }
-    public LoginServicio(String rutaTemporal){
-        this.loginLogica = new LoginLogica(rutaTemporal);
-    }
 
     public UsuarioDTO iniciarSesion(LoginDTO login) {
         return loginLogica.iniciarSesion(login);

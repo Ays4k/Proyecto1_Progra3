@@ -17,6 +17,10 @@ public class RecursoServicio {
 
     public void eliminarRecurso(String id) { logica.eliminarRecurso(id); }
 
+    public RecursoDTO buscarPorId(String id) {
+        return logica.buscarPorId(id);
+    }
+
     public List<RecursoDTO> buscarPorDescripcion(String descripcion) {
         return logica.buscarPorDescripcion(descripcion);
     }

@@ -15,9 +15,6 @@ public class UsuarioLogica {
         this.datos = new UsuarioDatos();
     }
 
-    public UsuarioLogica(String rutaTemporal){
-        this.datos = new UsuarioDatos();
-    }
 
     // la identificacion es la cedula: solo numeros (se ajusta aqui si cambia el formato)
     private static final String FORMATO_IDENTIFICACION = "\\d{9,12}";

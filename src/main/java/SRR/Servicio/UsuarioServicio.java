@@ -13,9 +13,6 @@ public class UsuarioServicio {
         this.usuarioLogica = new UsuarioLogica();
     }
 
-    public UsuarioServicio(String rutaTemporal){
-        this.usuarioLogica = new UsuarioLogica(rutaTemporal);
-    }
 
     public List<UsuarioDTO> obtenerUsuarios() {
         return usuarioLogica.obtenerUsuarios();

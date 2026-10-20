@@ -1,9 +1,11 @@
 package SRR.Controlador;
 
 import SRR.DTO.CategoriaDTO;
+import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
 import SRR.Servicio.CategoriaServicio;
+import SRR.Servicio.RecursoServicio;
 import SRR.Servicio.ReservaServicio;
 import SRR.Utilidades.Sesion;
 import javafx.application.Platform;
@@ -35,6 +37,7 @@ public class ReservasController {
     @FXML DatePicker date;
 
     private CategoriaServicio categoriaServicio = new CategoriaServicio();
+    private final RecursoServicio recursoServicio = new RecursoServicio();
 
     private ObservableList<CategoriaDTO> listaCategorias;
 
@@ -85,8 +88,7 @@ public class ReservasController {
         horColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
                 dato.getValue().getHoraInicio() + " - " + dato.getValue().getHoraFin()));
         recColum.setCellValueFactory(dato -> new javafx.beans.property.SimpleStringProperty(
-                dato.getValue().getIdsRecursos() == null ? ""
-                        : String.join(", ", dato.getValue().getIdsRecursos())));
+                nombresDe(dato.getValue().getIdsRecursos(), "\n")));
         estColum.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
         // Centrar texto de las columnas
@@ -97,21 +99,13 @@ public class ReservasController {
         recColum.setStyle("-fx-alignment: CENTER;");
         estColum.setStyle("-fx-alignment: CENTER;");
 
-        // Ajustar alto de filas cuando cambien los ítems, la lista o la altura de la tabla
-        tableRes.heightProperty().addListener((obs, oldH, newH) -> ajustarAltoFilas(tableRes, tableRes.getItems()));
-        tableRes.itemsProperty().addListener((obs, oldList, newList) -> {
-            if (newList != null) {
-                ajustarAltoFilas(tableRes, newList);
-                newList.addListener((javafx.collections.ListChangeListener.Change<? extends ReservaDTO> c) ->
-                        ajustarAltoFilas(tableRes, newList)
-                );
-            }
-        });
+        // sin alto fijo de fila: asi cada fila crece segun cuantos recursos tenga
 
         try{
             resList = FXCollections.observableList(servicio.reservasActivasDe(Sesion.getId()));
-        }catch (Exception e){
-            Avisos.error("No se pudieron cargar sus reservas.");
+        }catch (RuntimeException e){
+            resList = FXCollections.observableArrayList();
+            Avisos.error("No se pudieron cargar sus reservas: " + e.getMessage());
         }
         tableRes.setItems(resList);
 
@@ -358,6 +352,19 @@ public class ReservasController {
         peticion.start();
 
     }
+    // devuelve los nombres de los recursos separados por "separador"
+    private String nombresDe(List<String> ids, String separador) {
+        if (ids == null) {
+            return "";
+        }
+        List<String> nombres = new ArrayList<>();
+        for (String id : ids) {
+            RecursoDTO recurso = recursoServicio.buscarPorId(id);
+            nombres.add(recurso == null ? id : recurso.getDescripcion());   // si no existe, deja el id
+        }
+        return String.join("\n ", nombres);
+    }
+
     private void cancelar(){
         ReservaDTO res = tableRes.getSelectionModel().getSelectedItem();
         if (res == null) {
@@ -368,7 +375,7 @@ public class ReservasController {
             servicio.cancelarReserva(res.getId());
             resList.remove(res);
             Avisos.info("Reserva cancelada correctamente.");
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             Avisos.error(e.getMessage());
         }
     }
@@ -403,28 +410,6 @@ public class ReservasController {
         listCategoria.getSelectionModel().clearSelection();
     }
 
-    private <T> void ajustarAltoFilas(TableView<T> tabla, ObservableList<T> lista) {
-        tabla.fixedCellSizeProperty().unbind();
-
-        if (lista == null || lista.isEmpty()) {
-            tabla.setFixedCellSize(-1);
-            return;
-        }
-
-        double alturaEstandar = 25.0;
-        double altoEncabezado = 29.0;
-        double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
-        double altoCalculado = altoDisponible / lista.size();
-
-        if (altoCalculado >= alturaEstandar) {
-            tabla.fixedCellSizeProperty().bind(
-                    tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
-            );
-        } else {
-            tabla.setFixedCellSize(alturaEstandar);
-        }
-    }
-
     @FXML
     public void handleImprimir(ActionEvent event) {
         List<ReservaDTO> visibles = tableRes.getItems();
@@ -442,8 +427,7 @@ public class ReservasController {
         List<String[]> filas = new ArrayList<>();
         for (ReservaDTO reserva : visibles) {
             String horario = reserva.getHoraInicio() + " - " + reserva.getHoraFin();
-            String recursos = reserva.getIdsRecursos() == null
-                    ? "" : String.join(", ", reserva.getIdsRecursos());
+            String recursos = nombresDe(reserva.getIdsRecursos(), ", ");
             filas.add(new String[]{reserva.getId(), reserva.getActividad(),
                     reserva.getFecha(), horario, recursos, reserva.getEstado()});
         }

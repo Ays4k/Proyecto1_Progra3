@@ -37,25 +37,11 @@ public class ReservaLogica {
     }
 
     public ReservaDTO buscarPorId(String id) {
-        for (ReservaDTO reserva : datos.listar()) {
-            if (reserva.getId().equals(id)) {
-                return reserva;
-            }
-        }
-        return null;
+        return datos.buscarPorId(id);
     }
 
     public List<ReservaDTO> buscarPorFuncionario(String idFuncionario) {
-        List<ReservaDTO> resultado = new ArrayList<>();
-        if (idFuncionario == null) {
-            return resultado;
-        }
-        for (ReservaDTO reserva : datos.listar()) {
-            if (idFuncionario.equalsIgnoreCase(reserva.getIdFuncionario())) {
-                resultado.add(reserva);
-            }
-        }
-        return resultado;
+        return datos.listarPorFuncionario(idFuncionario);
     }
 
      //Un recurso esta libre si ninguna reserva ACTIVA lo usa en esa fecha
@@ -63,47 +49,11 @@ public class ReservaLogica {
 
     public boolean estaDisponible(String idRecurso, String fecha,
                                   String horaInicio, String horaFin) {
-        LocalTime inicioPedido = LocalTime.parse(horaInicio);
-        LocalTime finPedido = LocalTime.parse(horaFin);
-
-        for (ReservaDTO reserva : datos.listar()) {
-            if (!"ACTIVA".equalsIgnoreCase(reserva.getEstado())) {
-                continue;
-            }
-            if (!fecha.equals(reserva.getFecha())) {
-                continue;
-            }
-            if (reserva.getIdsRecursos() == null
-                    || !reserva.getIdsRecursos().contains(idRecurso)) {
-                continue;
-            }
-
-            LocalTime inicioExistente = LocalTime.parse(reserva.getHoraInicio());
-            LocalTime finExistente = LocalTime.parse(reserva.getHoraFin());
-
-            // se traslapan si cada uno empieza antes de que el otro termine
-            if (inicioPedido.isBefore(finExistente) && inicioExistente.isBefore(finPedido)) {
-                return false;
-            }
-        }
-        return true;
+        return !datos.recursoOcupado(idRecurso, fecha, horaInicio, horaFin);
     }
 
     public boolean estaDisponible(String idRecurso) {
-        for (ReservaDTO reserva : datos.listar()) {
-            if (!"ACTIVA".equalsIgnoreCase(reserva.getEstado())) {
-                continue;
-            }
-            if (reserva.getIdsRecursos() == null) {
-                continue;
-            }
-            for (String usados : reserva.getIdsRecursos()) {
-                if (usados.equals(idRecurso)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return !datos.recursoEnReservaActiva(idRecurso);
     }
 
     public List<RecursoDTO> recursosDisponibles(String idCategoria, String fecha,
@@ -140,7 +90,7 @@ public class ReservaLogica {
             throw new CategoriasNoDisponiblesException(sinCupo);
         }
 
-        ReservaDTO reserva = new ReservaDTO(generarId(), idFuncionario, recursosAsignados,
+        ReservaDTO reserva = new ReservaDTO(null, idFuncionario, recursosAsignados,
                 actividad, fecha, horaInicio, horaFin, "ACTIVA");
         datos.agregar(reserva);
         return reserva;
@@ -178,13 +128,10 @@ public class ReservaLogica {
         }
     }
 
-    public List<ReservaDTO> reservasDe(String idFuncionario) {
-        return buscarPorFuncionario(idFuncionario);
-    }
 
     public List<ReservaDTO> reservasActivasDe(String idFuncionario){
         List<ReservaDTO> activas = new ArrayList<ReservaDTO>();
-        for(ReservaDTO x : reservasDe(idFuncionario)){
+        for(ReservaDTO x : buscarPorFuncionario(idFuncionario)){
             if(x.getEstado().equals("ACTIVA")){
                 activas.add(x);
             }
@@ -283,21 +230,6 @@ public class ReservaLogica {
     private String descripcionCategoria(String idCategoria) {
         CategoriaDTO categoria = categoriaLogica.buscarPorId(idCategoria);
         return categoria == null ? idCategoria : categoria.getDescripcion();
-    }
-
-    private String generarId() {
-        int mayor = 0;
-        for (ReservaDTO reserva : datos.listar()) {
-            String id = reserva.getId();
-            if (id != null && id.startsWith("RES-")) {
-                try {
-                    mayor = Math.max(mayor, Integer.parseInt(id.substring(4)));
-                } catch (NumberFormatException e) {
-                    // formato distinto, se ignora
-                }
-            }
-        }
-        return String.format("RES-%06d", mayor + 1);
     }
 
     public List<ReservaDTO> obtenerTodasLasReservas() {

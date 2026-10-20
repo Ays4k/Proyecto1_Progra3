@@ -96,6 +96,14 @@ public class EstadisticasController {
 
     @FXML
     public void handleCargarRecursos(ActionEvent event) {
+        try {
+            cargarEstadisticaRecursos();
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudieron cargar las estadísticas: " + e.getMessage());
+        }
+    }
+
+    private void cargarEstadisticaRecursos() {
         LocalDate desde = dpDesdeRecursos.getValue();
         LocalDate hasta = dpHastaRecursos.getValue();
 
@@ -114,6 +122,14 @@ public class EstadisticasController {
 
     @FXML
     public void handleCargarActividades(ActionEvent event) {
+        try {
+            cargarEstadisticaActividades();
+        } catch (RuntimeException e) {
+            Avisos.error("No se pudieron cargar las estadísticas: " + e.getMessage());
+        }
+    }
+
+    private void cargarEstadisticaActividades() {
         LocalDate desde = dpDesdeActividades.getValue();
         LocalDate hasta = dpHastaActividades.getValue();
 
