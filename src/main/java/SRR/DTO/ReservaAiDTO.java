@@ -1,9 +1,12 @@
 package SRR.DTO;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class ReservaAiDTO {
+public class ReservaAiDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String actividad;
     private LocalDate fecha;
