@@ -42,7 +42,6 @@ public class UsuarioDatos {
         return listaUsuarios;
     }
 
-    // devuelve el usuario (sin contrasena) con esa identificacion, o null si no existe
     public UsuarioDTO buscarPorId(String id) {
         if (id == null || id.isBlank()) {
             return null;
@@ -124,13 +123,6 @@ public class UsuarioDatos {
             ps.setString(5,funcionario.getRol());
 
             ps.executeUpdate();
-            /*
-            try (ResultSet claves = ps.getGeneratedKeys()) {
-                if (claves.next()) {
-                    funcionario.setId(String.valueOf(claves.getLong(1)));
-                }
-            }
-            */
 
         }catch (SQLException e){
             throw new RuntimeException("No se pudo agregar el usuario", e);

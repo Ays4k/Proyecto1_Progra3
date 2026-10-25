@@ -12,8 +12,8 @@ public final class Protocolo {
 
     // ---------- Puertos ----------
     public static final String HOST_POR_DEFECTO = "localhost";
-    public static final int PUERTO_PETICIONES = 5000;
-    public static final int PUERTO_NOTIFICACIONES = 5001;
+    public static final int PUERTO_PETICIONES = 6767;
+    public static final int PUERTO_NOTIFICACIONES = 7676;
 
     // ---------- Login ----------
     /** params: (LoginDTO login) -> UsuarioDTO */
