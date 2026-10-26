@@ -3,9 +3,9 @@ package SRR.Controlador;
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Servicio.CategoriaServicio;
-import SRR.Servicio.RecursoServicio;
-import SRR.Servicio.ReservaServicio;
+import SRR.Proxy.CategoriaProxy;
+import SRR.Proxy.RecursoProxy;
+import SRR.Proxy.ReservaProxy;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -68,9 +68,9 @@ public class EstadisticasController {
     //se guarda para exportar al PDF
     private JFreeChart graficoActividades;
 
-    private final ReservaServicio reservaServicio = new ReservaServicio();
-    private final RecursoServicio recursoServicio = new RecursoServicio();
-    private final CategoriaServicio categoriaServicio = new CategoriaServicio();
+    private final ReservaProxy reservaServicio = new ReservaProxy();
+    private final RecursoProxy recursoServicio = new RecursoProxy();
+    private final CategoriaProxy categoriaServicio = new CategoriaProxy();
 
     @FXML
     public void initialize() {
