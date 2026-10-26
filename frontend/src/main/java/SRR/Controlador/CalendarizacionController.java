@@ -3,10 +3,10 @@ package SRR.Controlador;
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Servicio.CategoriaServicio;
-import SRR.Servicio.RecursoServicio;
-import SRR.Servicio.ReservaServicio;
-import SRR.Servicio.UsuarioServicio;
+import SRR.Proxy.CategoriaProxy;
+import SRR.Proxy.RecursoProxy;
+import SRR.Proxy.ReservaProxy;
+import SRR.Proxy.UsuarioProxy;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -34,10 +34,10 @@ public class CalendarizacionController {
     @FXML private Button btnImprimir;
     @FXML private TableView<Map<String, String>> tblCalendarizacion;
 
-    private final CategoriaServicio categoriaServicio = new CategoriaServicio();
-    private final RecursoServicio recursoServicio = new RecursoServicio();
-    private final ReservaServicio reservaServicio = new ReservaServicio();
-    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
+    private final CategoriaProxy categoriaServicio = new CategoriaProxy();
+    private final RecursoProxy recursoServicio = new RecursoProxy();
+    private final ReservaProxy reservaServicio = new ReservaProxy();
+    private final UsuarioProxy usuarioServicio = new UsuarioProxy();
 
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
