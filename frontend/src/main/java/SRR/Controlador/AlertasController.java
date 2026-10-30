@@ -3,8 +3,6 @@ package SRR.Controlador;
 import SRR.DTO.AlertaReservaDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -26,6 +24,8 @@ import javafx.geometry.VPos;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 
+import SRR.Modelo.ListaAlertas;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -38,19 +38,19 @@ public class AlertasController {
     @FXML private TableColumn<AlertaReservaDTO, Void> colDescartar;
 
     // La lista que la tabla muestra. Si se agrega o quita algo aquí, la tabla se actualiza sola.
-    private final ObservableList<AlertaReservaDTO> alertas = FXCollections.observableArrayList();
+    private final ListaAlertas listaAlertas = new ListaAlertas();
 
     // El hilo que escucha al servidor de alertas (uno por sesión)
     private ClienteNotificaciones clienteNotificaciones;
 
     @FXML
     public void initialize() {
-        tablaAlertas.setItems(alertas);
+        tablaAlertas.setItems(listaAlertas.getAlertas());
         tablaAlertas.setPlaceholder(new Label("No hay alertas"));
 
         // Texto de la primera columna: "Encargado - Actividad"
         colActividad.setCellValueFactory(celda -> new SimpleStringProperty(
-                celda.getValue().getEncargado() + " - " + celda.getValue().getActividad()));
+                ListaAlertas.resumen(celda.getValue())));
 
         // Las otras dos columnas llevan un botón en cada fila
         colVer.setCellFactory(columna -> crearCeldaConBoton("Ver", "", this::verAlerta));
@@ -63,7 +63,7 @@ public class AlertasController {
     // Agrega una alerta a la lista. Se puede llamar desde cualquier hilo:
     // Platform.runLater hace que el cambio ocurra en el hilo de la pantalla.
     public void agregarAlerta(AlertaReservaDTO alerta) {
-        Platform.runLater(() -> alertas.add(alerta));
+        Platform.runLater(() -> listaAlertas.agregar(alerta));
     }
 
     // Crea una celda que muestra un botón y, al pulsarlo, ejecuta la acción sobre la alerta de esa fila
@@ -135,7 +135,7 @@ public class AlertasController {
 
         Optional<ButtonType> respuesta = confirmacion.showAndWait();
         if (respuesta.isPresent() && respuesta.get() == ButtonType.YES) {
-            alertas.remove(alerta);
+            listaAlertas.descartar(alerta);
         }
     }
 
