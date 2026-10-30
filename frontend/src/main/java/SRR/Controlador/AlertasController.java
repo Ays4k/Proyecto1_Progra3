@@ -14,6 +14,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -59,6 +65,8 @@ public class AlertasController {
 
             {
                 boton.setStyle("-fx-padding: 2 6 2 6; " + estilo);
+                boton.setPrefWidth(36);        // los dos botones miden lo mismo
+                setAlignment(Pos.CENTER);      // centra el botón dentro de la celda
                 boton.setOnAction(e -> accion.accept(getTableView().getItems().get(getIndex())));
             }
 
@@ -72,22 +80,41 @@ public class AlertasController {
 
     // "Ver": ventana emergente con el detalle de la alerta
     private void verAlerta(AlertaReservaDTO alerta) {
-        StringBuilder detalle = new StringBuilder();
-        detalle.append("Encargado: ").append(alerta.getEncargado()).append("\n");
-        detalle.append("Fecha: ").append(alerta.getFecha()).append("\n");
-        detalle.append("Desde: ").append(alerta.getHoraInicio()).append("\n");
-        detalle.append("Hasta: ").append(alerta.getHoraFin()).append("\n");
-        detalle.append("Recursos:\n");
-        if (alerta.getNombresRecursos() != null) {
-            for (String recurso : alerta.getNombresRecursos()) {
-                detalle.append("   - ").append(recurso).append("\n");
-            }
-        }
+        GridPane datos = new GridPane();
+        datos.setHgap(12);
+        datos.setVgap(8);
+        datos.setPadding(new Insets(10, 10, 5, 10));
 
-        Alert ventana = new Alert(Alert.AlertType.INFORMATION, detalle.toString());
-        ventana.setTitle(alerta.getActividad());
-        ventana.setHeaderText(null);
+        agregarFila(datos, 0, "Encargado:", alerta.getEncargado());
+        agregarFila(datos, 1, "Fecha:", alerta.getFecha());
+        agregarFila(datos, 2, "Desde:", alerta.getHoraInicio());
+        agregarFila(datos, 3, "Hasta:", alerta.getHoraFin());
+
+        Label etiquetaRecursos = new Label("Recursos:");
+        etiquetaRecursos.setStyle("-fx-font-weight: bold;");
+        ListView<String> listaRecursos = new ListView<>();
+        if (alerta.getNombresRecursos() != null) {
+            listaRecursos.getItems().addAll(alerta.getNombresRecursos());
+        }
+        listaRecursos.setPrefSize(260, 90);
+        datos.add(etiquetaRecursos, 0, 4);
+        datos.add(listaRecursos, 1, 4);
+        GridPane.setValignment(etiquetaRecursos, VPos.TOP);
+
+        Alert ventana = new Alert(Alert.AlertType.INFORMATION);
+        ventana.setTitle("Detalle de la reserva");
+        ventana.setHeaderText(alerta.getActividad());
+        ventana.setGraphic(null);
+        ventana.getDialogPane().setContent(datos);
         ventana.showAndWait();
+    }
+
+    // Agrega una fila "campo: valor" a la ventana de detalle
+    private void agregarFila(GridPane tabla, int fila, String titulo, String valor) {
+        Label etiqueta = new Label(titulo);
+        etiqueta.setStyle("-fx-font-weight: bold;");
+        tabla.add(etiqueta, 0, fila);
+        tabla.add(new Label(valor), 1, fila);
     }
 
     // "Descartar": pregunta y, si dice que sí, quita la alerta SOLO de esta lista (no se avisa al servidor)
