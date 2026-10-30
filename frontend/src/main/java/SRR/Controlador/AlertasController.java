@@ -14,6 +14,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import SRR.Comunicacion.ClienteNotificaciones;
+import SRR.Comunicacion.Conexion;
+import SRR.DTO.Protocolo;
+import SRR.Utilidades.Avisos;
+import SRR.Utilidades.Sesion;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -34,6 +40,9 @@ public class AlertasController {
     // La lista que la tabla muestra. Si se agrega o quita algo aquí, la tabla se actualiza sola.
     private final ObservableList<AlertaReservaDTO> alertas = FXCollections.observableArrayList();
 
+    // El hilo que escucha al servidor de alertas (uno por sesión)
+    private ClienteNotificaciones clienteNotificaciones;
+
     @FXML
     public void initialize() {
         tablaAlertas.setItems(alertas);
@@ -48,7 +57,7 @@ public class AlertasController {
         colDescartar.setCellFactory(columna -> crearCeldaConBoton("X",
                 "-fx-text-fill: red; -fx-font-weight: bold;", this::descartarAlerta));
 
-        cargarAlertasDePrueba();   // TEMPORAL: se borra cuando conectemos con el servidor real
+        iniciarEscucha();
     }
 
     // Agrega una alerta a la lista. Se puede llamar desde cualquier hilo:
@@ -130,16 +139,22 @@ public class AlertasController {
         }
     }
 
-    // TEMPORAL: alertas falsas para probar el panel
-    private void cargarAlertasDePrueba() {
-        agregarAlerta(new AlertaReservaDTO("RES-000101", "Juan Mora", "Reunion clientes",
-                "2026-10-31", "08:00", "10:00",
-                List.of("Sala de reuniones - Piso 1", "Laptop Dell Latitude #1")));
-        agregarAlerta(new AlertaReservaDTO("RES-000102", "Pedro Arias", "Capacitacion",
-                "2026-11-02", "13:00", "16:00",
-                List.of("Proyector Epson #1")));
-        agregarAlerta(new AlertaReservaDTO("RES-000103", "Ana Lopez", "Coordinacion viaje",
-                "2026-11-03", "09:00", "11:00",
-                List.of("Vehículo Toyota Corolla")));
+    // Abre la conexión con el servidor de alertas y empieza a escuchar
+    private void iniciarEscucha() {
+        clienteNotificaciones = new ClienteNotificaciones(
+                Conexion.getInstance().getHost(),
+                Protocolo.PUERTO_NOTIFICACIONES,
+                Sesion.getId(),
+                this::agregarAlerta,
+                mensaje -> Platform.runLater(() -> Avisos.advertencia(mensaje)));
+        clienteNotificaciones.iniciar();
+    }
+
+    // Se llama al cerrar sesión: apaga el hilo y cierra su conexión
+    public void detenerEscucha() {
+        if (clienteNotificaciones != null) {
+            clienteNotificaciones.detener();
+            clienteNotificaciones = null;
+        }
     }
 }
