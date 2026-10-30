@@ -1,4 +1,4 @@
-package SRR.Modelo;
+package SRR.Alertas;
 
 import SRR.DTO.AlertaReservaDTO;
 import org.junit.jupiter.api.BeforeEach;
