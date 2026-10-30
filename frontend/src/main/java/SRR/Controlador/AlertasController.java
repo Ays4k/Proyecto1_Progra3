@@ -24,9 +24,8 @@ import javafx.geometry.VPos;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 
-import SRR.Modelo.ListaAlertas;
+import SRR.Alertas.ListaAlertas;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
