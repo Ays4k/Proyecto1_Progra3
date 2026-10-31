@@ -1,9 +1,6 @@
 package SRR.Logica;
 
-import SRR.DTO.CategoriaDTO;
-import SRR.DTO.RecursoDTO;
-import SRR.DTO.ReservaAiDTO;
-import SRR.DTO.ReservaDTO;
+import SRR.DTO.*;
 import SRR.Datos.ReservaDatos;
 import SRR.Excepciones.CategoriasNoDisponiblesException;
 
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ReservaLogica {
 
@@ -22,8 +20,8 @@ public class ReservaLogica {
     private final CategoriaLogica categoriaLogica = new CategoriaLogica();
     private  GeminiService ai;
     private boolean funcionalidadai;
-
-    public ReservaLogica(){
+    private final NotificacionLogica notificaciones;
+    public ReservaLogica(Consumer<AlertaReservaDTO> obs){
         try {
             this.ai = new GeminiService();
             funcionalidadai = true;
@@ -31,11 +29,10 @@ public class ReservaLogica {
             this.ai = null;
             funcionalidadai = false;
         }
-
+        notificaciones = new NotificacionLogica(obs);
         datos = new ReservaDatos();
         recursoLogica = new RecursoLogica();
     }
-
     public ReservaDTO buscarPorId(String id) {
         return datos.buscarPorId(id);
     }
@@ -44,8 +41,6 @@ public class ReservaLogica {
         return datos.listarPorFuncionario(idFuncionario);
     }
 
-     //Un recurso esta libre si ninguna reserva ACTIVA lo usa en esa fecha
-     // dentro de un rango que se traslape con el pedido.
 
     public boolean estaDisponible(String idRecurso, String fecha,
                                   String horaInicio, String horaFin) {
@@ -76,13 +71,12 @@ public class ReservaLogica {
         List<String> recursosAsignados = new ArrayList<>();
         List<String> sinCupo = new ArrayList<>();
 
-        // LinkedHashSet elimina categorias repetidas y conserva el orden
         for (String idCategoria : new LinkedHashSet<>(idsCategorias)) {
             List<RecursoDTO> libres = recursosDisponibles(idCategoria, fecha, horaInicio, horaFin);
             if (libres.isEmpty()) {
                 sinCupo.add(descripcionCategoria(idCategoria));
             } else {
-                recursosAsignados.add(libres.get(0).getId());   // el primero disponible
+                recursosAsignados.add(libres.get(0).getId());
             }
         }
 
@@ -93,6 +87,8 @@ public class ReservaLogica {
         ReservaDTO reserva = new ReservaDTO(null, idFuncionario, recursosAsignados,
                 actividad, fecha, horaInicio, horaFin, "ACTIVA");
         datos.agregar(reserva);
+        notificaciones.notificar(reserva);
+
         return reserva;
     }
 
@@ -211,7 +207,6 @@ public class ReservaLogica {
             );
         }
 
-        // Conservar solamente si 08:00-17:00 fue una regla confirmada.
         if (inicio.isBefore(LocalTime.of(8, 0))
                 || fin.isAfter(LocalTime.of(17, 0))) {
 

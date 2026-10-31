@@ -13,9 +13,8 @@ import java.util.List;
 
 public class RecursoDatos {
 
-    // codigos de error de MySQL
-    private static final int ERROR_CATEGORIA_INEXISTENTE = 1452; // llave foranea: la categoria no existe
-    private static final int ERROR_RECURSO_EN_USO = 1451;        // llave foranea: el recurso esta en una reserva
+    private static final int ERROR_CATEGORIA_INEXISTENTE = 1452;
+    private static final int ERROR_RECURSO_EN_USO = 1451;
 
     public List<RecursoDTO> listar() {
         List<RecursoDTO> lista = new ArrayList<>();
@@ -34,7 +33,6 @@ public class RecursoDatos {
         return lista;
     }
 
-    // devuelve el recurso con ese id, o null si no existe
     public RecursoDTO buscarPorId(String id) {
         if (id == null || id.isBlank()) {
             return null;
@@ -43,7 +41,7 @@ public class RecursoDatos {
         try {
             idNumerico = Long.parseLong(id.trim());
         } catch (NumberFormatException e) {
-            return null;   // un id que no es numero no puede existir
+            return null;
         }
 
         String sql = "SELECT id, descripcion, id_categoria FROM recurso WHERE id = ?";
@@ -65,8 +63,6 @@ public class RecursoDatos {
         return filtrar(idCategoria, null);
     }
 
-    // idCategoria o descripcion vacios (o null) significan "sin filtro"
-    // la descripcion se busca como texto contenido, sin distinguir mayusculas
     public List<RecursoDTO> filtrar(String idCategoria, String descripcion) {
         StringBuilder sql = new StringBuilder(
                 "SELECT id, descripcion, id_categoria FROM recurso WHERE 1 = 1");
@@ -76,7 +72,7 @@ public class RecursoDatos {
             try {
                 parametros.add(Long.parseLong(idCategoria.trim()));
             } catch (NumberFormatException e) {
-                return new ArrayList<>();   // una categoria que no es numero no tiene recursos
+                return new ArrayList<>();
             }
             sql.append(" AND id_categoria = ?");
         }
@@ -113,7 +109,6 @@ public class RecursoDatos {
                 rs.getString("id_categoria"));
     }
 
-    // para que % y _ escritos por el usuario se busquen como texto normal
     private String escaparLike(String texto) {
         return texto.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
@@ -130,7 +125,7 @@ public class RecursoDatos {
 
             try (ResultSet claves = ps.getGeneratedKeys()) {
                 if (claves.next()) {
-                    recurso.setId(String.valueOf(claves.getLong(1)));   // id que genero la base
+                    recurso.setId(String.valueOf(claves.getLong(1)));
                 }
             }
         } catch (SQLException e) {

@@ -1,5 +1,6 @@
 package SRR.Servicio;
 
+import SRR.DTO.AlertaReservaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
@@ -7,10 +8,15 @@ import SRR.Excepciones.CategoriasNoDisponiblesException;
 import SRR.Logica.ReservaLogica;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ReservaServicio {
 
-    private final ReservaLogica reservaLogica = new ReservaLogica();
+    private final ReservaLogica reservaLogica;
+    public ReservaServicio(Consumer<AlertaReservaDTO> obs){
+        reservaLogica = new ReservaLogica(obs);
+    }
+
 
     public ReservaDTO crearReserva(String idFuncionario, String actividad, String fecha,
                                    String horaInicio, String horaFin,

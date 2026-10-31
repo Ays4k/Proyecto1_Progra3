@@ -13,9 +13,8 @@ import java.util.List;
 
 public class CategoriaDatos {
 
-    // codigos de error de MySQL
-    private static final int ERROR_DUPLICADO = 1062;        // UNIQUE: la descripcion ya existe
-    private static final int ERROR_CATEGORIA_EN_USO = 1451; // llave foranea: tiene recursos asociados
+    private static final int ERROR_DUPLICADO = 1062;
+    private static final int ERROR_CATEGORIA_EN_USO = 1451;
 
     public CategoriaDatos() {
     }
@@ -37,7 +36,6 @@ public class CategoriaDatos {
         return lista;
     }
 
-    // devuelve la categoria con ese id, o null si no existe
     public CategoriaDTO buscarPorId(String id) {
         if (id == null || id.isBlank()) {
             return null;
@@ -46,7 +44,7 @@ public class CategoriaDatos {
         try {
             idNumerico = Long.parseLong(id.trim());
         } catch (NumberFormatException e) {
-            return null;   // un id que no es numero no puede existir
+            return null;
         }
 
         String sql = "SELECT id, descripcion FROM categoria WHERE id = ?";
@@ -64,7 +62,6 @@ public class CategoriaDatos {
         }
     }
 
-    // la descripcion se busca como texto contenido, sin distinguir mayusculas
     public List<CategoriaDTO> buscarPorDescripcion(String texto) {
         List<CategoriaDTO> lista = new ArrayList<>();
         if (texto == null) {
@@ -94,7 +91,6 @@ public class CategoriaDatos {
                 rs.getString("descripcion"));
     }
 
-    // para que % y _ escritos por el usuario se busquen como texto normal
     private String escaparLike(String texto) {
         return texto.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
@@ -110,7 +106,7 @@ public class CategoriaDatos {
 
             try (ResultSet claves = ps.getGeneratedKeys()) {
                 if (claves.next()) {
-                    categoria.setId(String.valueOf(claves.getLong(1)));   // id que genero la base
+                    categoria.setId(String.valueOf(claves.getLong(1)));
                 }
             }
         } catch (SQLException e) {

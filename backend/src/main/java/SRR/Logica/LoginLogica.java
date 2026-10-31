@@ -13,7 +13,6 @@ public class LoginLogica {
     }
 
 
-   //devuelve el usuario sin contrasena si las credenciales son validas, devuelve null si no.
     public UsuarioDTO iniciarSesion(LoginDTO login) {
         if (login == null || login.getId() == null || login.getId().isBlank()) {
             return null;

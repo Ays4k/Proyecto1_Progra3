@@ -8,7 +8,7 @@ import java.util.List;
 public class CategoriaLogica {
 
     private CategoriaDatos datos = new CategoriaDatos();
-    
+
     public List<CategoriaDTO> obtenerCategorias() {
         return datos.listar();
     }
@@ -21,14 +21,13 @@ public class CategoriaLogica {
         return datos.buscarPorDescripcion(texto);
     }
 
-    // id vacio = categoria nueva (el id lo genera la base); con id = modificar
     public int agregarCategoria(CategoriaDTO categoria) {
         if (categoria.getId() == null || categoria.getId().isBlank()) {
             datos.agregar(categoria);
-            return 1; // Categoría agregada exitosamente
+            return 1;
         }
         datos.modificar(categoria);
-        return 2; // Categoría modificada exitosamente
+        return 2;
     }
 
     public void eliminarCategoria(String id) {

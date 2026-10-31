@@ -1,6 +1,8 @@
 package SRR.Logica;
 
+import SRR.DTO.ReservaDTO;
 import SRR.DTO.UsuarioDTO;
+import SRR.Datos.ReservaDatos;
 import SRR.Datos.UsuarioDatos;
 import SRR.Excepciones.UsuarioEnUsoException;
 
@@ -9,26 +11,24 @@ import java.util.List;
 
 public class UsuarioLogica {
 
-    private UsuarioDatos datos;
+    private final UsuarioDatos datos;
+    private final ReservaDatos reservaDatos = new ReservaDatos();
 
     public UsuarioLogica(){
         this.datos = new UsuarioDatos();
     }
 
 
-    // la identificacion es la cedula: solo numeros (se ajusta aqui si cambia el formato)
     private static final String FORMATO_IDENTIFICACION = "\\d{9,12}";
 
     public List<UsuarioDTO> obtenerUsuarios() {
-        return datos.listar(); //los usuarios vienen sin contrasenas
+        return datos.listar();
     }
 
     public UsuarioDTO buscarPorId(String id) {
         return datos.buscarPorId(id);
     }
 
-    // devuelve el nombre del usuario, o un texto de respaldo si el usuario ya no existe
-    // lo usan las pantallas que muestran reservas, donde solo se guarda el id
     public String nombreDe(String id) {
         UsuarioDTO usuario = buscarPorId(id);
         return usuario == null || usuario.getNombre() == null
@@ -50,7 +50,6 @@ public class UsuarioLogica {
         return resultado;
     }
 
-    //devuelve 2 si se modifica un usuario existente, 1 si agrega uno nuevo
     public int cambiosUsuario(UsuarioDTO usuario) {
         if (buscarPorId(usuario.getId()) != null) {
             datos.modificar(usuario);
@@ -73,14 +72,21 @@ public class UsuarioLogica {
             return false;
         }
 
-        // solo no deja borrar cuando el usuario tiene reservas activas
-        ReservaLogica reservaLogica = new ReservaLogica();
-        if (!reservaLogica.reservasActivasDe(id).isEmpty()) {
+        if (tieneReservasActivas(id)) {
             throw new UsuarioEnUsoException(
                     "No se puede eliminar el funcionario: tiene reservas activas.");
         }
 
         datos.borrar(id);
         return true;
+    }
+
+    private boolean tieneReservasActivas(String idFuncionario) {
+        for (ReservaDTO reserva : reservaDatos.listarPorFuncionario(idFuncionario)) {
+            if ("ACTIVA".equals(reserva.getEstado())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

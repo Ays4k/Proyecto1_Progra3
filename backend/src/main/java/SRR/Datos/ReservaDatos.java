@@ -12,9 +12,8 @@ import java.util.List;
 
 public class ReservaDatos {
 
-    // codigos de error de MySQL
-    private static final int ERROR_FUNCIONARIO_INEXISTENTE = 1048; // la subconsulta de usuario devolvio NULL
-    private static final int ERROR_RECURSO_INEXISTENTE = 1452;     // llave foranea: el recurso no existe
+    private static final int ERROR_FUNCIONARIO_INEXISTENTE = 1048;
+    private static final int ERROR_RECURSO_INEXISTENTE = 1452;
 
     public List<ReservaDTO> listar() {
         List<ReservaDTO> lista = new ArrayList<>();
@@ -35,7 +34,6 @@ public class ReservaDatos {
         return lista;
     }
 
-    // devuelve la reserva con ese id, o null si no existe
     public ReservaDTO buscarPorId(String id) {
         if (id == null || id.isBlank()) {
             return null;
@@ -44,7 +42,7 @@ public class ReservaDatos {
         try {
             idNumerico = Long.parseLong(id.trim());
         } catch (NumberFormatException e) {
-            return null;   // un id que no es numero no puede existir
+            return null;
         }
 
         String sql = "SELECT r.id, u.identificacion, r.descripcion, r.fecha, r.hora_inicio, r.hora_fin, r.estado "
@@ -68,7 +66,6 @@ public class ReservaDatos {
         }
     }
 
-    // reservas de un funcionario, por su cedula
     public List<ReservaDTO> listarPorFuncionario(String cedula) {
         List<ReservaDTO> lista = new ArrayList<>();
         if (cedula == null || cedula.isBlank()) {
@@ -95,7 +92,6 @@ public class ReservaDatos {
         return lista;
     }
 
-    // true si el recurso esta en una reserva ACTIVA que se traslapa con ese rango
     public boolean recursoOcupado(String idRecurso, String fecha, String horaInicio, String horaFin) {
         String sql = "SELECT 1 FROM reserva_recurso rr JOIN reserva r ON r.id = rr.id_reserva "
                    + "WHERE rr.id_recurso = ? AND r.estado = 'ACTIVA' AND r.fecha = ? "
@@ -117,7 +113,6 @@ public class ReservaDatos {
         }
     }
 
-    // true si el recurso esta en alguna reserva ACTIVA, sin importar la fecha
     public boolean recursoEnReservaActiva(String idRecurso) {
         String sql = "SELECT 1 FROM reserva_recurso rr JOIN reserva r ON r.id = rr.id_reserva "
                    + "WHERE rr.id_recurso = ? AND r.estado = 'ACTIVA' LIMIT 1";
@@ -135,20 +130,18 @@ public class ReservaDatos {
         }
     }
 
-    // arma el DTO con los datos de la reserva; los recursos se cargan aparte
     private ReservaDTO convertir(ResultSet rs) throws SQLException {
         return new ReservaDTO(
                 String.valueOf(rs.getLong("id")),
                 rs.getString("identificacion"),
                 new ArrayList<>(),
                 rs.getString("descripcion"),
-                rs.getString("fecha"),                          // yyyy-MM-dd
-                rs.getString("hora_inicio").substring(0, 5),    // HH:mm:ss -> HH:mm
+                rs.getString("fecha"),
+                rs.getString("hora_inicio").substring(0, 5),
                 rs.getString("hora_fin").substring(0, 5),
                 rs.getString("estado"));
     }
 
-    // llena idsRecursos de cada reserva con una consulta a reserva_recurso
     private void cargarRecursos(Connection c, List<ReservaDTO> reservas) throws SQLException {
         String sql = "SELECT id_recurso FROM reserva_recurso WHERE id_reserva = ? ORDER BY id_recurso";
 
@@ -165,7 +158,6 @@ public class ReservaDatos {
         }
     }
 
-    // guarda la reserva y sus recursos en una transaccion: o se guarda todo o nada
     public void agregar(ReservaDTO reserva) {
         String sql = "INSERT INTO reserva (descripcion, fecha, hora_inicio, hora_fin, id_usuario, estado) "
                    + "VALUES (?, ?, ?, ?, (SELECT id FROM usuario WHERE identificacion = ?), ?)";
@@ -190,7 +182,7 @@ public class ReservaDatos {
                 }
                 insertarRecursos(c, idNuevo, reserva.getIdsRecursos());
                 c.commit();
-                reserva.setId(String.valueOf(idNuevo));   // id que genero la base
+                reserva.setId(String.valueOf(idNuevo));
             } catch (SQLException | RuntimeException e) {
                 c.rollback();
                 throw e;
@@ -200,7 +192,6 @@ public class ReservaDatos {
         }
     }
 
-    // actualiza la reserva y vuelve a escribir sus recursos, en una transaccion
     public void modificar(ReservaDTO reserva) {
         String sql = "UPDATE reserva SET descripcion = ?, fecha = ?, hora_inicio = ?, hora_fin = ?, "
                    + "estado = ? WHERE id = ?";
@@ -238,7 +229,6 @@ public class ReservaDatos {
         }
     }
 
-    // sus filas de reserva_recurso se borran solas (ON DELETE CASCADE)
     public void borrar(String id) {
         String sql = "DELETE FROM reserva WHERE id = ?";
 
@@ -255,7 +245,6 @@ public class ReservaDatos {
         }
     }
 
-    // una fila en reserva_recurso por recurso, con la misma conexion de la transaccion
     private void insertarRecursos(Connection c, long idReserva, List<String> idsRecursos) throws SQLException {
         if (idsRecursos == null || idsRecursos.isEmpty()) {
             return;
