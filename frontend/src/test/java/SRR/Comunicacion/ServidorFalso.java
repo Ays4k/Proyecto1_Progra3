@@ -22,7 +22,7 @@ import java.util.List;
 
 // Servidor de mentira para probar el frontend sin el backend real.
 // Responde los mismos metodos de Protocolo con datos guardados en memoria
-// (no usa MySQL) e imita las validaciones y mensajes de error del backend.
+// (no usa MySQL) e imita las validaciones principales del backend, con los mismos mensajes.
 // Los cambios (crear, modificar, eliminar) se pierden al cerrarlo.
 //
 // Uso manual: correr el main y despues abrir el frontend normalmente.
