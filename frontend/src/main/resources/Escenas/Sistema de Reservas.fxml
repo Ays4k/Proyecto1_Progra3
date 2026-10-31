@@ -5,9 +5,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Controlador.SistemaReservasController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="1061.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SRR.Controlador.SistemaReservasController">
    <children>
-      <TabPane fx:id="tabPanePrincipal" prefHeight="540.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="tabPanePrincipal" prefHeight="540.0" prefWidth="801.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="260.0" AnchorPane.topAnchor="0.0">
           <tabs>
               <Tab fx:id="tabReservas" text="Reservas">
                   <content>
@@ -47,5 +47,6 @@
           </tabs>
       </TabPane>
       <Button fx:id="btnCerrarSesion" layoutX="701.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleCerrarSesion" text="Cerrar Sesión" />
+      <fx:include fx:id="panelAlertas" prefWidth="260.0" source="PanelAlertas.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

@@ -1,8 +1,8 @@
 package SRR.Controlador;
 
 import SRR.DTO.ReservaDTO;
-import SRR.Servicio.ReservaServicio;
-import SRR.Servicio.UsuarioServicio;
+import SRR.Proxy.ReservaProxy;
+import SRR.Proxy.UsuarioProxy;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -29,8 +29,8 @@ public class ActividadesController {
     @FXML private Button btnImprimir;
     @FXML private TableView<Map<String, String>> tblActividades;
 
-    private final ReservaServicio reservaServicio = new ReservaServicio();
-    private final UsuarioServicio usuarioServicio = new UsuarioServicio();
+    private final ReservaProxy reservaServicio = new ReservaProxy();
+    private final UsuarioProxy usuarioServicio = new UsuarioProxy();
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML

@@ -19,6 +19,7 @@ public class SistemaReservasController {
     @FXML private Tab tabActividades;
     @FXML private Tab tabEstadisticas;
     @FXML private Button btnCerrarSesion;
+    @FXML private AlertasController panelAlertasController;
 
     // Almacena el rol seleccionado antes de cargar la escena
     private static String rolActual;
@@ -46,6 +47,10 @@ public class SistemaReservasController {
 
     @FXML
     public void handleCerrarSesion(ActionEvent event) {
+        if (panelAlertasController != null) {
+            panelAlertasController.detenerEscucha();
+        }
+
         // 1. Limpia la sesión activa
         Sesion.cerrar();
 
