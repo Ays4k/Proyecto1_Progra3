@@ -32,6 +32,10 @@ public class Conexion {
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
 
+    // true mientras se espera la respuesta de la IA. Es volatile porque la escribe el hilo
+    // de la IA y la leen los demas (el de JavaFX) sin pasar por el candado.
+    private volatile boolean esperandoIa = false;
+
     private String avisoConfiguracion;   // null si config.properties se leyo bien o no existe
 
     private Conexion() {
@@ -146,6 +150,24 @@ public class Conexion {
         }
     }
 
+    // Para consultas (peticiones que solo leen datos). Si el socket ya estaba abierto pero
+    // el servidor se reinicio, la primera escritura o lectura falla: en ese caso se abre una
+    // conexion nueva y se intenta UNA vez mas. No se reintenta si el servidor esta apagado,
+    // si se agoto el tiempo, ni nunca para crear, modificar o eliminar (se haria dos veces).
+    public synchronized Respuesta enviarConsulta(Peticion peticion) {
+        boolean yaEstabaConectado = estaConectado();
+        try {
+            return enviar(peticion);
+        } catch (ServidorException e) {
+            boolean seCortoLaConexion = e.getCause() instanceof IOException
+                    && !(e.getCause() instanceof SocketTimeoutException);
+            if (!yaEstabaConectado || !seCortoLaConexion) {
+                throw e;
+            }
+            return enviar(peticion);   // enviar() ve el socket cerrado y abre uno nuevo
+        }
+    }
+
     public synchronized boolean estaConectado() {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }
@@ -169,6 +191,14 @@ public class Conexion {
         String aviso = avisoConfiguracion;
         avisoConfiguracion = null;
         return aviso;
+    }
+
+    public void setEsperandoIa(boolean esperandoIa) {
+        this.esperandoIa = esperandoIa;
+    }
+
+    public boolean isEsperandoIa() {
+        return esperandoIa;
     }
 
     public String getHost() {
