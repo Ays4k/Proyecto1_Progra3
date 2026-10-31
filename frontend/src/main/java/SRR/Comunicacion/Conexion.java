@@ -146,7 +146,8 @@ public class Conexion {
             throw new ServidorException("El servidor tardó demasiado en responder. Intente de nuevo.", e);
         } catch (IOException | ClassNotFoundException e) {
             cerrar();
-            throw new ServidorException("Se perdió la conexión con el servidor.", e);
+            throw new ServidorException("Se perdió la conexión con el servidor. Verifique que el backend "
+                    + "esté encendido. Si estaba guardando algo, revise si se aplicó antes de repetirlo.", e);
         }
     }
 
