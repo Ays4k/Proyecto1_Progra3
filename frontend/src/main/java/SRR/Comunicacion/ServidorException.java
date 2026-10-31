@@ -10,7 +10,7 @@ public class ServidorException extends RuntimeException {
         super(mensaje);
     }
     // Mensaje y excepcion original. Se usa cuando falla la red .
-    // La causa no la ve el usuario: sirve para depurar.
+    // La causa no la ve el usuario, es solo para depurar.
     public ServidorException(String mensaje, Throwable causa) {
         super(mensaje, causa);
     }
