@@ -1,12 +1,13 @@
 package SRR.Controlador;
 
+import SRR.Comunicacion.ServidorException;
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
 import SRR.DTO.ReservaAiDTO;
 import SRR.DTO.ReservaDTO;
-import SRR.Servicio.CategoriaServicio;
-import SRR.Servicio.RecursoServicio;
-import SRR.Servicio.ReservaServicio;
+import SRR.Proxy.CategoriaProxy;
+import SRR.Proxy.RecursoProxy;
+import SRR.Proxy.ReservaProxy;
 import SRR.Utilidades.Sesion;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -32,12 +33,12 @@ import java.io.File;
 
 public class ReservasController {
 
-    ReservaServicio servicio = new ReservaServicio();
+    ReservaProxy servicio = new ReservaProxy();
 
     @FXML DatePicker date;
 
-    private CategoriaServicio categoriaServicio = new CategoriaServicio();
-    private final RecursoServicio recursoServicio = new RecursoServicio();
+    private CategoriaProxy categoriaServicio = new CategoriaProxy();
+    private final RecursoProxy recursoServicio = new RecursoProxy();
 
     private ObservableList<CategoriaDTO> listaCategorias;
 
@@ -247,7 +248,13 @@ public class ReservasController {
     }
 
     private void cargarCategorias() {
-        listaCategorias = FXCollections.observableArrayList(categoriaServicio.obtenerCategorias());
+        try {
+            listaCategorias = FXCollections.observableArrayList(categoriaServicio.obtenerCategorias());
+        } catch (RuntimeException e) {
+            // sin conexion la lista queda vacia y se avisa, pero la pestaña igual se abre
+            listaCategorias = FXCollections.observableArrayList();
+            Avisos.error("No se pudieron cargar las categorías: " + e.getMessage());
+        }
         listCategoria.setCellFactory(listView -> {
             ListCell<CategoriaDTO> cell  = new ListCell<>() {
                 @Override
@@ -359,10 +366,14 @@ public class ReservasController {
         }
         List<String> nombres = new ArrayList<>();
         for (String id : ids) {
-            RecursoDTO recurso = recursoServicio.buscarPorId(id);
-            nombres.add(recurso == null ? id : recurso.getDescripcion());   // si no existe, deja el id
+            try {
+                RecursoDTO recurso = recursoServicio.buscarPorId(id);
+                nombres.add(recurso == null ? id : recurso.getDescripcion());   // si no existe, deja el id
+            } catch (ServidorException e) {
+                nombres.add("(sin conexión)");   // no se pudo pedir el nombre al servidor
+            }
         }
-        return String.join("\n ", nombres);
+        return String.join(separador, nombres);
     }
 
     private void cancelar(){
