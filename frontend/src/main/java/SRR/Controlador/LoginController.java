@@ -5,6 +5,8 @@ import SRR.DTO.UsuarioDTO;
 import SRR.Servicio.LoginServicio;
 import SRR.Singleton.MasterStageController;
 import SRR.Utilidades.Sesion;
+import SRR.Comunicacion.Conexion;
+import SRR.Utilidades.Avisos;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +21,16 @@ public class LoginController {
     @FXML private Label lblMensaje;
 
     private final LoginServicio loginServicio = new LoginServicio();
+
+    @FXML
+    public void initialize() {
+        // Al abrir el login se carga la configuracion. Si config.properties no se pudo
+        // leer, se avisa y runLater hace que salga cuando la ventana ya esta visible.
+        String aviso = Conexion.getInstance().tomarAvisoConfiguracion();
+        if (aviso != null) {
+            Platform.runLater(() -> Avisos.advertencia(aviso));
+        }
+    }
 
     @FXML
     public void handleIngresar(ActionEvent event) {

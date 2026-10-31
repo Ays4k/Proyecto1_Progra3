@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-// Singleton con el unico socket de peticiones del frontend (puerto 5000 por defecto).
+// Singleton con el unico socket de peticiones del frontend (el puerto sale de Protocolo).
 // Todos los proxies envian por aqui. Los metodos son synchronized para que
 // salga una sola peticion a la vez y cada respuesta le llegue a quien la pidio.
 public class Conexion {
@@ -31,6 +31,8 @@ public class Conexion {
     private Socket socket;
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
+
+    private String avisoConfiguracion;   // null si config.properties se leyo bien o no existe
 
     private Conexion() {
         cargarConfiguracion();
@@ -60,8 +62,13 @@ public class Conexion {
                     }
                 }
             }
-        } catch (IOException e) {
-            // si no se puede leer el archivo se quedan los valores por defecto
+        } catch (IOException | IllegalArgumentException e) {
+            // El archivo existe pero no se pudo leer (bloqueado, sin permisos o con formato invalido).
+            // Se siguen usando los valores por defecto y se guarda el aviso para que la vista lo muestre.
+            avisoConfiguracion = "No se pudo leer el archivo config.properties. "
+                    + "Se usará la configuración por defecto (servidor en "
+                    + Protocolo.HOST_POR_DEFECTO + ").";
+            System.err.println(avisoConfiguracion + " Causa: " + e);
         }
 
         host = propiedades.getProperty("servidor.host", Protocolo.HOST_POR_DEFECTO).trim();
@@ -154,6 +161,14 @@ public class Conexion {
         socket = null;
         salida = null;
         entrada = null;
+    }
+
+    // Devuelve el aviso una sola vez y lo borra, para que no se repita cada vez
+    // que se vuelve a la pantalla de login (por ejemplo, al cerrar sesion).
+    public synchronized String tomarAvisoConfiguracion() {
+        String aviso = avisoConfiguracion;
+        avisoConfiguracion = null;
+        return aviso;
     }
 
     public String getHost() {
