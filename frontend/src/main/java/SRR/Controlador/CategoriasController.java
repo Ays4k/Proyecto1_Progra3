@@ -1,26 +1,22 @@
 package SRR.Controlador;
 
+import SRR.Comunicacion.ServidorException;
 import SRR.DTO.CategoriaDTO;
-
-import SRR.Servicio.CategoriaServicio;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-
-import javafx.scene.control.*;
-import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
-
+import SRR.Proxy.CategoriaProxy;
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import SRR.Excepciones.CategoriaEnUsoException;
-import SRR.Utilidades.Avisos;
 
 public class CategoriasController {
 
@@ -37,7 +33,7 @@ public class CategoriasController {
     @FXML private Button btnSearch;
     @FXML private Label lblSearch;
     @FXML private Button btnImprimir;
-    private final CategoriaServicio categoriaServicio = new CategoriaServicio();
+    private final CategoriaProxy categoriaServicio = new CategoriaProxy();
 
     @FXML
     public void initialize() {
@@ -64,11 +60,17 @@ public class CategoriasController {
             }
         });
 
-        categoriaList = FXCollections.observableList(categoriaServicio.obtenerCategorias());
+        try {
+            categoriaList = FXCollections.observableList(categoriaServicio.obtenerCategorias());
+        } catch (ServidorException e) {
+            // sin conexion la tabla queda vacia, pero la pestaña se abre igual
+            categoriaList = FXCollections.observableArrayList();
+            Avisos.error("No se pudieron cargar las categorías: " + e.getMessage());
+        }
         catTable.setItems(categoriaList);
         btnSave.setOnAction(event -> guardarCategoria());
         btnDelete.setOnAction(event -> {
-           eliminarCategoria();
+            eliminarCategoria();
         });
         btnClean.setOnAction(event -> limpiarCampos());
         catTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -108,10 +110,9 @@ public class CategoriasController {
                 categoriaList.remove(categoriaSeleccionada);
                 limpiarCampos();
                 Avisos.info("Categoría eliminada correctamente.");
-            } catch (CategoriaEnUsoException e) {
+            } catch (ServidorException e) {
+                // error del servidor, como una categoria con recursos asociados, o falta de conexion
                 Avisos.error(e.getMessage());
-            } catch (RuntimeException e) {
-                Avisos.error("No se pudo eliminar la categoría: " + e.getMessage());
             }
         }
     }
@@ -148,10 +149,10 @@ public class CategoriasController {
         try {
             int resultado = categoriaServicio.servicioCategorias(categoria);
             Avisos.info(resultado == 1 ? "Categoría agregada correctamente."
-                                       : "Categoría modificada correctamente.");
-            categoriaList.setAll(categoriaServicio.obtenerCategorias());   // relee de la base
+                    : "Categoría modificada correctamente.");
+            categoriaList.setAll(categoriaServicio.obtenerCategorias());   // relee la lista desde el servidor
             limpiarCampos();
-        } catch (RuntimeException e) {
+        } catch (ServidorException e) {
             Avisos.error(e.getMessage());
         }
     }
@@ -165,11 +166,16 @@ public class CategoriasController {
         }
 
         double alturaEstandar = 25.0;
+        // tope para que pocas filas no se estiren hasta llenar toda la tabla, con una sola fila
+        // del alto completo de la tabla el clic no la seleccionaba
+        double alturaMaxima = 50.0;
         double altoEncabezado = 29.0;
         double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
         double altoCalculado = altoDisponible / lista.size();
 
-        if (altoCalculado >= alturaEstandar) {
+        if (altoCalculado > alturaMaxima) {
+            tabla.setFixedCellSize(alturaMaxima);
+        } else if (altoCalculado >= alturaEstandar) {
             tabla.fixedCellSizeProperty().bind(
                     tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
             );
