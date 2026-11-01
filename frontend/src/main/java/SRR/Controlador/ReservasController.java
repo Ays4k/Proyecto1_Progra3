@@ -140,10 +140,7 @@ public class ReservasController {
         cargarCategorias();
 
         btnAi.setOnAction(event -> reservaAi());
-        btnReservar.setOnAction(event -> {
-            reservar();
-            limpiar();
-        });
+        btnReservar.setOnAction(event -> reservar());
         btnCan.setOnAction(event -> {
             cancelar();
         });
@@ -393,24 +390,26 @@ public class ReservasController {
 
     private void reservar(){
         String actividad = txtActividad.getText().trim();
-        String fecha = date.valueProperty().get().toString();
-        String horaInicio = cmbInicio.getSelectionModel().getSelectedItem().toString();
-        String horaFinal = cmbFinal.getSelectionModel().getSelectedItem().toString();
+        // si falta la fecha o alguna hora se envia null y el backend responde cual falta
+        String fecha = date.getValue() == null ? null : date.getValue().toString();
+        LocalTime inicio = cmbInicio.getSelectionModel().getSelectedItem();
+        LocalTime fin = cmbFinal.getSelectionModel().getSelectedItem();
+        String horaInicio = inicio == null ? null : inicio.toString();
+        String horaFinal = fin == null ? null : fin.toString();
         List<String> categorias = new ArrayList<String>();
         for(CategoriaDTO cat : listCategoria.getSelectionModel().getSelectedItems()){
             categorias.add(cat.getId());
         }
 
-        // crearReserva ahora recibe las categorias y devuelve la reserva ya armada,
+        // crearReserva recibe las categorias y devuelve la reserva ya armada,
         // con el id generado y el recurso libre de cada categoria asignado
-        ReservaDTO reserva;
         try {
-            reserva = servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
+            ReservaDTO reserva = servicio.crearReserva(Sesion.getId(), actividad, fecha, horaInicio, horaFinal, categorias);
             resList.add(reserva);
-        }catch (Exception e){
+            limpiar();   // solo si se creo, para no borrar lo que el usuario lleno cuando hay un error
+        } catch (ServidorException e) {
             Avisos.error(e.getMessage());
         }
-
     }
 
     private void limpiar(){
