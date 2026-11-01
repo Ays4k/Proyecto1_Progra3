@@ -1,7 +1,9 @@
 package SRR.Controlador;
 
-import SRR.Servicio.LoginServicio;
+import SRR.Comunicacion.ServidorException;
+import SRR.Proxy.LoginProxy;
 import SRR.Singleton.MasterStageController;
+import SRR.Utilidades.Avisos;
 import SRR.Utilidades.Sesion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +17,7 @@ public class CambiarClaveController {
     @FXML private PasswordField txtConfirmar;
     @FXML private Label lblMensaje;
 
-    private final LoginServicio loginServicio = new LoginServicio();
+    private final LoginProxy loginServicio = new LoginProxy();
 
     // El id se recibe antes de mostrar la pantalla, porque este formulario
     // no lo pide. Viene del login o de la sesion activa.
@@ -37,9 +39,15 @@ public class CambiarClaveController {
             lblMensaje.setTextFill(javafx.scene.paint.Color.GREEN);
             lblMensaje.setText("Clave cambiada correctamente");
             limpiar();
-        } catch (IllegalArgumentException e) {
-            lblMensaje.setTextFill(javafx.scene.paint.Color.RED);
-            lblMensaje.setText(e.getMessage());
+        } catch (ServidorException e) {
+            if (e.esProblemaDeConexion()) {
+                // con causa es un problema de conexion, el mensaje es largo para el label
+                Avisos.error(e.getMessage());
+            } else {
+                // sin causa es una validacion del backend, como "Las claves nuevas no coinciden"
+                lblMensaje.setTextFill(javafx.scene.paint.Color.RED);
+                lblMensaje.setText(e.getMessage());
+            }
         }
     }
 
