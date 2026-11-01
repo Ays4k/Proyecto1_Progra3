@@ -1,19 +1,17 @@
 package SRR.Controlador;
 
 import SRR.DTO.UsuarioDTO;
-import SRR.Excepciones.UsuarioEnUsoException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-
-import SRR.Servicio.UsuarioServicio;
-
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
+import SRR.Comunicacion.ServidorException;
+import SRR.Proxy.UsuarioProxy;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ import java.util.List;
 
 public class FuncionariosController {
 
-    private final UsuarioServicio userService = new UsuarioServicio();
+    private final UsuarioProxy userService = new UsuarioProxy();
 
     @FXML private Button btnSave;
     @FXML private Button btnDelete;
@@ -72,7 +70,13 @@ public class FuncionariosController {
             }
         });
 
-        userList = FXCollections.observableList(userService.obtenerUsuarios());
+        try {
+            userList = FXCollections.observableList(userService.obtenerUsuarios());
+        } catch (ServidorException e) {
+            // sin conexion la tabla queda vacia, pero la pestaña se abre igual
+            userList = FXCollections.observableArrayList();
+            Avisos.error("No se pudieron cargar los funcionarios: " + e.getMessage());
+        }
         tableUsers.setItems(userList);
 
         btnSearch.setOnAction(event -> buscarFuncionario());
@@ -154,10 +158,12 @@ public class FuncionariosController {
             try {
                 if (userService.eliminarUsuario(seleccionado.getId())) {
                     userList.remove(seleccionado);
+                    limpiarBusqueda();   // la tabla vuelve a mostrar todos los funcionarios
                     limpiarCampos();
                     Avisos.info("Funcionario eliminado correctamente.");
                 }
-            } catch (UsuarioEnUsoException e) {
+            } catch (ServidorException e) {
+                // error del servidor, como un funcionario con reservas activas, o falta de conexion
                 Avisos.error(e.getMessage());
             }
         }
@@ -190,20 +196,27 @@ public class FuncionariosController {
         String cedula = txtId.getText().trim();
         boolean esNuevo = !txtId.isDisabled();   // con una fila seleccionada el campo esta bloqueado
 
-        if (esNuevo && userService.buscarPorId(cedula) != null) {
-            Avisos.error("Ya existe un funcionario con esa cédula.");
-            return;
-        }
-
         try {
+            if (esNuevo && userService.buscarPorId(cedula) != null) {
+                Avisos.error("Ya existe un funcionario con esa cédula.");
+                return;
+            }
             userService.cambiosUsuario(new UsuarioDTO(cedula, name, phone, null, rol));
-        } catch (RuntimeException e) {
+            userList.setAll(userService.obtenerUsuarios());   // relee la lista desde el servidor
+        } catch (ServidorException e) {
             Avisos.error(e.getMessage());
             return;
         }
 
-        userList.setAll(userService.obtenerUsuarios());
+        limpiarBusqueda();   // la tabla vuelve a mostrar todos los funcionarios
         limpiarCampos();
+        // baja hasta el funcionario guardado para que se vea
+        for (UsuarioDTO usuario : userList) {
+            if (usuario.getId().equals(cedula)) {
+                tableUsers.scrollTo(usuario);
+                break;
+            }
+        }
     }
 
     private void limpiarCampos() {
@@ -224,11 +237,16 @@ public class FuncionariosController {
         }
 
         double alturaEstandar = 25.0;
+        // tope para que pocas filas no se estiren hasta llenar toda la tabla, con una sola fila
+        // del alto completo de la tabla el clic no la seleccionaba
+        double alturaMaxima = 50.0;
         double altoEncabezado = 29.0;
         double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
         double altoCalculado = altoDisponible / lista.size();
 
-        if (altoCalculado >= alturaEstandar) {
+        if (altoCalculado > alturaMaxima) {
+            tabla.setFixedCellSize(alturaMaxima);
+        } else if (altoCalculado >= alturaEstandar) {
             tabla.fixedCellSizeProperty().bind(
                     tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
             );
