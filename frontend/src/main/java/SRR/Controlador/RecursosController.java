@@ -1,10 +1,10 @@
 package SRR.Controlador;
 
+import SRR.Comunicacion.ServidorException;
 import SRR.DTO.CategoriaDTO;
 import SRR.DTO.RecursoDTO;
-import SRR.Excepciones.RecursoException;
-import SRR.Servicio.CategoriaServicio;
-import SRR.Servicio.RecursoServicio;
+import SRR.Proxy.CategoriaProxy;
+import SRR.Proxy.RecursoProxy;
 import SRR.Utilidades.Avisos;
 import SRR.Utilidades.ReportePdf;
 import SRR.Utilidades.RutaDestino;
@@ -42,8 +42,8 @@ public class RecursosController {
     private ObservableList<RecursoDTO> recursoList;
     private ObservableList<CategoriaDTO> categoriaList;
 
-    private final RecursoServicio recursoServicio = new RecursoServicio();
-    private final CategoriaServicio categoriaServicio = new CategoriaServicio();
+    private final RecursoProxy recursoServicio = new RecursoProxy();
+    private final CategoriaProxy categoriaServicio = new CategoriaProxy();
 
 
 
@@ -87,7 +87,13 @@ public class RecursosController {
         cbFiltroCategoria.setOnShowing(event->{
             cargarCategorias();
         });
-        recursoList = FXCollections.observableArrayList(recursoServicio.obtenerRecursos());
+        try {
+            recursoList = FXCollections.observableArrayList(recursoServicio.obtenerRecursos());
+        } catch (ServidorException e) {
+            // sin conexion la tabla queda vacia, pero la pestaña se abre igual
+            recursoList = FXCollections.observableArrayList();
+            Avisos.error("No se pudieron cargar los recursos: " + e.getMessage());
+        }
         tablaRecursos.setItems(recursoList);
 
         btnGuardar.setOnAction(event -> guardarRecurso());
@@ -115,7 +121,15 @@ public class RecursosController {
     }
 
     private void cargarCategorias() {
-        categoriaList = FXCollections.observableArrayList(categoriaServicio.obtenerCategorias());
+        try {
+            categoriaList = FXCollections.observableArrayList(categoriaServicio.obtenerCategorias());
+        } catch (ServidorException e) {
+            // si falla se quedan las categorias que ya estaban cargadas
+            Avisos.error("No se pudieron cargar las categorías: " + e.getMessage());
+            if (categoriaList == null) {
+                categoriaList = FXCollections.observableArrayList();
+            }
+        }
 
         StringConverter<CategoriaDTO> converter = new StringConverter<>() {
             @Override
@@ -141,8 +155,8 @@ public class RecursosController {
         String descripcion = txtDesc.getText().trim();
         CategoriaDTO categoriaSeleccionada = cbFormCategoria.getValue();
 
-           // si no se selecciono una categoría se envia null
-           // RecursoLogica será responsable de rechazarlo
+        // si no se selecciono una categoría se envia null
+        // RecursoLogica será responsable de rechazarlo
 
         String idCategoria = categoriaSeleccionada == null
                 ? null : categoriaSeleccionada.getId();
@@ -158,34 +172,20 @@ public class RecursosController {
             int resultado =
                     recursoServicio.guardarRecurso(nuevoRecurso);
 
-            if (resultado == 1) {
-                recursoList.add(nuevoRecurso);
+            // se relee la lista del servidor porque el id del recurso nuevo lo genera la base
+            // y no vuelve en el objeto que se envio por el socket
+            recursoList.setAll(recursoServicio.obtenerRecursos());
 
-                Avisos.info("Recurso agregado correctamente.");
+            Avisos.info(resultado == 1 ? "Recurso agregado correctamente."
+                    : "Recurso modificado correctamente.");
 
-            } else if (resultado == 2) {
-                for (int i = 0; i < recursoList.size(); i++) {
-                    if (recursoList.get(i)
-                            .getId()
-                            .equals(nuevoRecurso.getId())) {
-
-                        recursoList.set(i, nuevoRecurso);
-                        break;
-                    }
-                }
-
-                Avisos.info("Recurso modificado correctamente.");
-            }
-
-              // solo se limpian los campos si la operación
-              // fue exitosa.
+            // solo se limpian los campos si la operación
+            // fue exitosa.
 
             limpiarCampos();
 
-        } catch (RecursoException e) {
+        } catch (ServidorException e) {
             Avisos.error(e.getMessage());
-        } catch (RuntimeException e) {
-            Avisos.error("No se pudo guardar el recurso: " + e.getMessage());
         }
     }
 
@@ -205,8 +205,8 @@ public class RecursosController {
 
             try {
 
-                 // el controlador solamente solicita la eliminacion
-                 // RecursoLogica decide si puede hacerse
+                // el controlador solamente solicita la eliminacion
+                // RecursoLogica decide si puede hacerse
 
                 recursoServicio.eliminarRecurso(seleccionado.getId());
 
@@ -217,10 +217,9 @@ public class RecursosController {
                         "Recurso eliminado correctamente."
                 );
 
-            } catch (RecursoException e) {
+            } catch (ServidorException e) {
+                // error del servidor, como un recurso en una reserva activa, o falta de conexion
                 Avisos.error(e.getMessage());
-            } catch (RuntimeException e) {
-                Avisos.error("No se pudo eliminar el recurso: " + e.getMessage());
             }
         }
     }
@@ -230,10 +229,14 @@ public class RecursosController {
         String idCat = (catFiltro != null) ? catFiltro.getId() : "";
         String descFiltro = txtBuscarDesc.getText().trim();
 
-        ObservableList<RecursoDTO> filtrados = FXCollections.observableArrayList(
-                recursoServicio.filtrarRecursos(idCat, descFiltro)
-        );
-        tablaRecursos.setItems(filtrados);
+        try {
+            ObservableList<RecursoDTO> filtrados = FXCollections.observableArrayList(
+                    recursoServicio.filtrarRecursos(idCat, descFiltro)
+            );
+            tablaRecursos.setItems(filtrados);
+        } catch (ServidorException e) {
+            Avisos.error("No se pudo buscar: " + e.getMessage());
+        }
     }
 
     private void seleccionarRecurso(RecursoDTO recurso) {
@@ -268,11 +271,16 @@ public class RecursosController {
         }
 
         double alturaEstandar = 25.0;
+        // tope para que pocas filas no se estiren hasta llenar toda la tabla, con una sola fila
+        // del alto completo de la tabla el clic no la seleccionaba
+        double alturaMaxima = 50.0;
         double altoEncabezado = 29.0;
         double altoDisponible = Math.max(0, (tabla.getHeight() > 0 ? tabla.getHeight() : tabla.getPrefHeight()) - altoEncabezado);
         double altoCalculado = altoDisponible / lista.size();
 
-        if (altoCalculado >= alturaEstandar) {
+        if (altoCalculado > alturaMaxima) {
+            tabla.setFixedCellSize(alturaMaxima);
+        } else if (altoCalculado >= alturaEstandar) {
             tabla.fixedCellSizeProperty().bind(
                     tabla.heightProperty().subtract(altoEncabezado).divide(lista.size())
             );
@@ -297,10 +305,10 @@ public class RecursosController {
 
         List<String[]> filas = new ArrayList<>();
         for (RecursoDTO recurso : visibles) {
-            CategoriaDTO categoria = categoriaServicio.buscarPorId(recurso.getIdCategoria());
-            String nombreCategoria = categoria == null
-                    ? recurso.getIdCategoria() : categoria.getDescripcion();
-            filas.add(new String[]{recurso.getId(), nombreCategoria, recurso.getDescripcion()});
+            // el nombre de la categoria se toma de la lista ya cargada, igual que en la tabla,
+            // asi no se hace una peticion al servidor por cada recurso
+            filas.add(new String[]{recurso.getId(), nombreDeCategoria(recurso.getIdCategoria()),
+                    recurso.getDescripcion()});
         }
 
         try {
