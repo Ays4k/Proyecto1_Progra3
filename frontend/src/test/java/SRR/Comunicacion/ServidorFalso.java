@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 // Servidor de mentira para probar el frontend sin el backend real.
 // Responde los mismos metodos de Protocolo con datos guardados en memoria
@@ -26,11 +27,15 @@ import java.util.List;
 // Los cambios (crear, modificar, eliminar) se pierden al cerrarlo.
 //
 // Uso manual: correr el main y despues abrir el frontend normalmente.
-// Uso en pruebas: new ServidorFalso(puerto).iniciar() y al final detener().
+// Uso en pruebas: new ServidorFalso(0).iniciar(), getPuerto() dice en que puerto quedo,
+// y al final detener(). Con puerto 0 el sistema elige uno libre, asi no choca con el
+// Servidor real si esta corriendo.
+
 public class ServidorFalso {
 
     private final int puerto;
     private ServerSocket servidor;
+    private final List<Socket> clientes = new CopyOnWriteArrayList<>();   // conexiones abiertas
     private volatile int retrasoMs = 0;   // para simular un backend lento en las pruebas
 
     private final List<UsuarioDTO> usuarios = new ArrayList<>();
@@ -58,6 +63,7 @@ public class ServidorFalso {
             while (!servidor.isClosed()) {
                 try {
                     Socket cliente = servidor.accept();
+                    clientes.add(cliente);
                     new Thread(() -> atender(cliente)).start();
                 } catch (IOException e) {
                     // el servidor se cerro con detener()
@@ -68,6 +74,7 @@ public class ServidorFalso {
         aceptador.start();
     }
 
+    // Cierra el puerto y tambien las conexiones abiertas, como pasaria si el backend real se cae
     public void detener() {
         try {
             if (servidor != null) {
@@ -76,6 +83,25 @@ public class ServidorFalso {
         } catch (IOException e) {
             // ya estaba cerrado
         }
+        cortarConexiones();
+    }
+
+    // Cierra las conexiones abiertas pero sigue escuchando. Para el cliente es igual que un
+    // reinicio del backend, su socket queda muerto y tiene que abrir uno nuevo.
+    public void cortarConexiones() {
+        for (Socket cliente : clientes) {
+            try {
+                cliente.close();
+            } catch (IOException e) {
+                // ya estaba cerrado
+            }
+        }
+        clientes.clear();
+    }
+
+    // El puerto en el que quedo escuchando. Si se creo con puerto 0, es el que eligio el sistema.
+    public int getPuerto() {
+        return servidor != null ? servidor.getLocalPort() : puerto;
     }
 
     public void setRetrasoMs(int retrasoMs) {
@@ -100,7 +126,9 @@ public class ServidorFalso {
                 salida.reset();
             }
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
-            // el cliente se desconecto
+            // fin normal de la conexion, el cliente cerro o se corto con cortarConexiones() o detener()
+        } finally {
+            clientes.remove(cliente);
         }
     }
 
@@ -116,14 +144,14 @@ public class ServidorFalso {
     @SuppressWarnings("unchecked")
     private Object ejecutar(String metodo, Object[] p) {
         switch (metodo) {
-            // ---------- Login ----------
+            // Login:
             case Protocolo.INICIAR_SESION:
                 return iniciarSesion((LoginDTO) p[0]);
             case Protocolo.CAMBIAR_CLAVE:
                 cambiarClave((String) p[0], (String) p[1], (String) p[2], (String) p[3]);
                 return null;
 
-            // ---------- Usuarios ----------
+            // Usuarios:
             case Protocolo.OBTENER_USUARIOS:
                 return new ArrayList<>(usuarios);
             case Protocolo.BUSCAR_USUARIO_POR_ID:
@@ -146,7 +174,7 @@ public class ServidorFalso {
             case Protocolo.ELIMINAR_USUARIO:
                 return eliminarUsuario((String) p[0]);
 
-            // ---------- Categorias ----------
+            // Categorias:
             case Protocolo.OBTENER_CATEGORIAS:
                 return new ArrayList<>(categorias);
             case Protocolo.GUARDAR_CATEGORIA:
@@ -157,7 +185,7 @@ public class ServidorFalso {
             case Protocolo.BUSCAR_CATEGORIA_POR_ID:
                 return buscarCategoria((String) p[0]);
 
-            // ---------- Recursos ----------
+            // Recursos:
             case Protocolo.OBTENER_RECURSOS:
                 return new ArrayList<>(recursos);
             case Protocolo.GUARDAR_RECURSO:
@@ -174,7 +202,7 @@ public class ServidorFalso {
             case Protocolo.FILTRAR_RECURSOS:
                 return filtrarRecursos((String) p[0], (String) p[1]);
 
-            // ---------- Reservas ----------
+            // Reservas:
             case Protocolo.CREAR_RESERVA:
                 return crearReserva((String) p[0], (String) p[1], (String) p[2],
                         (String) p[3], (String) p[4], (List<String>) p[5]);
@@ -215,7 +243,7 @@ public class ServidorFalso {
         }
     }
 
-    // ================= Login =================
+    // Login:
 
     private UsuarioDTO iniciarSesion(LoginDTO login) {
         if (login == null || login.getId() == null) {
@@ -248,7 +276,7 @@ public class ServidorFalso {
         u.setContrasena(nueva);
     }
 
-    // ================= Usuarios =================
+    // Usuarios:
 
     private UsuarioDTO buscarUsuario(String id) {
         for (UsuarioDTO u : usuarios) {
@@ -286,7 +314,7 @@ public class ServidorFalso {
         return true;
     }
 
-    // ================= Categorias =================
+    // Categorias:
 
     private CategoriaDTO buscarCategoria(String id) {
         for (CategoriaDTO c : categorias) {
@@ -316,7 +344,7 @@ public class ServidorFalso {
         categorias.remove(buscarCategoria(id));
     }
 
-    // ================= Recursos =================
+    // Recursos:
 
     private RecursoDTO buscarRecurso(String id) {
         for (RecursoDTO r : recursos) {
@@ -368,7 +396,7 @@ public class ServidorFalso {
         return lista;
     }
 
-    // ================= Reservas =================
+    // Reservas:
 
     private ReservaDTO crearReserva(String idFuncionario, String actividad, String fecha,
                                     String horaInicio, String horaFin, List<String> idsCategorias) {
@@ -442,7 +470,7 @@ public class ServidorFalso {
         return texto != null && buscado != null && texto.toLowerCase().contains(buscado.toLowerCase());
     }
 
-    // ================= Datos iniciales =================
+    // Datos iniciales:
 
     // Mismos usuarios de prueba que sql/schema_srr.sql. Las fechas son relativas a hoy
     // para que Calendarizacion, Actividades y Estadisticas siempre tengan algo que mostrar.
