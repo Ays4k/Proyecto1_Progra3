@@ -1,6 +1,7 @@
 package SRR.Utilidades;
 
 import javafx.scene.control.Alert;
+import javafx.scene.layout.Region;
 
 public class Avisos {
 
@@ -22,6 +23,8 @@ public class Avisos {
     private static void mostrar(Alert.AlertType tipo, String mensaje) {
         Alert alerta = new Alert(tipo, mensaje);
         alerta.setHeaderText(null);
+        // sin esto JavaFX no agranda la ventana segun el texto y corta los mensajes largos con "..."
+        alerta.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alerta.showAndWait();
     }
 }
