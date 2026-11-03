@@ -96,12 +96,28 @@ Si el frontend se abre con el backend apagado, el login muestra que no hay conex
 
 ## Usuarios de prueba
 
-| Usuario | Clave | Rol |
-|---|---|---|
-| `admin` | `admin` | ADMINISTRADOR |
-| `user` | `user` | FUNCIONARIO |
+Estos son los usuarios que carga `sql/schema_srr.sql`. El usuario se escribe en el campo **ID** del login.
 
-El script carga más usuarios, todos con clave `nombre123` (por ejemplo `30303030` / `ana123`). Ojo: `10101010`, `20202020` y `25252525` también son administradores.
+| Usuario | Clave | Nombre | Rol |
+|---|---|---|---|
+| `admin` | `admin` | Admin | ADMINISTRADOR |
+| `user` | `user` | User | FUNCIONARIO |
+| `10101010` | `maria123` | Maria | ADMINISTRADOR |
+| `20202020` | `carlos123` | Carlos | ADMINISTRADOR |
+| `25252525` | `gabriela123` | Gabriela | ADMINISTRADOR |
+| `30303030` | `ana123` | Ana | FUNCIONARIO |
+| `40404040` | `luis123` | Luis | FUNCIONARIO |
+| `50505050` | `sofia123` | Sofia | FUNCIONARIO |
+| `60606060` | `diego123` | Diego | FUNCIONARIO |
+| `70707070` | `valeria123` | Valeria | FUNCIONARIO |
+| `80808080` | `pablo123` | Pablo | FUNCIONARIO |
+| `90909090` | `andres123` | Andres | FUNCIONARIO |
+| `11111122` | `camila123` | Camila | FUNCIONARIO |
+| `22222233` | `jose123` | Jose | FUNCIONARIO |
+| `33333344` | `natalia123` | Natalia | FUNCIONARIO |
+| `44444455` | `esteban123` | Esteban | FUNCIONARIO |
+
+Si se agregan o cambian funcionarios desde la pestaña Funcionarios, esos cambios quedan en MySQL y esta tabla ya no los refleja. Para volver a estos datos se recrea la base (paso 1).
 
 ## Alertas
 
