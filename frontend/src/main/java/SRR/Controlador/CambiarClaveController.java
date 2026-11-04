@@ -36,17 +36,22 @@ public class CambiarClaveController {
         try {
             loginServicio.cambiarClave(id, txtActual.getText(),
                     txtNueva.getText(), txtConfirmar.getText());
-            lblMensaje.setTextFill(javafx.scene.paint.Color.GREEN);
-            lblMensaje.setText("Clave cambiada correctamente");
             limpiar();
+            Avisos.info("Clave cambiada correctamente. Inicie sesión con su nueva clave.");
+            MasterStageController.getInstance().volverEscenaAnterior();
         } catch (ServidorException e) {
             if (e.esProblemaDeConexion()) {
                 // con causa es un problema de conexion, el mensaje es largo para el label
                 Avisos.error(e.getMessage());
             } else {
                 // sin causa es una validacion del backend, como "Las claves nuevas no coinciden"
+                String mensaje = e.getMessage();
+                if ("ID o clave actual incorrectos".equals(mensaje)) {
+                    // aqui el id ya se escribio en el login, solo puede fallar la clave actual
+                    mensaje = "La clave actual es incorrecta";
+                }
                 lblMensaje.setTextFill(javafx.scene.paint.Color.RED);
-                lblMensaje.setText(e.getMessage());
+                lblMensaje.setText(mensaje);
             }
         }
     }
