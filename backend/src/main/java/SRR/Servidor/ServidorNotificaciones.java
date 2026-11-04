@@ -42,6 +42,10 @@ public class ServidorNotificaciones implements Consumer<AlertaReservaDTO> {
         }
     }
 
+    public int cantidadClientes() {
+        return clientesAlerta.size();
+    }
+
     @Override
     public void accept(AlertaReservaDTO alerta) {
         if (alerta == null) {

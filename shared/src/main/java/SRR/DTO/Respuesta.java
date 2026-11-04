@@ -2,11 +2,6 @@ package SRR.DTO;
 
 import java.io.Serializable;
 
-/**
- * Mensaje que el backend devuelve al frontend.
- * Si todo salió bien, "error" es null y "resultado" trae el valor (puede ser null si el método es void).
- * Si algo falló, "error" trae el mensaje y "resultado" es null.
- */
 public class Respuesta implements Serializable {
     private static final long serialVersionUID = 1L;
 

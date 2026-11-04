@@ -51,11 +51,28 @@ Con un usuario administrador de MySQL (por ejemplo `root`), ejecutarlo una sola 
 
 Para **recrear la base desde cero** (borra todos los datos), quitar el `--` de la línea `-- DROP DATABASE IF EXISTS srr;` al principio del script antes de ejecutarlo.
 
+### Base de datos de pruebas (solo para las pruebas de integración del backend)
+
+Las pruebas de integración del backend usan una base aparte, `srr_test`, para no tocar los datos reales. Se crea una sola vez con:
+```bash
+mysql -u root -p < sql/schema_srr_test.sql
+```
+Es el mismo script de arriba con el nombre de la base cambiado. Las pruebas leen su conexión de `backend/src/test/resources/conexion.properties`, que apunta a `srr_test`.
+
 ## 2. Configuración
 
 ### Backend
-- Se conecta a MySQL en `localhost:3306`, base `srr`, con el usuario `admin` / `admin` que crea el script (configurado en `backend/.../Datos/ConexionBD.java`).
 - Escucha en los puertos **6767** (peticiones) y **7676** (notificaciones).
+- Se conecta a MySQL con los datos de `backend/src/main/resources/conexion.properties`:
+
+| Clave | Para qué sirve | Valor por defecto |
+|---|---|---|
+| `db.url` | Dirección JDBC de la base | `jdbc:mysql://localhost:3306/srr?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` |
+| `db.user` | Usuario de MySQL | `admin` |
+| `db.pass` | Clave del usuario de MySQL | `admin` |
+
+  El usuario `admin` lo crea `sql/schema_srr.sql`. Cada valor se puede cambiar sin editar el archivo con una propiedad del sistema al ejecutar el backend: `-Dsrr.db.url=...`, `-Dsrr.db.user=...` o `-Dsrr.db.pass=...` (en IntelliJ: *Edit Configurations → Servidor → VM options*). Si el archivo no existe, se usan los valores por defecto.
+- Al crear una reserva, el backend avisa a todos los frontends conectados al puerto 7676 **menos al que la creó**. Cada frontend se identifica al conectarse enviando su ID de usuario como primer mensaje; si no lo envía en 5 segundos, el backend cierra esa conexión.
 
 ### Frontend
 La dirección del backend y los tiempos de espera están en `frontend/src/main/resources/config.properties`:
@@ -144,10 +161,22 @@ Pruebas incluidas:
 | `ProxyTest` | Unidad | Proxies y `Conexion` contra un servidor simulado (`ServidorFalso`): respuesta correcta, error del backend, tiempo agotado, servidor apagado, reintento de consultas y aviso de IA ocupada |
 | `ListaAlertasTest` | Unidad | Agregar, ver y descartar alertas, sin interfaz |
 | `ClienteNotificacionesTest` | Unidad | Recepción de alertas y reconexión contra un servidor de alertas simulado |
-| `EnrutadorBaseTest` | Unidad | El enrutador del backend que dirige cada petición a su Servicio |
+| `EnrutadorBaseTest` | Unidad | El enrutador base del backend: registrar operaciones, atenderlas y propagar errores |
+| `EnrutadorPrincipalTest` | Unidad | Que cada operación de `Protocolo` tenga enrutador y que una desconocida devuelva error |
+| `AtencionClienteTest` | Unidad | Atención de un cliente por socket: respuesta, errores convertidos en `Respuesta`, varias peticiones en la misma conexión y desconexión |
+| `ServidorNotificacionesTest` | Unidad | Registro de clientes de alertas, que la alerta llegue a todos menos al creador, saludos inválidos y clientes caídos |
+| `SerializacionTest` | Unidad | `Peticion`, `Respuesta` y los DTO viajando por serialización |
+| `ReservaLogicaValidacionTest`, `UsuarioLogicaValidacionTest`, `RecursoLogicaValidacionTest`, `LoginLogicaTest`, `NotificacionLogicaTest` | Unidad | Validaciones de la capa Lógica que no necesitan base de datos |
+| `UsuarioDatosIT`, `CategoriaDatosIT`, `RecursoDatosIT`, `ReservaDatosIT` | Integración | Capa Datos contra `srr_test`: consultas, altas, cambios, bajas y restricciones de la base |
+| `LoginLogicaIT`, `UsuarioLogicaIT`, `CategoriaYRecursoLogicaIT`, `ReservaLogicaIT` | Integración | Reglas de la capa Lógica con la base real: disponibilidad, cancelaciones, reservas sin cupo y alertas |
+| `ServidorIT` | Integración | El servidor del backend por socket (peticiones y alertas) contra `srr_test`, con varios clientes |
 | `ProxyIT` | Integración | Login y creación de reservas contra el servidor real |
 
-**Para las pruebas de integración**, MySQL (con la base `srr` y sus datos de prueba) y el `Servidor` tienen que estar encendidos antes de ejecutar `mvn verify`. Si el `Servidor` no responde, esas pruebas **se saltan** en lugar de fallar. Usan el usuario `user` / `user`, así que esa clave no debe estar cambiada. Como no hay una base aparte para pruebas, la reserva que crean se cancela al terminar (queda registrada como cancelada).
+**Para las pruebas de integración del frontend (`ProxyIT`)**, MySQL (con la base `srr` y sus datos de prueba) y el `Servidor` tienen que estar encendidos antes de ejecutar `mvn verify`. Si el `Servidor` no responde, esas pruebas **se saltan** en lugar de fallar. Usan el usuario `user` / `user`, así que esa clave no debe estar cambiada. La reserva que crean se cancela al terminar (queda registrada como cancelada).
+
+**Para las pruebas de integración del backend**, solo hace falta MySQL con la base `srr_test` creada (ver el paso 1); **no** necesitan el `Servidor` encendido, porque cada prueba arma el suyo. Cada prueba crea sus propios usuarios, categorías y recursos y los borra al terminar. Antes de empezar comprueban que la conexión apunte a `srr_test` y, si apunta a otra base, fallan sin tocar nada. Si no se puede conectar a `srr_test`, se **saltan** en lugar de fallar.
+
+Para ejecutar solo las del backend, desde la raíz del proyecto: `mvn test -pl backend -am` (unidad) o `mvn verify -pl backend -am` (unidad e integración).
 
 `ServidorFalso` (en las fuentes de prueba del frontend) también se puede ejecutar a mano con su `main`, para probar el frontend sin backend ni MySQL.
 

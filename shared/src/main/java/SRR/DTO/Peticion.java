@@ -2,10 +2,6 @@ package SRR.DTO;
 
 import java.io.Serializable;
 
-/**
- * Mensaje que el frontend (proxy) envía al backend.
- * Dice QUÉ método se quiere ejecutar y con QUÉ parámetros.
- */
 public class Peticion implements Serializable {
     private static final long serialVersionUID = 1L;
 
