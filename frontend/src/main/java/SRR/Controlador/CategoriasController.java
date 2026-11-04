@@ -9,6 +9,7 @@ import SRR.Utilidades.RutaDestino;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -34,6 +35,7 @@ public class CategoriasController {
     @FXML private Label lblSearch;
     @FXML private Button btnImprimir;
     private final CategoriaProxy categoriaServicio = new CategoriaProxy();
+    private FilteredList<CategoriaDTO> categoriasFiltradas;
 
     @FXML
     public void initialize() {
@@ -67,7 +69,8 @@ public class CategoriasController {
             categoriaList = FXCollections.observableArrayList();
             Avisos.error("No se pudieron cargar las categorías: " + e.getMessage());
         }
-        catTable.setItems(categoriaList);
+        categoriasFiltradas = new FilteredList<>(categoriaList, c -> true);
+        catTable.setItems(categoriasFiltradas);
         btnSave.setOnAction(event -> guardarCategoria());
         btnDelete.setOnAction(event -> {
             eliminarCategoria();
@@ -108,6 +111,7 @@ public class CategoriasController {
             try {
                 categoriaServicio.eliminarCategoria(categoriaSeleccionada.getId());
                 categoriaList.remove(categoriaSeleccionada);
+                limpiarBusqueda();
                 limpiarCampos();
                 Avisos.info("Categoría eliminada correctamente.");
             } catch (ServidorException e) {
@@ -118,24 +122,26 @@ public class CategoriasController {
     }
 
     private void buscarCategoria() {
-        String textoBusqueda = txtSearch.getText().trim();
-        if(textoBusqueda.isEmpty()) {
-            lblSearch.setText("Ingrese un texto para buscar");
-            lblSearch.setStyle("-fx-text-fill: red;");
-            return;
-        }
-        for (CategoriaDTO categoria : categoriaList) {
-            if (categoria.getDescripcion().toLowerCase().contains(textoBusqueda.toLowerCase())) {
-                catTable.getSelectionModel().select(categoria);
-                catTable.scrollTo(categoria);
-                lblSearch.setText("Categoría encontrada");
-                lblSearch.setStyle("-fx-text-fill: green;");
-                return;
-            }
-        }
-        lblSearch.setText("Categoría no encontrada");
-        lblSearch.setStyle("-fx-text-fill: red;");
+        String texto = txtSearch.getText().trim().toLowerCase();
+        categoriasFiltradas.setPredicate(c ->
+                texto.isEmpty() || c.getDescripcion().toLowerCase().contains(texto));
+        limpiarCampos();
 
+        if (texto.isEmpty()) {
+            lblSearch.setText("");   // sin texto se muestran todas las categorías
+        } else if (categoriasFiltradas.isEmpty()) {
+            lblSearch.setText("Categoría no encontrada");
+            lblSearch.setStyle("-fx-text-fill: red;");
+        } else {
+            lblSearch.setText("Categorías encontradas: " + categoriasFiltradas.size());
+            lblSearch.setStyle("-fx-text-fill: green;");
+        }
+    }
+
+    private void limpiarBusqueda() {
+        txtSearch.clear();
+        lblSearch.setText("");
+        categoriasFiltradas.setPredicate(c -> true);   // la tabla vuelve a mostrar todas
     }
 
     public void guardarCategoria() {
@@ -151,6 +157,7 @@ public class CategoriasController {
             Avisos.info(resultado == 1 ? "Categoría agregada correctamente."
                     : "Categoría modificada correctamente.");
             categoriaList.setAll(categoriaServicio.obtenerCategorias());   // relee la lista desde el servidor
+            limpiarBusqueda();
             limpiarCampos();
         } catch (ServidorException e) {
             Avisos.error(e.getMessage());
