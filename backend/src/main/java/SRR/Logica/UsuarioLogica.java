@@ -86,13 +86,8 @@ public class UsuarioLogica {
     }
 
     public boolean eliminarUsuario(String id) {
-        UsuarioDTO usuario = buscarPorId(id);
-        if (usuario == null) {
+        if (buscarPorId(id) == null) {
             return false;
-        }
-
-        if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol())) {
-            throw new IllegalArgumentException("No se puede eliminar a un administrador.");
         }
 
         if (tieneReservasActivas(id)) {
