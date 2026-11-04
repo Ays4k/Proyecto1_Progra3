@@ -51,6 +51,7 @@ public class UsuarioLogica {
     }
 
     public int cambiosUsuario(UsuarioDTO usuario) {
+        validarDatos(usuario);
         if (buscarPorId(usuario.getId()) != null) {
             datos.modificar(usuario);
             return 2;
@@ -58,6 +59,23 @@ public class UsuarioLogica {
         validarIdentificacion(usuario.getId());
         datos.agregar(usuario);
         return 1;
+    }
+
+    private void validarDatos(UsuarioDTO usuario) {
+        String nombre = usuario.getNombre();
+        String telefono = usuario.getTelefono();
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío.");
+        }
+        if (nombre.length() > 50) {
+            throw new IllegalArgumentException("El nombre no puede tener más de 50 caracteres.");
+        }
+        if (telefono == null || telefono.isBlank()) {
+            throw new IllegalArgumentException("El teléfono no puede estar vacío.");
+        }
+        if (telefono.length() > 15) {
+            throw new IllegalArgumentException("El teléfono no puede tener más de 15 caracteres.");
+        }
     }
 
     private void validarIdentificacion(String id) {
@@ -68,8 +86,13 @@ public class UsuarioLogica {
     }
 
     public boolean eliminarUsuario(String id) {
-        if (buscarPorId(id) == null) {
+        UsuarioDTO usuario = buscarPorId(id);
+        if (usuario == null) {
             return false;
+        }
+
+        if ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol())) {
+            throw new IllegalArgumentException("No se puede eliminar a un administrador.");
         }
 
         if (tieneReservasActivas(id)) {
