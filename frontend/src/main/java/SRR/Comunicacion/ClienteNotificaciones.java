@@ -61,7 +61,9 @@ public class ClienteNotificaciones implements Runnable {
                 // avisa solo la primera vez, no en cada reintento
                 if (activo && !falloAvisado) {
                     falloAvisado = true;
-                    alFallar.accept("Se perdió la conexión con el servidor de alertas: " + e.getMessage()
+                    // sin detalle cuando la excepcion no trae mensaje, para que no salga null
+                    String detalle = e.getMessage() != null ? " (" + e.getMessage() + ")" : "";
+                    alFallar.accept("Se perdió la conexión con el servidor de alertas" + detalle
                             + ". Se intentará reconectar automáticamente.");
                 }
             } finally {
