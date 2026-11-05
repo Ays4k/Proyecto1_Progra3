@@ -7,6 +7,9 @@ Universidad Nacional, Costa Rica — 2026 - II Ciclo
 - SAUL SERRANO BRENES — 703320671
 - ISAAC BRENES TORRENTES — 119640551
 
+## Repositorio
+https://github.com/Ays4k/Proyecto2_Progra3
+
 ## Arquitectura
 
 El sistema corre como **dos programas separados** que se comunican por la red: el **backend** (un servidor sin interfaz) y el **frontend** (la aplicación JavaFX). Puede haber varios frontends conectados al mismo backend.
